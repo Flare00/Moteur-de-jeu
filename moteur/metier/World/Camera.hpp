@@ -163,6 +163,10 @@ public:
 		return this->transformation;
 	}
 
+	glm::vec3 getPosition() {
+		return this->position;
+	}
+
 
 
 private:

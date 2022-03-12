@@ -15,14 +15,15 @@
 #include <common/vboindexer.hpp>
 
 #include "GameObject.hpp"
-
+#include "../Light/Material.hpp"
 #include "../Texture.hpp"
 #include "../Collision/BoundingBox.hpp"
 #include "../Shader/GlobalShader.hpp"
 
 class Modele : public GameObject {
 private:
-	GlobalShader* shader;
+	GlobalShader * shader;
+	Material material;
 protected:
 	std::vector<glm::vec3> vertexArray;
 	std::vector<glm::vec2> texCoords;
@@ -149,8 +150,12 @@ public:
 		this->shader->use();
 
 		glEnable(GL_TEXTURE_2D);
+
 		this->shader->drawTexture(this->texture.texture, this->texture.id);
-		this->shader->drawMesh(this->VAO, this->indices.size(), this->getTransformMatrix());
+
+		//LIGHT TEST
+		this->shader->setLightTest();
+		this->shader->drawMesh(this->VAO, this->indices.size(), this->getTransformMatrix(), this->material);
 
 		if (dfs)
 			GameObject::draw(dfs);
@@ -208,6 +213,10 @@ public:
 
 	std::vector<glm::vec2> getTexCoords() {
 		return this->texCoords;
+	}
+	
+	Material* getMaterial() {
+		return &this->material;
 	}
 };
 
