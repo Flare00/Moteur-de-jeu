@@ -3,7 +3,7 @@
 
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
-#endif 
+#endif
 
 #include <stb_image.h>
 
@@ -11,23 +11,25 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
-class Texture{
+class Texture
+{
 private:
 	std::string path;
-    int width, height, nbChan;
-	
-	unsigned int texture_index;
-    unsigned char* texture_data;
+	int width, height, nbChan;
 
-    bool loaded;
+	unsigned int texture_index;
+	unsigned char *texture_data;
+
+	bool loaded;
 
 	bool powerOfTwo(int x)
 	{
 		return (x & (x - 1)) == 0;
 	}
+
 public:
-	
-    Texture(std::string path) {
+	Texture(std::string path)
+	{
 		this->path = path;
 
 		glGenTextures(1, &this->texture_index);
@@ -39,14 +41,17 @@ public:
 		this->height = h;
 		this->nbChan = nbC;
 
-		if (this->texture_data) {
+		if (this->texture_data)
+		{
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->texture_data);
 			glBindTexture(GL_TEXTURE_2D, this->texture_index);
 
-			if (powerOfTwo(w) && powerOfTwo(h)) {
+			if (powerOfTwo(w) && powerOfTwo(h))
+			{
 				glGenerateMipmap(GL_TEXTURE_2D);
 			}
-			else {
+			else
+			{
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -54,13 +59,15 @@ public:
 			}
 			this->loaded = true;
 		}
-		else {
+		else
+		{
 			this->loaded = false;
 		}
 		stbi_image_free(this->texture_data);
-    }
+	}
 
-	void draw(GLuint u_texture, int index) {
+	void draw(GLuint u_texture, int index)
+	{
 		glActiveTexture(GL_TEXTURE0 + index);
 		glBindTexture(GL_TEXTURE_2D, this->texture_index);
 		glUniform1i(u_texture, index);
