@@ -1,6 +1,7 @@
 #ifndef __SCENE_SPACE_H__
 #define __SCENE_SPACE_H__
 
+#include "../Tools/PrimitiveMesh.hpp"
 #include "../Shader/GlobalShader.hpp"
 #include "Scene.hpp"
 
@@ -35,58 +36,58 @@ public:
 
 		//Creation du fond
 		Modele* background = new Modele("Background", globalShader);
-		generate_uv_sphere(background, 4, 4);
+		PrimitiveMesh::generate_uv_sphere(background, 4, 4);
 		background->setTexture(back, true);
 		background->getTransform()->setScale(5000.0f);
 		this->scene->addChild(background);
 
 		//Creation du Soleil
 		Modele* soleil = new Modele("Soleil", globalShader);
-		generate_uv_sphere(soleil, meshPrecision, meshPrecision);
+		PrimitiveMesh::generate_uv_sphere(soleil, meshPrecision, meshPrecision);
 		soleil->setTexture(texSoleil, true);
 
 		//Creation de la Terre
 		Modele* terre = new Modele("Terre", globalShader);
-		generate_uv_sphere(terre, meshPrecision, meshPrecision);
+		PrimitiveMesh::generate_uv_sphere(terre, meshPrecision, meshPrecision);
 		terre->setTexture(texTerre, true);
 		//Creation de la Lune
 		Modele* lune = new Modele("Lune", globalShader);
-		generate_uv_sphere(lune, meshPrecision, meshPrecision);
+		PrimitiveMesh::generate_uv_sphere(lune, meshPrecision, meshPrecision);
 		lune->setTexture(texLune, true);
 
 		//Creation de mercure
 		Modele* mercure = new Modele("Mercure", globalShader);
-		generate_uv_sphere(mercure, meshPrecision, meshPrecision);
+		PrimitiveMesh::generate_uv_sphere(mercure, meshPrecision, meshPrecision);
 		mercure->setTexture(texMercure, true);
 
 		//Creation de Venus
 		Modele* venus = new Modele("Venus", globalShader);
-		generate_uv_sphere(venus, meshPrecision, meshPrecision);
+		PrimitiveMesh::generate_uv_sphere(venus, meshPrecision, meshPrecision);
 		venus->setTexture(texVenus, true);
 
 		//Creation de Mars
 		Modele* mars = new Modele("Mars", globalShader);
-		generate_uv_sphere(mars, meshPrecision, meshPrecision);
+		PrimitiveMesh::generate_uv_sphere(mars, meshPrecision, meshPrecision);
 		mars->setTexture(texMars, true);
 
 		//Creation de Jupiter
 		Modele* jupiter = new Modele("Jupiter", globalShader);
-		generate_uv_sphere(jupiter, meshPrecision, meshPrecision);
+		PrimitiveMesh::generate_uv_sphere(jupiter, meshPrecision, meshPrecision);
 		jupiter->setTexture(texJupiter, true);
 
 		//Creation de Saturne
 		Modele* saturne = new Modele("Saturne", globalShader);
-		generate_uv_sphere(saturne, meshPrecision, meshPrecision);
+		PrimitiveMesh::generate_uv_sphere(saturne, meshPrecision, meshPrecision);
 		saturne->setTexture(texSaturne, true);
 
 		//Creation de Uranus
 		Modele* uranus = new Modele("Uranus", globalShader);
-		generate_uv_sphere(uranus, meshPrecision, meshPrecision);
+		PrimitiveMesh::generate_uv_sphere(uranus, meshPrecision, meshPrecision);
 		uranus->setTexture(texUranus, true);
 
 		//Creation de Neptune
 		Modele* neptune = new Modele("Neptune", globalShader);
-		generate_uv_sphere(neptune, meshPrecision, meshPrecision);
+		PrimitiveMesh::generate_uv_sphere(neptune, meshPrecision, meshPrecision);
 		neptune->setTexture(texNeptune, true);
 
 		scene->addChild(soleil);

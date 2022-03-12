@@ -20,6 +20,11 @@ private:
     unsigned char* texture_data;
 
     bool loaded;
+
+	bool powerOfTwo(int x)
+	{
+		return (x & (x - 1)) == 0;
+	}
 public:
 	
     Texture(std::string path) {
@@ -27,14 +32,6 @@ public:
 
 		glGenTextures(1, &this->texture_index);
 		glBindTexture(GL_TEXTURE_2D, this->texture_index);
-
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
 
 		int w, h, nbC;
 		this->texture_data = stbi_load(path.c_str(), &w, &h, &nbC, 4);
@@ -45,6 +42,16 @@ public:
 		if (this->texture_data) {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->texture_data);
 			glBindTexture(GL_TEXTURE_2D, this->texture_index);
+
+			if (powerOfTwo(w) && powerOfTwo(h)) {
+				glGenerateMipmap(GL_TEXTURE_2D);
+			}
+			else {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			}
 			this->loaded = true;
 		}
 		else {
