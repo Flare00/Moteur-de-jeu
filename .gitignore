@@ -2,3 +2,5 @@
 .vscode/
 build/
 out/
+moteur/moteur
+moteur/moteur.exe
