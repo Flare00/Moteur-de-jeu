@@ -30,47 +30,15 @@ public:
 		}
 	}
 
-	void drawMesh(GLuint vertexbuffer, GLuint texcoordbuffer, GLuint elementbuffer, std::vector<unsigned int>* indices, glm::mat4 transformMatrix) {
+	void drawMesh(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix) {
 		//Load Vertex
 		glUniformMatrix4fv(this->u_model, 1, GL_FALSE, &transformMatrix[0][0]);
 
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(
-			0,                  // attribute
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,  // stride
-			(void*)0            // array buffer offset
-		);
+		// Bind VAO
+		glBindVertexArray(VAO);
 
-
-
-
-		//Loads UV
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, texcoordbuffer);
-		glVertexAttribPointer(
-			1,                  // attribute
-			2,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,  				// stride
-			(void*)0            // array buffer offset
-		);
-		
-		//Draw Triangles 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-		glDrawElements(
-			GL_TRIANGLES,      // mode
-			indices->size(),    // count
-			GL_UNSIGNED_INT,   // type
-			(void*)0           // element array buffer offset
-		);
-
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(0);
+		// Draw
+		glDrawElements(GL_TRIANGLES, size_indice, GL_UNSIGNED_INT, 0);
 	}
 };
 

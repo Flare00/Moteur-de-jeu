@@ -21,12 +21,12 @@
 #include "../Shader/GlobalShader.hpp"
 
 class Modele : public GameObject {
-private :
+private:
 	GlobalShader* shader;
 protected:
-	std::vector<glm::vec3> indexed_vertices;
+	std::vector<glm::vec3> vertexArray;
 	std::vector<glm::vec2> texCoords;
-	std::vector<float> indexed_vtc;
+	std::vector<glm::vec3> normals;
 	std::vector<unsigned int> indices;
 
 	//Textures
@@ -39,15 +39,16 @@ protected:
 	};
 
 
+
 	TextureContainer texture;
 
 	//BoundingBox
 	BoundingBox* boundingBox;
 
 	//Buffers
-	GLuint vertexbuffer;
-	GLuint texcoordbuffer;
-	GLuint elementbuffer;
+	GLuint VAO;
+	GLuint VBO[3];
+	GLuint EBO;
 
 	//---
 	bool hasData;
@@ -56,22 +57,36 @@ public:
 
 	//--- BUFFERS ---
 	virtual void loadBuffer() {
-		//Load vertex Info
-		glGenBuffers(1, &this->vertexbuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, this->vertexbuffer);
-		glBufferData(GL_ARRAY_BUFFER, this->indexed_vertices.size() * sizeof(glm::vec3), &this->indexed_vertices[0], GL_STATIC_DRAW);
+		bool notEmptyTexture = (this->texCoords.size() > 0);
+		bool notEmptyNormal = (this->normals.size() > 0);
 
+		glGenVertexArrays(1, &this->VAO);
+		glGenBuffers(3, this->VBO);
+		glGenBuffers(1, &this->EBO);
 
-		//Load TexCoords Info
-		glGenBuffers(1, &this->texcoordbuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, this->texcoordbuffer);
-		glBufferData(GL_ARRAY_BUFFER, this->texCoords.size() * sizeof(glm::vec2), &this->texCoords[0], GL_STATIC_DRAW);
+		glBindVertexArray(VAO);
 
+		// position attribute
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, this->VBO[0]);
+		glBufferData(GL_ARRAY_BUFFER, this->vertexArray.size() * sizeof(vec3), &this->vertexArray[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-		//Load Element Info
-		glGenBuffers(1, &this->elementbuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, this->elementbuffer);
-		glBufferData(GL_ARRAY_BUFFER, this->indices.size() * sizeof(unsigned int), &this->indices[0], GL_STATIC_DRAW);
+		if (this->texCoords.size() > 0) {
+			glEnableVertexAttribArray(1);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+			glBufferData(GL_ARRAY_BUFFER, this->texCoords.size() * sizeof(vec2), &this->texCoords[0], GL_STATIC_DRAW);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		}
+		if (this->normals.size() > 0) {
+			glEnableVertexAttribArray(2);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+			glBufferData(GL_ARRAY_BUFFER, this->normals.size() * sizeof(vec3), &this->normals[0], GL_STATIC_DRAW);
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		}
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(unsigned int), &this->indices[0], GL_STATIC_DRAW);
+
 		hasData = true;
 	}
 
@@ -83,25 +98,25 @@ public:
 		std::vector<std::vector<unsigned short> > triangles;
 
 		//Chargement du fichier de maillage
-		loadOFF(fileOff, this->indexed_vertices, indices, triangles);
+		loadOFF(fileOff, this->vertexArray, indices, triangles);
 		for (int i = 0, max = indices.size(); i < max; i++) {
 			this->indices.push_back((int)indices[i]);
 		}
-		this->boundingBox = new BoundingBox(this->indexed_vertices);
+		this->boundingBox = new BoundingBox(this->vertexArray);
 
 		loadBuffer();
 	}
 
-	Modele(std::string id, GlobalShader * shader, GameObject* parent = NULL) : GameObject(id, parent) {
+	Modele(std::string id, GlobalShader* shader, GameObject* parent = NULL) : GameObject(id, parent) {
 		this->shader = shader;
 	}
 
-	Modele(std::string id, std::vector<glm::vec3> indexed_vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords,GlobalShader * shader, GameObject* parent = NULL) : GameObject(id, parent) {
+	Modele(std::string id, std::vector<glm::vec3> indexed_vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, GlobalShader* shader, GameObject* parent = NULL) : GameObject(id, parent) {
 		this->shader = shader;
-		this->indexed_vertices = indexed_vertices;
+		this->vertexArray = indexed_vertices;
 		this->indices = indices;
 		this->texCoords = texCoords;
-		this->boundingBox = new BoundingBox(this->indexed_vertices);
+		this->boundingBox = new BoundingBox(this->vertexArray);
 
 		loadBuffer();
 	}
@@ -111,9 +126,9 @@ public:
 			free(this->texture.texture);
 		}
 
-		glDeleteBuffers(1, &this->vertexbuffer);
-		glDeleteBuffers(1, &this->texcoordbuffer);
-		glDeleteBuffers(1, &this->elementbuffer);
+		glDeleteVertexArrays(1, &this->VAO);
+		glDeleteBuffers(3, this->VBO);
+		glDeleteBuffers(1, &this->EBO);
 	}
 
 	// --- METHODES ---
@@ -135,7 +150,7 @@ public:
 
 		glEnable(GL_TEXTURE_2D);
 		this->shader->drawTexture(this->texture.texture, this->texture.id);
-		this->shader->drawMesh(this->vertexbuffer, this->texcoordbuffer, this->elementbuffer, &this->indices, this->getTransformMatrix());
+		this->shader->drawMesh(this->VAO, this->indices.size(), this->getTransformMatrix());
 
 		if (dfs)
 			GameObject::draw(dfs);
@@ -166,17 +181,17 @@ public:
 
 
 	void setData(std::vector<glm::vec3> indexed_vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords) {
-		this->indexed_vertices = indexed_vertices;
+		this->vertexArray = indexed_vertices;
 		this->indices = indices;
 		this->texCoords = texCoords;
 
-		this->boundingBox = new BoundingBox(this->indexed_vertices);
+		this->boundingBox = new BoundingBox(this->vertexArray);
 
 		loadBuffer();
 	}
 
 	std::vector<glm::vec3> getIndexedVertices() {
-		return this->indexed_vertices;
+		return this->vertexArray;
 	}
 
 	BoundingBox* getBoundingBox() {
@@ -232,15 +247,15 @@ void generate_uv_sphere(Modele* modele, int nbMeridien, int nbParalleles) {
 	std::vector<unsigned int> indices;
 	std::vector<glm::vec2> texCoords;
 	for (int j = 0; j <= nbParalleles; j++) {
-		float parallele = ( M_PI * (float)j) / ((float)nbParalleles);
-		for (int i = 0; i<= nbMeridien; i++) {
+		float parallele = (M_PI * (float)j) / ((float)nbParalleles);
+		for (int i = 0; i <= nbMeridien; i++) {
 			//Coordinate
 			float meridien = (2.0f * M_PI * (float)i) / ((float)nbMeridien);
 			float x = sin(parallele) * cos(meridien);
 			float y = cos(parallele);
 			float z = sin(parallele) * sin(meridien);
 			indexed_vertices.push_back(glm::vec3(x, y, z));
-			
+
 			//Texture Coordinate
 			texCoords.push_back(glm::vec2(meridien / (2.0f * M_PI), parallele / (M_PI)));
 

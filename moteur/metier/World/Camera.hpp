@@ -120,35 +120,35 @@ public:
 
 
 	void rotate(CameraAxe axe, bool sensPositif, float deltaTime) {
-			float vitesse = this->rotateSpeed * deltaTime * (sensPositif ? 1.0f : -1.0f);
-			switch (axe) {
-			case CameraAxe::X:
-				this->pitch += vitesse;
-				break;
-			case CameraAxe::Y:
-				this->yaw += vitesse;
-				break;
-			case CameraAxe::Z:
-				this->roll += vitesse;
-				break;
-			}
-			updateVectors();
+		float vitesse = this->rotateSpeed * deltaTime * (sensPositif ? 1.0f : -1.0f);
+		switch (axe) {
+		case CameraAxe::X:
+			this->pitch += vitesse;
+			break;
+		case CameraAxe::Y:
+			this->yaw += vitesse;
+			break;
+		case CameraAxe::Z:
+			this->roll += vitesse;
+			break;
+		}
+		updateVectors();
 	}
 
-		void rotate(CameraAxe axe, float value) {
-			float vitesse = this->rotateSpeed * value;
-			switch (axe) {
-			case CameraAxe::X:
-				this->pitch += vitesse;
-				break;
-			case CameraAxe::Y:
-				this->yaw += vitesse;
-				break;
-			case CameraAxe::Z:
-				this->roll += vitesse;
-				break;
-			}
-			updateVectors();
+	void rotate(CameraAxe axe, float value) {
+		float vitesse = this->rotateSpeed * value;
+		switch (axe) {
+		case CameraAxe::X:
+			this->pitch += vitesse;
+			break;
+		case CameraAxe::Y:
+			this->yaw += vitesse;
+			break;
+		case CameraAxe::Z:
+			this->roll += vitesse;
+			break;
+		}
+		updateVectors();
 	}
 
 	void setOrbitalCible(vec3 pos) {
@@ -179,7 +179,6 @@ private:
 		}
 		else {
 
-	
 		}
 	}
 

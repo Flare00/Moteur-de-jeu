@@ -73,7 +73,7 @@ add_executable(moteur
 		moteur/Shaders/fragment_shader.glsl
 		moteur/Shaders/terrain_vertex_shader.glsl
 		moteur/Shaders/terrain_fragment_shader.glsl
- "moteur/metier/GameObject/Planete.hpp")
+ "moteur/metier/GameObject/Planete.hpp" "moteur/metier/Game/Scene.hpp" "moteur/metier/Game/Game.hpp"  "moteur/metier/Game/SceneSpace.hpp")
 target_link_libraries(moteur
 	${ALL_LIBS}
 )

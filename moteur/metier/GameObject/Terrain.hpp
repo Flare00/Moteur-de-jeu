@@ -100,7 +100,7 @@ public :
 		
 		this->shader->setLimit(this->limitTop, this->limitBottom, this->limitBlur);
 		//Draw Modele information
-		this->shader->drawMesh(this->vertexbuffer, this->texcoordbuffer, this->elementbuffer, &this->indices, this->getTransformMatrix());
+		this->shader->drawMesh(this->VAO, this->indices.size(), this->getTransformMatrix());
 
 		if(dfs)
 			GameObject::draw(dfs);

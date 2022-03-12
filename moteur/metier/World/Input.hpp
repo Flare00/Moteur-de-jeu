@@ -40,7 +40,7 @@ private :
 		GLdouble xPos;
 		GLdouble yPos;
 		glfwGetCursorPos(window, &xPos, &yPos);
-		if(firstMouseMovement > 0){
+		if(this->firstMouseMovement > 0){
 			firstMouseMovement--;
 			lastMouseX = xPos;
 			lastMouseY = yPos;
@@ -148,6 +148,10 @@ public:
 	{
 		mouseInput(window);
 		keyboardInput(window,deltaTime);
+	}
+
+	void SetCamera(Camera* camera) {
+		this->camera = camera;
 	}
 
 };
