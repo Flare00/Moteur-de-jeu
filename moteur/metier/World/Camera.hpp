@@ -53,6 +53,9 @@ public:
 	vec3 cibleOrbital = vec3(0.0f);
 	bool modeOrbital = false;
 
+	float distanceMax = 10000.0f;
+	float distanceMin = 0.1f;
+
 public:
 	Camera(vec3 pos = vec3(0.0f, 0.0f, 3.0f), float yaw = YAW, float pitch = PITCH, vec3 up = vec3(0.0f, 1.0f, 0.0f)) {
 		this->transformation = glm::mat4(1.0f);
@@ -87,7 +90,7 @@ public:
 	}
 
 	mat4 getProjection() {
-		return glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 10000.0f);
+		return glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, this->distanceMin, this->distanceMax);
 	}
 
 	mat4 getViewMatrix() {
@@ -167,6 +170,17 @@ public:
 		return this->position;
 	}
 
+	float getDistance(glm::vec3 point) {
+		return glm::distance(this->position, point);
+	}
+
+	bool isInFieldOfView(glm::vec3 point) {
+		float v = getDistance(point);
+		if (v <= this->distanceMax) {
+			return true;
+		}
+		return false;
+	}
 
 
 private:

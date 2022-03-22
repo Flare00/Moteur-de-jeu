@@ -56,13 +56,16 @@ public:
 		return this->transform->getMatrix();
 	}
 
-	void drawDFS() {
+	virtual void updateTransformation() {
+	}
+
+	void computeDFS(Camera * camera) {
 		for (int i = 0, max = this->childs.size(); i < max; i++) {
-			this->childs[i]->draw(true);
+			this->childs[i]->compute(camera, true);
 		}
 	}
 
-	void drawBFS() {
+	void computeBFS(Camera* camera) {
 		std::vector<GameObject*> parcours;
 		parcours.push_back(this);
 
@@ -70,7 +73,7 @@ public:
 			GameObject* current = parcours[0];
 			parcours.erase(parcours.begin());
 			if (current != this) {
-				current->draw(false);
+				current->compute(camera, false);
 			}
 			std::vector<GameObject*> currentChilds = current->getChilds();
 			for (int i = 0, max = currentChilds.size(); i < max; i++) {
@@ -80,12 +83,12 @@ public:
 
 	}
 
-	virtual void draw(bool dfs) {
+	virtual void compute(Camera* camera, bool dfs) {
 		if (dfs) {
-			this->drawDFS();
+			this->computeDFS(camera);
 		}
 		else {
-			this->drawBFS();
+			this->computeBFS(camera);
 		}
 	}
 

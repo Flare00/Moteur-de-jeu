@@ -192,7 +192,7 @@ public:
 			soleil->findDirectChild("Neptune")->getTransform()->selfRotate(vec3(0, 1, 0), day / 0.75f * deltaTime);
 		}
 
-		this->scene->draw(true);
+		this->scene->compute(this->cameras[this->activeCamera], true);
 	}
 };
 

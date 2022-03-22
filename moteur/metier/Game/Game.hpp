@@ -5,6 +5,8 @@
 #include "Scene.hpp"
 #include "SceneSpace.hpp"
 
+#include "SceneCollision.hpp"
+
 class Game {
 private :
 	int activeScene = -1;

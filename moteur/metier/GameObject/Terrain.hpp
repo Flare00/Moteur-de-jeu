@@ -83,7 +83,14 @@ public :
 		this->limitBlur = limit;
 	}
 
-	virtual void draw(bool dfs = true) {
+	virtual void compute(Camera* camera, bool dfs = true) {
+
+		draw();
+		if (dfs)
+			GameObject::compute(camera, dfs);
+	}
+
+	void draw(Camera* camera, bool dfs = true) {
 		if (!this->hasData) {
 			return;
 		}
@@ -102,8 +109,6 @@ public :
 		//Draw Modele information
 		this->shader->drawMesh(this->VAO, this->indices.size(), this->getTransformMatrix());
 
-		if(dfs)
-			GameObject::draw(dfs);
 	}
 };
 

@@ -19,7 +19,7 @@ class Input {
 public :
 	bool pause = false;
 	bool rotateTerrain = false;
-	int rotateSpeed = 1.0f;
+	float rotateSpeed = 1.0f;
 
 private :
 	Camera * camera;
@@ -42,14 +42,14 @@ private :
 		glfwGetCursorPos(window, &xPos, &yPos);
 		if(this->firstMouseMovement > 0){
 			firstMouseMovement--;
-			lastMouseX = xPos;
-			lastMouseY = yPos;
+			lastMouseX = (float)xPos;
+			lastMouseY = (float)yPos;
 		} else {
-			float xOffset = xPos - lastMouseX;
-			float yOffset = lastMouseY - yPos;
+			float xOffset = (float)xPos - lastMouseX;
+			float yOffset = lastMouseY - (float)yPos;
 
-			lastMouseX = xPos;
-			lastMouseY = yPos;
+			lastMouseX = (float)xPos;
+			lastMouseY = (float)yPos;
 
 			this->camera->rotate(CameraAxe::X, yOffset * sensivityMouseX);
 			this->camera->rotate(CameraAxe::Y, xOffset * sensivityMouseY);
@@ -122,9 +122,9 @@ private :
 
 			//Rotation de terrain
 			if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
-				rotateSpeed += 0.05;
+				rotateSpeed += 0.05f;
 			if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
-				rotateSpeed -= 0.05;
+				rotateSpeed -= 0.05f;
 			;
 
 

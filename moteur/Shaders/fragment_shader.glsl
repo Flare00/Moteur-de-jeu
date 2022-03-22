@@ -51,7 +51,7 @@ void main(){
     vec3 norm = normalize(Normal);
     vec3 cameraDir = normalize(u_camera_pos - FragPos);
 
-    vec3 lightVec = vec3(0.5);
+    vec3 lightVec = vec3(1.0f);
     for(int i = 0; i < NB_LIGHTS; i++){
             lightVec += calculateLight(u_lights[i], norm, cameraDir);
     }

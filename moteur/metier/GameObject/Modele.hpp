@@ -15,14 +15,15 @@
 #include <common/vboindexer.hpp>
 
 #include "GameObject.hpp"
+#include "../World/Camera.hpp"
 #include "../Light/Material.hpp"
 #include "../Texture.hpp"
-#include "../Collision/BoundingBox.hpp"
+#include "../Collision/Collision.hpp"
 #include "../Shader/GlobalShader.hpp"
 
 class Modele : public GameObject {
 private:
-	GlobalShader * shader;
+	GlobalShader* shader;
 	Material material;
 protected:
 	std::vector<glm::vec3> vertexArray;
@@ -39,12 +40,10 @@ protected:
 		bool destroyAtEnd;
 	};
 
-
-
 	TextureContainer texture;
 
-	//BoundingBox
-	BoundingBox* boundingBox;
+	//Collision
+	Collision* collision;
 
 	//Buffers
 	GLuint VAO;
@@ -103,7 +102,7 @@ public:
 		for (int i = 0, max = indices.size(); i < max; i++) {
 			this->indices.push_back((int)indices[i]);
 		}
-		this->boundingBox = new BoundingBox(this->vertexArray);
+		this->collision = new Collision(this->vertexArray);
 
 		loadBuffer();
 	}
@@ -117,7 +116,7 @@ public:
 		this->vertexArray = indexed_vertices;
 		this->indices = indices;
 		this->texCoords = texCoords;
-		this->boundingBox = new BoundingBox(this->vertexArray);
+		this->collision = new Collision(this->vertexArray);
 
 		loadBuffer();
 	}
@@ -132,18 +131,20 @@ public:
 		glDeleteBuffers(1, &this->EBO);
 	}
 
-	// --- METHODES ---
-	void drawTextures() {
-		//Draw les textures
+	virtual void compute(Camera* camera, bool dfs = true) {
+		bool isInFOV = false;
+		std::vector<glm::vec3> boxCoords = this->collision->getBoundingBox()->getCoords();
+		for (int i = 0, max = boxCoords.size(); i < max && !isInFOV; i++) {
+			isInFOV = camera->isInFieldOfView(boxCoords[i]);
+		}
+		if (isInFOV) {
+			draw();
+		}
 
+		if (dfs)
+			GameObject::compute(camera, dfs);
 	}
-	void drawMesh(bool uv) {
-		//Set Transformation in shader		
-
-	}
-
-
-	virtual void draw(bool dfs = true) {
+	void draw() {
 		if (!hasData) {
 			return;
 		}
@@ -157,8 +158,7 @@ public:
 		this->shader->setLightTest();
 		this->shader->drawMesh(this->VAO, this->indices.size(), this->getTransformMatrix(), this->material);
 
-		if (dfs)
-			GameObject::draw(dfs);
+
 	}
 
 	void fillTextureData(TextureContainer* container, Texture* texture, bool destroyAtEnd) {
@@ -190,7 +190,7 @@ public:
 		this->indices = indices;
 		this->texCoords = texCoords;
 
-		this->boundingBox = new BoundingBox(this->vertexArray);
+		this->collision = new Collision(this->vertexArray);
 
 		loadBuffer();
 	}
@@ -199,8 +199,8 @@ public:
 		return this->vertexArray;
 	}
 
-	BoundingBox* getBoundingBox() {
-		return this->boundingBox;
+	Collision* getCollision() {
+		return this->collision;
 	}
 
 	Shader* getShader() {
@@ -214,7 +214,7 @@ public:
 	std::vector<glm::vec2> getTexCoords() {
 		return this->texCoords;
 	}
-	
+
 	Material* getMaterial() {
 		return &this->material;
 	}
