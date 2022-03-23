@@ -52,9 +52,11 @@ void main(){
     vec3 cameraDir = normalize(u_camera_pos - FragPos);
 
     vec3 lightVec = vec3(1.0f);
+    /*
     for(int i = 0; i < NB_LIGHTS; i++){
             lightVec += calculateLight(u_lights[i], norm, cameraDir);
     }
+    */
 	if(u_has_texture == 0){
 		color = (vec4(lightVec,1) * vec4(TexCoord , 0, 1 ));
 	} else {
