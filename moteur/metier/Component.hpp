@@ -7,8 +7,8 @@ class Component {
 public :
 	enum Type {
 		Collision,
+		Gravity
 	};
-	GameObject* parent;
 private :
 	Type type;
 
@@ -19,9 +19,6 @@ public :
 
 	Type getType() {
 		return this->type;
-	}
-
-	virtual void apply(GameObject* parent) {
 	}
 };
 

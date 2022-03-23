@@ -112,8 +112,9 @@ public:
 		this->shader = shader;
 	}
 
-	Modele(std::string id, std::vector<glm::vec3> indexed_vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, GlobalShader* shader, GameObject* parent = NULL) : GameObject(id, parent) {
+	Modele(std::string id, std::vector<glm::vec3> indexed_vertices, std::vector<glm::vec3> normals, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, GlobalShader* shader, GameObject* parent = NULL) : GameObject(id, parent) {
 		this->shader = shader;
+		this->normals = normals;
 		this->vertexArray = indexed_vertices;
 		this->indices = indices;
 		this->texCoords = texCoords;
@@ -128,7 +129,6 @@ public:
 			this->addComponent(this->collision);
 		}
 	}
-	
 
 	virtual ~Modele() {
 		if (this->texture.destroyAtEnd && this->texture.texture != NULL) {

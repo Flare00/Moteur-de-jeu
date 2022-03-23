@@ -16,13 +16,13 @@
 using namespace glm;
 
 class Input {
-public :
+public:
 	bool pause = false;
 	bool rotateTerrain = false;
 	float rotateSpeed = 1.0f;
 
-private :
-	Camera * camera;
+private:
+	Camera* camera;
 
 	bool cameraPosPress = false;
 	bool pausePress = false;
@@ -36,15 +36,16 @@ private :
 	float sensivityMouseY = 0.001f;
 
 	//Process Mouse input
-	void mouseInput(GLFWwindow * window){
+	void mouseInput(GLFWwindow* window) {
 		GLdouble xPos;
 		GLdouble yPos;
 		glfwGetCursorPos(window, &xPos, &yPos);
-		if(this->firstMouseMovement > 0){
+		if (this->firstMouseMovement > 0) {
 			firstMouseMovement--;
 			lastMouseX = (float)xPos;
 			lastMouseY = (float)yPos;
-		} else {
+		}
+		else {
 			float xOffset = (float)xPos - lastMouseX;
 			float yOffset = lastMouseY - (float)yPos;
 
@@ -56,7 +57,7 @@ private :
 		}
 		//void rotate(CameraAxe axe, bool sensPositif, float deltaTime) {
 	}
-	
+
 	// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 	// ---------------------------------------------------------------------------------------------------------
 	void keyboardInput(GLFWwindow* window, float deltaTime)
@@ -84,11 +85,15 @@ private :
 			}
 
 			//Permet de changer la valeur de l'attribut "isTexture" permettant d'avoir soit une texture_low, soit une coloration selon la position.
-			/*if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS && !cameraPosPress) {
+			if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS && !cameraPosPress) {
 				std::cout << "Camera Pos   : [ " << camera->position.x << " ; " << camera->position.y << " ; " << camera->position.z << " ]" << std::endl;
 				std::cout << "Camera Rotat : [ " << camera->yaw << " ; " << camera->pitch << " ; " << camera->roll << " ]" << std::endl;
 				std::cout << "Camera Front : [ " << camera->front.x << " ; " << camera->front.y << " ; " << camera->front.z << " ]" << std::endl;
-				cameraPosPress = true;lastMouseXltaTime);*/
+				cameraPosPress = true;
+			}
+			if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE && cameraPosPress) {
+				cameraPosPress = false;
+			}
 
 
 			//Rotation de la camera
@@ -140,14 +145,14 @@ private :
 
 public:
 
-	Input(Camera * camera){
+	Input(Camera* camera) {
 		this->camera = camera;
 	}
 
 	void processInput(GLFWwindow* window, float deltaTime)
 	{
 		mouseInput(window);
-		keyboardInput(window,deltaTime);
+		keyboardInput(window, deltaTime);
 	}
 
 	void SetCamera(Camera* camera) {

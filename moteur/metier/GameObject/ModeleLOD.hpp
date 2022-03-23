@@ -36,13 +36,15 @@ public:
 		modeles[2] = imposteur;
 		distanceLOD[0] = 10.0f;
 		distanceLOD[1] = 100.0f;
+		this->addComponent(modeles[0]->getCollision());
 	}
 
 	ModeleLOD(std::string id, GlobalShader* shader, std::string fileOff, GameObject* parent = NULL) : GameObject(id, parent) {
 		modeles[0] = new Modele(id, shader, fileOff);
-		this->addComponent(modeles[0]->getCollision());
 		distanceLOD[0] = 10.0f;
 		distanceLOD[1] = 100.0f;
+		this->addComponent(modeles[0]->getCollision());
+
 	}
 
 	ModeleLOD(std::string id, GlobalShader* shader, GameObject* parent = NULL) : GameObject(id, parent) {
@@ -52,11 +54,12 @@ public:
 		distanceLOD[1] = 100.0f;
 	}
 
-	ModeleLOD(std::string id, std::vector<glm::vec3> indexed_vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, GlobalShader* shader, GameObject* parent = NULL) : GameObject(id, parent) {
-		modeles[0] = new Modele(id, indexed_vertices, indices, texCoords, shader);
+	ModeleLOD(std::string id, std::vector<glm::vec3> indexed_vertices, std::vector<glm::vec3> normals, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, GlobalShader* shader, GameObject* parent = NULL) : GameObject(id, parent) {
+		modeles[0] = new Modele(id, indexed_vertices, normals, indices, texCoords, shader);
 		this->addComponent(modeles[0]->getCollision());
 		distanceLOD[0] = 10.0f;
 		distanceLOD[1] = 100.0f;
+
 	}
 
 	virtual ~ModeleLOD() {
@@ -82,7 +85,6 @@ public:
 			else if (distance <= this->distanceLOD[1]) {
 				level = 1;
 			}
-			std::cout << "Distance : " << distance << " | Level : " << level << std::endl;
 			draw(level);
 		}
 
@@ -95,7 +97,6 @@ public:
 		if (modeles[level] == NULL) {
 			level = 0;
 		}
-		std::cout << "Level : " << level << std::endl;
 		modeles[level]->getShader()->use();
 
 		glEnable(GL_TEXTURE_2D);

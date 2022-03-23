@@ -165,9 +165,7 @@ public:
 		std::vector<Component*> res;
 		while (i < max) {
 			if (this->composants[i]->getType() == type) {
-				this->composants[i]->apply(this);
 				res.push_back(this->composants[i]);
-
 			}
 			i++;
 		}
@@ -186,6 +184,18 @@ public:
 		return res;
 	}
 
+	bool hasOneComponentByType(Component::Type type) {
+		int i = 0, max = this->composants.size();
+		bool res = false;
+		while (i < max && !res) {
+			if (this->composants[i]->getType() == type) {
+				res = true;
+			}
+			i++;
+		}
+		return res;
+	}
+
 	std::vector<Component*> getAllComponentsByTypeRecursive(Component::Type type) {
 		std::vector<Component*> res = this->getComponentsByType(type);
 		for (int i = 0, max = this->childs.size(); i < max; i++) {
@@ -194,6 +204,20 @@ public:
 		}
 		return res;
 	}
+
+	std::vector<GameObject*> getAllGameObjectByComponentType(Component::Type type) {
+		std::vector<GameObject*> res;
+		if (hasOneComponentByType(type)) {
+			res.push_back(this);
+		}
+		for (int i = 0, max = this->childs.size(); i < max; i++) {
+			std::vector<GameObject*> tmp = this->childs[i]->getAllGameObjectByComponentType(type);
+			res.insert(res.end(), tmp.begin(), tmp.end());
+		}
+		return res;
+	}
+
+	
 
 };
 

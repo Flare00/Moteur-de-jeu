@@ -83,7 +83,6 @@ public:
 		// Bind VAO
 		glBindVertexArray(VAO);
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		// Draw
 		glDrawElements(GL_TRIANGLES, size_indice, GL_UNSIGNED_INT, 0);
 	}

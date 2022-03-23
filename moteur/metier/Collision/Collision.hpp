@@ -63,8 +63,8 @@ public:
 		this->boundingBox = b;
 	}
 
-	virtual void apply(GameObject* parent, float delta) {
-		this->boundingBox->applyTransformation(parent->getTransformMatrix());
+	virtual void apply(glm::mat4 tranformationMatrix) {
+		this->boundingBox->applyTransformation(tranformationMatrix);
 	}
 };
 
