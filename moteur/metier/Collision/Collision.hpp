@@ -1,24 +1,25 @@
 #ifndef __COLLISION_H__
 #define __COLLISION_H__
 
+#include "../Component.hpp"
 #include "BoundingBox.hpp"
 
 
-class Collision {
+class Collision : public Component {
 private:
-	BoundingBox* boundingBox;
+	BoundingBox* boundingBox = NULL;
 	bool actif;
 public:
-	Collision(bool actif = false) {
+	Collision(bool actif = false) : Component(Component::Type::Collision) {
 		this->actif = actif;
 	}
 
-	Collision(std::vector<glm::vec3> indexed_vertices, bool actif = true) {
+	Collision(std::vector<glm::vec3> indexed_vertices, bool actif = true) : Component(Component::Type::Collision) {
 		this->boundingBox = new BoundingBox(indexed_vertices);
 		this->actif = actif;
 	}
 
-	Collision(BoundingBox* b, bool actif = true) {
+	Collision(BoundingBox* b, bool actif = true) : Component(Component::Type::Collision) {
 		this->boundingBox = b;
 		this->actif = actif;
 	}
@@ -62,6 +63,9 @@ public:
 		this->boundingBox = b;
 	}
 
+	virtual void apply(GameObject* parent, float delta) {
+		this->boundingBox->applyTransformation(parent->getTransformMatrix());
+	}
 };
 
 #endif

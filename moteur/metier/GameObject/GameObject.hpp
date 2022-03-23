@@ -6,23 +6,23 @@
 #include <string>
 #include <vector>
 
+#include "../Component.hpp"
 #include "../Transformation.hpp"
 #include "../World/Camera.hpp"
 
 class GameObject {
 private:
-
 	std::string identifier;
 	Transformation* transform;
 	GameObject* parent;
 	std::vector<GameObject*> childs;
+	std::vector<Component*> composants;
 
 public:
 	GameObject(std::string id, GameObject* parent = NULL) {
 		this->identifier = id;
 		this->parent = parent;
 		this->transform = new Transformation();
-
 	}
 
 	GameObject(std::string id, GameObject* parent, std::vector<GameObject*> childs) {
@@ -30,7 +30,6 @@ public:
 		this->parent = parent;
 		this->childs = childs;
 		this->transform = new Transformation();
-
 	}
 
 	~GameObject() {
@@ -153,6 +152,47 @@ public:
 
 	void setParent(GameObject* parent) {
 		this->parent = parent;
+	}
+
+	void addComponent(Component* component) {
+		this->composants.push_back(component);
+	}
+	std::vector<Component*> getComponents() {
+		return this->composants;
+	}
+	std::vector<Component*> getComponentsByType(Component::Type type) {
+		int i = 0, max = this->composants.size();
+		std::vector<Component*> res;
+		while (i < max) {
+			if (this->composants[i]->getType() == type) {
+				this->composants[i]->apply(this);
+				res.push_back(this->composants[i]);
+
+			}
+			i++;
+		}
+		return res;
+	}
+
+	Component* getOneComponentByType(Component::Type type) {
+		int i = 0, max = this->composants.size();
+		Component* res = NULL;
+		while (i < max && res == NULL) {
+			if (this->composants[i]->getType() == type) {
+				res = this->composants[i];
+			}
+			i++;
+		}
+		return res;
+	}
+
+	std::vector<Component*> getAllComponentsByTypeRecursive(Component::Type type) {
+		std::vector<Component*> res = this->getComponentsByType(type);
+		for (int i = 0, max = this->childs.size(); i < max; i++) {
+			std::vector<Component*> tmp = this->childs[i]->getAllComponentsByTypeRecursive(type);
+			res.insert(res.end(), tmp.begin(), tmp.end());
+		}
+		return res;
 	}
 
 };

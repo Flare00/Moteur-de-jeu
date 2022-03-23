@@ -170,16 +170,12 @@ public:
 		return this->position;
 	}
 
-	float getDistance(glm::vec3 point) {
-		return glm::distance(this->position, point);
-	}
-
-	bool isInFieldOfView(glm::vec3 point) {
-		float v = getDistance(point);
+	float isInFieldOfView(glm::vec3 point) {
+		float v = glm::distance(this->position, point);
 		if (v <= this->distanceMax) {
-			return true;
+			return v;
 		}
-		return false;
+		return -1.0f;
 	}
 
 

@@ -22,6 +22,12 @@
 #include "../Shader/GlobalShader.hpp"
 
 class Modele : public GameObject {
+public: 
+	struct TextureContainer {
+		int id = -1;
+		Texture* texture = NULL;
+		bool destroyAtEnd;
+	};
 private:
 	GlobalShader* shader;
 	Material material;
@@ -34,16 +40,12 @@ protected:
 	//Textures
 	int lastTextureID = 0;
 
-	struct TextureContainer {
-		int id = -1;
-		Texture* texture = NULL;
-		bool destroyAtEnd;
-	};
+
 
 	TextureContainer texture;
 
 	//Collision
-	Collision* collision;
+	Collision* collision = NULL;
 
 	//Buffers
 	GLuint VAO;
@@ -102,8 +104,7 @@ public:
 		for (int i = 0, max = indices.size(); i < max; i++) {
 			this->indices.push_back((int)indices[i]);
 		}
-		this->collision = new Collision(this->vertexArray);
-
+		generateCollision();
 		loadBuffer();
 	}
 
@@ -116,10 +117,18 @@ public:
 		this->vertexArray = indexed_vertices;
 		this->indices = indices;
 		this->texCoords = texCoords;
-		this->collision = new Collision(this->vertexArray);
 
+		generateCollision();
 		loadBuffer();
 	}
+
+	void generateCollision() {
+		if (this->collision == NULL) {
+			this->collision = new Collision(this->vertexArray);
+			this->addComponent(this->collision);
+		}
+	}
+	
 
 	virtual ~Modele() {
 		if (this->texture.destroyAtEnd && this->texture.texture != NULL) {
@@ -131,6 +140,7 @@ public:
 		glDeleteBuffers(1, &this->EBO);
 	}
 
+	// ---- METHODE ----
 	virtual void compute(Camera* camera, bool dfs = true) {
 		bool isInFOV = false;
 		std::vector<glm::vec3> boxCoords = this->collision->getBoundingBox()->getCoords();
@@ -175,6 +185,10 @@ public:
 		return this->texture.texture;
 	}
 
+	TextureContainer getTextureContainer() {
+		return this->texture;
+	}
+
 	void setTexture(Texture* texture, bool destroyAtEnd) {
 		this->fillTextureData(&this->texture, texture, destroyAtEnd);
 
@@ -189,9 +203,7 @@ public:
 		this->vertexArray = indexed_vertices;
 		this->indices = indices;
 		this->texCoords = texCoords;
-
-		this->collision = new Collision(this->vertexArray);
-
+		generateCollision();
 		loadBuffer();
 	}
 
@@ -199,11 +211,15 @@ public:
 		return this->vertexArray;
 	}
 
+	std::vector<glm::vec3> getNormals() {
+		return this->normals;
+	}
+
 	Collision* getCollision() {
 		return this->collision;
 	}
 
-	Shader* getShader() {
+	GlobalShader* getShader() {
 		return this->shader;
 	}
 
@@ -218,6 +234,15 @@ public:
 	Material* getMaterial() {
 		return &this->material;
 	}
+
+	Material getStaticMaterial() {
+		return this->material;
+	}
+
+	GLuint getVAO() {
+		return this->VAO;
+	}
+
 };
 
 

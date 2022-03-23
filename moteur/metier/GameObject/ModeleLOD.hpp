@@ -22,151 +22,95 @@
 #include "Modele.hpp"
 
 class ModeleLOD : public GameObject {
-private:
-	GlobalShader* shader;
-	Material material;
 protected:
 	//0 : High Poly, 1 : Low Poly, 2 : Impostor
 	Modele* modeles[3];
 	float distanceLOD[2];
-	//Textures
-	int lastTextureID = 0;
-
-	struct TextureContainer {
-		int id = -1;
-		Texture* texture = NULL;
-		bool destroyAtEnd;
-	};
-
-	TextureContainer texture;
-	//Collision
-	Collision* collision;
-
-	bool hasData;
 
 public:
 
 	// --- CONSTRUCTEURS ET DESTRUCTEURS ---
+	ModeleLOD(std::string id, Modele* high, Modele* low = NULL, Modele* imposteur = NULL, GameObject* parent = NULL) : GameObject(id, parent) {
+		modeles[0] = high;
+		modeles[1] = low;
+		modeles[2] = imposteur;
+		distanceLOD[0] = 10.0f;
+		distanceLOD[1] = 100.0f;
+	}
+
 	ModeleLOD(std::string id, GlobalShader* shader, std::string fileOff, GameObject* parent = NULL) : GameObject(id, parent) {
-		Modele[0] = new Modele(id, shader, fileOff);
-		distanceLOD[0] = 100.0f;
-		distanceLOD[1] = 1000.0f;
+		modeles[0] = new Modele(id, shader, fileOff);
+		this->addComponent(modeles[0]->getCollision());
+		distanceLOD[0] = 10.0f;
+		distanceLOD[1] = 100.0f;
 	}
 
 	ModeleLOD(std::string id, GlobalShader* shader, GameObject* parent = NULL) : GameObject(id, parent) {
-		Modele[0] = new Modele(id, shader);
-		distanceLOD[0] = 100.0f;
-		distanceLOD[1] = 1000.0f;
+		modeles[0] = new Modele(id, shader);
+
+		distanceLOD[0] = 10.0f;
+		distanceLOD[1] = 100.0f;
 	}
 
 	ModeleLOD(std::string id, std::vector<glm::vec3> indexed_vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, GlobalShader* shader, GameObject* parent = NULL) : GameObject(id, parent) {
-		Modele[0] = new Modele(id, indexed_vertices, indices, texCoords, shader);
-		distanceLOD[0] = 100.0f;
-		distanceLOD[1] = 1000.0f;
+		modeles[0] = new Modele(id, indexed_vertices, indices, texCoords, shader);
+		this->addComponent(modeles[0]->getCollision());
+		distanceLOD[0] = 10.0f;
+		distanceLOD[1] = 100.0f;
 	}
 
 	virtual ~ModeleLOD() {
 		for (int i = 0; i < 3; i++) {
-			delete Modele[i];
+			delete modeles[i];
 		}
 	}
 
 	// --- METHODES ---
-	void drawTextures() {
-		//Draw les textures
-
-	}
-	void drawMesh(bool uv) {
-		//Set Transformation in shader		
-
-	}
-
 	virtual void compute(Camera* camera, bool dfs = true) {
-		bool isInFOV = false;
-		glm::vec3* boxCoords = this->collision->getBoundingBox()->getCoords();
-		for (int i = 0; i < 8 && !isInFOV; i++) {
-			isInFOV = camera->isInFieldOfView(boxCoords[i]);
+		float distance = -1.0f;
+		std::vector<glm::vec3> boxCoords = modeles[0]->getCollision()->getBoundingBox()->getCoords();
+		for (int i = 0; i < 8 && distance < 0.0f; i++) {
+			distance = camera->isInFieldOfView(boxCoords[i]);
 		}
+
 		
-		if (isInFOV) {
-			float dist = camera->getDistance(this->collision->getBoundingBox()->getCenter());
+		if (distance >= 0.0f) {
 			int level = 2;
-			if (dist < this->distanceLOD[0]) {
+			if (distance <= this->distanceLOD[0]) {
 				level = 0;
 			}
-			else if (dist < this->distanceLOD[1]) {
+			else if (distance <= this->distanceLOD[1]) {
 				level = 1;
 			}
+			std::cout << "Distance : " << distance << " | Level : " << level << std::endl;
 			draw(level);
 		}
 
 		if (dfs)
-			GameObject::draw(dfs);
+			GameObject::compute(camera,dfs);
 	}
 
 
 	void draw(int level) {
-
-		if (!hasData) {
-			return;
+		if (modeles[level] == NULL) {
+			level = 0;
 		}
-		this->shader->use();
+		std::cout << "Level : " << level << std::endl;
+		modeles[level]->getShader()->use();
 
 		glEnable(GL_TEXTURE_2D);
-
-		this->shader->drawTexture(this->texture.texture, this->texture.id);
+		modeles[level]->getShader()->drawTexture(modeles[level]->getTextureContainer().texture, modeles[level]->getTextureContainer().id);
 
 		//LIGHT TEST
-		this->shader->setLightTest();
-		this->shader->drawMesh(this->VAO, this->indices.size(), this->getTransformMatrix(), this->material);
-
+		modeles[level]->getShader()->setLightTest();
+		modeles[level]->getShader()->drawMesh(modeles[level]->getVAO(), modeles[level]->getIndices().size(), this->getTransformMatrix(), modeles[level]->getStaticMaterial());
 	}
 
-	void fillTextureData(TextureContainer* container, Texture* texture, bool destroyAtEnd) {
-		if (container->id == -1) {
-			container->id = lastTextureID++;
-		}
-		container->texture = texture;
-		container->destroyAtEnd = destroyAtEnd;
-	}
 
 	// ---- GETTER ET SETTER ---
 
-	Texture* getTexture() {
-		return this->texture.texture;
-	}
-
-	void setTexture(Texture* texture, bool destroyAtEnd) {
-		this->fillTextureData(&this->texture, texture, destroyAtEnd);
-
-	}
-
-	void removeTexture() {
-		this->texture.texture = NULL;
-	}
-
-	std::vector<glm::vec3> getIndexedVertices() {
-		return this->vertexArray;
-	}
-
-	Collision* getCollision(int level) {
-		return this->modeles[level]->collision;
-	}
-
-	Shader* getShader() {
-		return this->shader;
-	}
-
-	std::vector<unsigned int> getIndices() {
-		return this->indices;
-	}
-
-	std::vector<glm::vec2> getTexCoords() {
-		return this->texCoords;
-	}
-
-	Material* getMaterial() {
-		return &this->material;
+	Modele* getModele(int level) {
+		return this->modeles[level];
 	}
 };
 

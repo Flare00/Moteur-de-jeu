@@ -14,7 +14,7 @@ private :
 	std::vector<Scene*> scenes;
 public :
 	Game() {
-		Scene* scene = new SceneSpace();
+		Scene* scene = new SceneCollision();
 		scene->Init();
 		this->scenes.push_back(scene);
 		this->activeScene = 0;
