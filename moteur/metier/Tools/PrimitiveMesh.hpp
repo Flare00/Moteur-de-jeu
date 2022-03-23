@@ -10,7 +10,9 @@ class PrimitiveMesh {
 public :
 	static void generate_plane(Modele* modele, int res_x, int res_y, float size_x, float size_y) {
 		std::vector<glm::vec3> indexed_vertices;
+		std::vector<glm::vec3> normals;
 		std::vector<unsigned int> indices;
+
 		std::vector<glm::vec2> texCoords;
 
 		for (int i = 0; i < res_x; i++) {
@@ -18,6 +20,7 @@ public :
 			for (int j = 0; j < res_y; j++) {
 				float pointY = (float)j * (size_y / (float)res_y);
 				indexed_vertices.push_back(glm::vec3(pointX - (size_x / 2.0), 0.0f, pointY - (size_y / 2.0)));
+				normals.push_back(glm::normalize(glm::vec3(0, 1, 0)));
 				texCoords.push_back(glm::vec2(((float)i) / ((float)res_x - 1), ((float)j) / ((float)res_y - 1)));
 			}
 		}
@@ -35,11 +38,12 @@ public :
 			}
 		}
 
-		modele->setData(indexed_vertices, indices, texCoords);
+		modele->setData(indexed_vertices, indices, texCoords, normals);
 	}
 
 	static void generate_uv_sphere(Modele* modele, int nbMeridien, int nbParalleles) {
 		std::vector<glm::vec3> indexed_vertices;
+		std::vector<glm::vec3> normals;
 		std::vector<unsigned int> indices;
 		std::vector<glm::vec2> texCoords;
 		for (int j = 0; j <= nbParalleles; j++) {
@@ -51,6 +55,7 @@ public :
 				float y = cos(parallele);
 				float z = sin(parallele) * sin(meridien);
 				indexed_vertices.push_back(glm::vec3(x, y, z));
+				normals.push_back(glm::normalize(glm::vec3(x, y, z)));
 
 				//Texture Coordinate
 				texCoords.push_back(glm::vec2(meridien / (2.0f * M_PI), parallele / (M_PI)));
@@ -70,7 +75,7 @@ public :
 				}
 			}
 		}
-		modele->setData(indexed_vertices, indices, texCoords);
+		modele->setData(indexed_vertices, indices, texCoords, normals);
 	}
 };
 

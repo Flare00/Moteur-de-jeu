@@ -199,8 +199,9 @@ public:
 	}
 
 
-	void setData(std::vector<glm::vec3> indexed_vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords) {
+	void setData(std::vector<glm::vec3> indexed_vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, std::vector<glm::vec3> normals) {
 		this->vertexArray = indexed_vertices;
+		this->normals = normals;
 		this->indices = indices;
 		this->texCoords = texCoords;
 		generateCollision();
