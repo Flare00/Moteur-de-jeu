@@ -18,7 +18,7 @@ public:
 	}
 	void apply(float delta) {
 		if (!collision) {
-			float vitesse = delta * -constantGravity * 0.1;
+			float vitesse = delta * -constantGravity *0.5;
 			parent->getTransform()->translate(glm::vec3(0, vitesse, 0));
 		}
 	}

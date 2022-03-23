@@ -7,6 +7,8 @@
 #include "../GameObject/ModeleLOD.hpp"
 #include <Collision/Gravity.hpp>
 #include <Collision/Physique.hpp>
+#include <World/InputCollision.hpp>
+
 #include "Scene.hpp"
 
 class SceneCollision : public Scene {
@@ -15,7 +17,9 @@ private:
 
 	int precision = 32;
 	int low_precision = 8;
-	
+
+	InputCollision* inputCol;
+
 public :
 	SceneCollision() {
 	}
@@ -23,7 +27,7 @@ public :
 	virtual void Init() {
 		Camera* c = new Camera(vec3(0, -2, -16), 90, 0);
 		this->cameras.push_back(c);
-		this->input = new Input(c);
+
 		globalShader = new GlobalShader("Shaders/vertex_shader.glsl", "Shaders/fragment_shader.glsl");
 		this->activeCamera = 0;
 
@@ -50,12 +54,14 @@ public :
 
 		this->scene->addChild(terrainLOD);
 		this->scene->addChild(objetLOD);
+
+		this->inputCol = new InputCollision(c, objetLOD);
 	}
 
 	virtual void Draw(float deltaTime) {
 
-		input->processInput(window, deltaTime);
-		if (!input->pause) {
+		inputCol->processInput(window, deltaTime);
+		if (!inputCol->pause) {
 			if (globalShader != NULL && this->activeCamera >= 0 && this->activeCamera < this->cameras.size())
 				globalShader->drawView(this->cameras[this->activeCamera]);
 			// Clear the screen
