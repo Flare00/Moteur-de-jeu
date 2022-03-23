@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 
 // Include GLFW
+#include <Global.hpp>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -29,7 +30,7 @@ private:
 	bool pausePress = false;
 	bool cameraModePress = false;
 	bool terrainRotatePress = false;
-
+	bool wireframeModePress = false;
 	//Mouse movement
 	int firstMouseMovement = 2;
 	float lastMouseX, lastMouseY;
@@ -158,6 +159,14 @@ private:
 			}
 			else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_RELEASE && terrainRotatePress) {
 				terrainRotatePress = false;
+			}
+
+			if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS && !wireframeModePress) {
+				global_wireframe = !global_wireframe;
+				wireframeModePress = true;
+			}
+			else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_RELEASE && wireframeModePress) {
+				wireframeModePress = false;
 			}
 		}
 	}

@@ -6,6 +6,7 @@
 #include "Shader.hpp"
 #include "Transformation.hpp"
 #include "Texture.hpp"
+#include <Global.hpp>
 class GlobalShader : public Shader {
 protected:
 	struct U_Material {
@@ -82,6 +83,13 @@ public:
 		glUniform1f(this->u_material.shininess,  material.getShininess());
 		// Bind VAO
 		glBindVertexArray(VAO);
+
+		if (global_wireframe) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 
 		// Draw
 		glDrawElements(GL_TRIANGLES, size_indice, GL_UNSIGNED_INT, 0);

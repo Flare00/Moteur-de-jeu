@@ -26,12 +26,11 @@ Le CMakeFile à été legerement modifié pour permettre l'utilisation de la lib
 
 Commandes :
 
-Z / Q / S / D : Tourner la camera selon Yaw et Pitch.
-Haut / Bas / Gauche / Droite / Shift / Controle : déplacé la camera.
-+ / - : Augmente/Réduit la résolution du mesh de terrain.
+Souris: Tourne la camera selon Yaw et Pitch.
+W : Met en Mode Wireframe pour voir le LOD
+
+Z / S / Q / D / Shift / Controle : déplacé la camera.
+UP / DOWN / LEFT / RIGHT : déplacé le soleil
+
 P : met l'animation et les controles en pause.
 I : Affiche dans la console des informations sur la caméra. (Position, Yaw Pitch Roll, Position du "Front").
-C : Mode orbital (Non Fonctionnel)
-
-Page UP / Page DOWN : Augmenté / Réduire la vitesse de rotation du terrain.
-Touche R : arreter / redemarrer la rotation du terrain.

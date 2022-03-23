@@ -73,7 +73,7 @@ add_executable(moteur
 		moteur/Shaders/fragment_shader.glsl
 		moteur/Shaders/terrain_vertex_shader.glsl
 		moteur/Shaders/terrain_fragment_shader.glsl
-   "moteur/metier/World/InputCollision.hpp")
+   "moteur/metier/World/InputCollision.hpp" "moteur/metier/Global.hpp")
 target_link_libraries(moteur
 	${ALL_LIBS}
 )
