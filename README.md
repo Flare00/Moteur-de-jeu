@@ -1,4 +1,5 @@
 # Moteur-de-jeu
+Lien Github : https://github.com/Flare00/Moteur-de-jeu
 Florentin DENIS
 Khélian LARVET
 
@@ -36,7 +37,7 @@ basé sur les bounding box (en l'occurence AABB). Lors d'une collision, nous sto
 - Pour le LOD, nous calculons la distance entre la caméra et les différentes coordonnées de la bounding box de l'objet concerné.
 Si celle-ci dépasse la distance de vision de la caméra, nous ne l'affichons pas.
 Sinon si elle se situe entre la distance maximum et une première borne arbitraire (ici 25.0f) nous affichons un imposteur (si existant). 
-Sinon si elle se situe entre la première borne et la deuxième borne, nous affichons le modèle "LowPoly" (si existant).
+Sinon si elle se situe entre la première borne et la deuxième borne (ici 10.0f), nous affichons le modèle "LowPoly" (si existant).
 Sinon nous affichons le modèle "HighPoly" qui correspond au modèle initial.
 
 - (BONUS) Pour afficher un octree, nous pourrions créer un modèle utilisant les coordonnées de l'octree et l'afficher en wireframe.

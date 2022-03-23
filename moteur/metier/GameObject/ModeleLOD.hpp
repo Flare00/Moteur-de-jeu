@@ -62,7 +62,7 @@ public:
 		modeles[0] = new Modele(id, indexed_vertices, normals, indices, texCoords, shader);
 		this->addComponent(modeles[0]->getCollision());
 		distanceLOD[0] = 10.0f;
-		distanceLOD[1] = 100.0f;
+		distanceLOD[1] = 25.0f;
 	}
 
 	virtual ~ModeleLOD()
@@ -105,18 +105,19 @@ public:
 
 	void draw(int level)
 	{
-		if (modeles[level] == NULL)
-		{
-			level = 0;
+		while (level >= 0 && modeles[level] == NULL) {
+			level--;
 		}
-		modeles[level]->getShader()->use();
+		if (level >= 0) {
+			modeles[level]->getShader()->use();
 
-		glEnable(GL_TEXTURE_2D);
-		modeles[level]->getShader()->drawTexture(modeles[level]->getTextureContainer().texture, modeles[level]->getTextureContainer().id);
+			glEnable(GL_TEXTURE_2D);
+			modeles[level]->getShader()->drawTexture(modeles[level]->getTextureContainer().texture, modeles[level]->getTextureContainer().id);
 
-		// LIGHT TEST
-		modeles[level]->getShader()->setLightTest();
-		modeles[level]->getShader()->drawMesh(modeles[level]->getVAO(), modeles[level]->getIndices().size(), this->getTransformMatrix(), modeles[level]->getStaticMaterial());
+			// LIGHT TEST
+			modeles[level]->getShader()->setLightTest();
+			modeles[level]->getShader()->drawMesh(modeles[level]->getVAO(), modeles[level]->getIndices().size(), this->getTransformMatrix(), modeles[level]->getStaticMaterial());
+		}
 	}
 
 	// ---- GETTER ET SETTER ---
