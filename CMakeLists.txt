@@ -73,7 +73,7 @@ add_executable(moteur
 		moteur/Shaders/fragment_shader.glsl
 		moteur/Shaders/terrain_vertex_shader.glsl
 		moteur/Shaders/terrain_fragment_shader.glsl
-  "moteur/metier/Game/Scene.hpp" "moteur/metier/Game/Game.hpp"  "moteur/metier/Game/SceneSpace.hpp" "moteur/metier/Tools/PrimitiveMesh.hpp" "moteur/metier/Light/Material.hpp" "moteur/metier/Game/SceneCollision.hpp" "moteur/metier/Collision/Collision.hpp"  "moteur/metier/GameObject/ModeleLOD.hpp" "moteur/metier/Component.hpp" "moteur/metier/Collision/Physique.hpp" "moteur/metier/Collision/Gravity.hpp")
+  )
 target_link_libraries(moteur
 	${ALL_LIBS}
 )

@@ -30,11 +30,11 @@ public :
 		Texture* texTerre = new Texture("Textures/SystemeSolaire/earth_daymap.jpg");
 		Texture* texSoleil = new Texture("Textures/SystemeSolaire/sun.jpg");
 		// Terrain
-		Modele* terrainHigh = new Modele("Terrain", globalShader);
+		Modele* terrainHigh = new Modele("", globalShader);
 		PrimitiveMesh::generate_plane(terrainHigh, precision, precision, 10.0f, 10.0f);
 		terrainHigh->setTexture(texTerre, true);
 
-		ModeleLOD* terrainLOD = new ModeleLOD("", terrainHigh);
+		ModeleLOD* terrainLOD = new ModeleLOD("Terrain", terrainHigh);
 		terrainLOD->getTransform()->translate(glm::vec3(0, -5, 0));
 
 		Modele* objetHigh = new Modele("", globalShader);

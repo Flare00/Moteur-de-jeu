@@ -34,12 +34,7 @@ public:
 	ModeleLOD(std::string id, Modele *high, Modele *low = NULL, Modele *imposteur = NULL, GameObject *parent = NULL) : GameObject(id, parent)
 	{
 		modeles[0] = high;
-		if (low == NULL) {
-			modeles[1] = simplify(modeles[0], 10);
-		}
-		else {
-			modeles[1] = low;
-		}
+		modeles[1] = low;
 		modeles[2] = imposteur;
 		distanceLOD[0] = 10.0f;
 		distanceLOD[1] = 100.0f;
@@ -52,7 +47,6 @@ public:
 		distanceLOD[0] = 10.0f;
 		distanceLOD[1] = 100.0f;
 		this->addComponent(modeles[0]->getCollision());
-		modeles[1] = simplify(modeles[0], 10);
 	}
 
 	ModeleLOD(std::string id, GlobalShader *shader, GameObject *parent = NULL) : GameObject(id, parent)
@@ -69,7 +63,6 @@ public:
 		this->addComponent(modeles[0]->getCollision());
 		distanceLOD[0] = 10.0f;
 		distanceLOD[1] = 100.0f;
-		modeles[1] = simplify(modeles[0], 10);
 	}
 
 	virtual ~ModeleLOD()
@@ -84,8 +77,10 @@ public:
 	virtual void compute(Camera *camera, bool dfs = true)
 	{
 		float distance = -1.0f;
+		modeles[0]->getCollision()->getBoundingBox()->applyTransformation(this->getTransformMatrix());
+
 		std::vector<glm::vec3> boxCoords = modeles[0]->getCollision()->getBoundingBox()->getCoords();
-		for (int i = 0; i < 8 && distance < 0.0f; i++)
+		for (int i = 0, max = boxCoords.size(); i < max && distance < 0.0f; i++)
 		{
 			distance = camera->isInFieldOfView(boxCoords[i]);
 		}

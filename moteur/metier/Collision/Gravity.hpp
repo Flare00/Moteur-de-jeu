@@ -14,7 +14,7 @@ public:
 		this->parent = parent;
 	}
 	void setCollision(bool collision) {
-		collision = collision;
+		this->collision = collision;
 	}
 	void apply(float delta) {
 		if (!collision) {

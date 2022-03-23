@@ -20,8 +20,8 @@ private:
 public:
 	BoundingBox(std::vector<glm::vec3> indexed_vertices){
 		if(indexed_vertices.size() > 0){
-			this->max = indexed_vertices[0];
-			this->min = indexed_vertices[0];
+			this->max = (glm::vec3)indexed_vertices[0];
+			this->min = (glm::vec3)indexed_vertices[0];
 		}
 		for(int i = 1, max = indexed_vertices.size(); i < max; i++){
 			for(int j = 0; j < 3; j++){
@@ -33,6 +33,7 @@ public:
 				}
 			}
 		}
+
 		this->transformedMax = this->max;
 		this->transformedMin = this->min;
 	}
@@ -41,17 +42,17 @@ public:
 		return glm::vec3(abs(this->max.x - this->min.x), abs(this->max.y - this->min.y),abs(this->max.z - this->min.z));
 	}
 
-	void applyTransformation(glm::mat4 transformation) {
+	void applyTransformation(glm::mat4 t) {
 		bool update = false;
 		for (int i = 0; i < 4 && !update; i++) {
 			for (int j = 0; j < 4 && !update; j++) {
-				if (this->transformation[i][j] != transformation[i][j]) {
+				if (this->transformation[i][j] != t[i][j]) {
+					this->transformation[i][j] = t[i][j];
 					update = true;
 				}
 			}
 		}
 		if (update) {
-			this->transformation = transformation;
 			computeTransformedMinMax();
 		}
 	}
@@ -84,29 +85,30 @@ public:
 	std::vector<glm::vec3> getCoords() {
 		std::vector<glm::vec3> coords(8);
 		glm::vec3 size = getSize();
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 8; i++) {
 			coords[i] = min;
-			coords[i + 4] = max;
 		}
-		// 0 : min
-		// 1 : max X , min Y, min Z
 		coords[1].x += size.x;
-		// 2 : max X, min Y, max Z
+
 		coords[2].x += size.x;
 		coords[2].z += size.z;
-		// 3 : min X, min Y, max Z
+
 		coords[3].z += size.z;
-		//4 : min X, max Y, min Z
-		coords[4].x -= size.x;
-		coords[4].z -= size.z;
-		//5 : max X, max Y, min Z
-		coords[5].z -= size.z;
-		//6 : max
-		//7 : min X, max Y, max Z
-		coords[7].x -= size.x;
+
+		coords[4].x += size.x;
+		coords[4].y += size.y;
+
+		coords[5].x += size.x;
+		coords[5].y += size.y;
+		coords[5].z += size.z;
+
+		coords[6].y += size.y;
+		coords[6].z += size.z;
+
+		coords[7].y += size.y;
 
 		for (int i = 0; i < 8; i++) {
-			glm::vec4 tmpCoord = glm::vec4(coords[i], 0) * this->transformation;
+			glm::vec4 tmpCoord = this->transformation* glm::vec4(coords[i], 1.0f) ;
 			coords[i].x = tmpCoord.x;
 			coords[i].y = tmpCoord.y;
 			coords[i].z = tmpCoord.z;
