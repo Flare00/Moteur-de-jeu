@@ -6,13 +6,13 @@ Khélian LARVET
 Le CMakeFile a été legerement modifié pour permettre l'utilisation de la librairie "stb_image.h",
 afin de pouvoir facilement lire des images PNG ou JPEG (./external/stb/stb_image.h).
 
--- FONCTIONNEMENT CMAKE  --  
+## FONCTIONNEMENT CMAKE
 
---- Technique_1  
+### Technique_1  
 ./InitCMake.sh  
 ./Launch.sh  
 
---- Technique_2  
+### Technique_2  
 mkdir build  
 cd build  
 cmake ..  
@@ -22,13 +22,13 @@ make -j
 Pour recompiler (Make et non CMake) avant de lancer le programme :  
 ./Launch -m  
 
--- DERNIERES FONCTIONNALITES AJOUTEES --  
+## DERNIERES FONCTIONNALITES AJOUTEES --  
 
-> Ajout d'un système de Physique / Collision.
-> Ajout d'un système de LOD (HighPoly ; LowPoly ; Impostor[non utlisé]).
+- Ajout d'un système de Physique / Collision.
+- Ajout d'un système de LOD (HighPoly ; LowPoly ; Impostor[non utlisé]).
 
 
--- EXPLICATIONS --  
+## EXPLICATIONS --  
 
 - Pour l'implémentation du système physique, nous avons mis en place un système de gravité basique et un système de gestion de collision
 basé sur les bounding box (en l'occurence AABB). Lors d'une collision, nous stoppons l'effet de la gravité sur les éléments concernés.  
@@ -42,7 +42,7 @@ Sinon nous affichons le modèle "HighPoly" qui correspond au modèle initial.
 - (BONUS) Pour afficher un octree, nous pourrions créer un modèle utilisant les coordonnées de l'octree et l'afficher en wireframe
 
 
--- COMMANDES --  
+## COMMANDES --  
 
 Souris : Peut orienter la caméra selon Yaw et Pitch (callback GLFW).  
 Z / S / Q / D / Shift / Controle : Déplacement de la camera.  
