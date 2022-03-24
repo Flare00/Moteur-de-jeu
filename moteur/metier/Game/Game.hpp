@@ -12,6 +12,7 @@ private :
 	int activeScene = -1;
 	int nbScene = 0;
 	std::vector<Scene*> scenes;
+	bool firstLaunch = true;
 public :
 	Game() {
 		Scene* scene = new SceneCollision();
@@ -22,8 +23,12 @@ public :
 	}
 
 	void Loop(float deltaTime) {
-		if (this->activeScene >= 0 && this->activeScene < this->nbScene) {
-			this->scenes[activeScene]->Draw(deltaTime);
+		if(this->firstLaunch){
+			this->firstLaunch = false;
+		} else {
+			if (this->activeScene >= 0 && this->activeScene < this->nbScene) {
+				this->scenes[activeScene]->Draw(deltaTime);
+			}
 		}
 	}
 };

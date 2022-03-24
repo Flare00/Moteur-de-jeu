@@ -11,7 +11,7 @@
 
 // Include GLFW
 #include <GLFW/glfw3.h>
-GLFWwindow* window;
+
 
 // Include GLM
 #include <glm/glm.hpp>
@@ -21,12 +21,8 @@ GLFWwindow* window;
 
 using namespace glm;
 
-#include <common/shader.hpp>
-#include <common/objloader.hpp>
-#include <common/vboindexer.hpp>
-
-
-#include <moteur/metier/Game/Game.hpp>
+#include <Global.hpp>
+#include <Game/Game.hpp>
 
 
 // settings
@@ -36,10 +32,6 @@ const unsigned int SCR_HEIGHT = 768;
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
-
-//Datas
-GameObject* scene;
-bool pause = false;
 
 Game* game;
 
@@ -63,10 +55,10 @@ void mainLoop() {
 		game->Loop(deltaTime);
 
 		// Swap buffers
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(global_window);
 		glfwPollEvents();
-	} // Check if the ESC key was pressed or the window was closed
-	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
+	} // Check if the ESC key was pressed or the global_window was closed
+	while (!global_stop && glfwWindowShouldClose(global_window) == 0);
 }
 
 
@@ -88,15 +80,15 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
-	// Open a window and create its OpenGL context
-	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Moteur - GLFW", NULL, NULL);
-	if (window == NULL) {
-		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
+	// Open a global_window and create its OpenGL context
+	global_window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Moteur - GLFW", NULL, NULL);
+	if (global_window == NULL) {
+		fprintf(stderr, "Failed to open GLFW global_window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
 		getchar();
 		glfwTerminate();
 		return -1;
 	}
-	glfwMakeContextCurrent(window);
+	glfwMakeContextCurrent(global_window);
 
 	// Initialize GLEW
 	glewExperimental = true; // Needed for core profile
@@ -108,14 +100,14 @@ int main(void)
 	}
 
 	// Ensure we can capture the escape key being pressed below
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(global_window, GLFW_STICKY_KEYS, GL_TRUE);
+	glfwSetInputMode(global_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	// Hide the mouse and enable unlimited mouvement
-	//  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//  glfwSetInputMode(global_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Set the mouse at the center of the screen
 	glfwPollEvents();
-	glfwSetCursorPos(window, SCR_WIDTH / 2, SCR_HEIGHT / 2);
+	glfwSetCursorPos(global_window, SCR_WIDTH / 2, SCR_HEIGHT / 2);
 
 	// Dark blue background
 	glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
@@ -140,13 +132,13 @@ int main(void)
 
 	glDeleteVertexArrays(1, &VertexArrayID);
 
-	// Close OpenGL window and terminate GLFW
+	// Close OpenGL global_window and terminate GLFW
 	glfwTerminate();
 
 	return 0;
 }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
+// glfw: whenever the global_window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {

@@ -58,17 +58,9 @@ add_definitions(
 
 # Moteur
 add_executable(moteur
+		common/shader.hpp
+		common/shader.cpp
         moteur/Moteur.cpp
-	common/shader.cpp
-	common/shader.hpp
-	common/controls.cpp
-	common/controls.hpp
-	common/texture.cpp
-	common/texture.hpp
-	common/objloader.cpp
-	common/objloader.hpp
-	common/vboindexer.cpp
-	common/vboindexer.hpp
         moteur/Shaders/vertex_shader.glsl
 		moteur/Shaders/fragment_shader.glsl
 		moteur/Shaders/terrain_vertex_shader.glsl

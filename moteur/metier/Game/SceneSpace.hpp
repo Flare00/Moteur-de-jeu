@@ -17,7 +17,7 @@ public:
 	virtual void Init() {
 		Camera* c = new Camera(vec3(-20, 30, -20), 45, -45);
 		this->cameras.push_back(c);
-		this->input = new Input(c);
+		//this->input = new Input(c);
 
 		globalShader = new GlobalShader("Shaders/vertex_shader.glsl", "Shaders/fragment_shader.glsl");
 		this->activeCamera = 0;
@@ -144,7 +144,7 @@ public:
 	}
 
 	virtual void Draw(float deltaTime) {
-
+		/*
 		input->processInput(window, deltaTime);
 
 		if (!input->pause) {
@@ -190,9 +190,11 @@ public:
 			soleil->findDirectChild("Saturne")->getTransform()->selfRotate(vec3(0, 1, 0), day / 0.42f * deltaTime);
 			soleil->findDirectChild("Uranus")->getTransform()->selfRotate(vec3(0, 1, 0), day / 0.71f * deltaTime);
 			soleil->findDirectChild("Neptune")->getTransform()->selfRotate(vec3(0, 1, 0), day / 0.75f * deltaTime);
+			
 		}
 
 		this->scene->compute(this->cameras[this->activeCamera], true);
+		*/
 	}
 };
 

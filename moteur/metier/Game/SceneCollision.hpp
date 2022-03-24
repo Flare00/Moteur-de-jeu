@@ -8,6 +8,7 @@
 #include <Collision/Gravity.hpp>
 #include <Collision/Physique.hpp>
 #include <World/InputCollision.hpp>
+#include <World/InputCollisionV2.hpp>
 
 #include "Scene.hpp"
 
@@ -60,8 +61,8 @@ public :
 
 	virtual void Draw(float deltaTime) {
 
-		inputCol->processInput(window, deltaTime);
-		if (!inputCol->pause) {
+		inputCol->processInput(deltaTime);
+		if (!global_pause) {
 			if (globalShader != NULL && this->activeCamera >= 0 && this->activeCamera < this->cameras.size())
 				globalShader->drawView(this->cameras[this->activeCamera]);
 			// Clear the screen
