@@ -6,10 +6,13 @@ class GameObject;
 class Component {
 public :
 	enum Type {
-		Collision,
-		Gravity
+		AUCUN,
+		COLLISION,
+		GRAVITY,
+		MODELE
 	};
-private :
+
+protected :
 	Type type;
 
 public :

@@ -10,7 +10,6 @@
 #include <iostream>
 
 #include <common/shader.hpp>
-#include <common/vboindexer.hpp>
 
 #include "../World/Camera.hpp"
 

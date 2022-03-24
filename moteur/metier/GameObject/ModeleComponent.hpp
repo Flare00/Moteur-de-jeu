@@ -1,48 +1,37 @@
-#ifndef __H_MODEL__
-#define __H_MODEL__
-#define _USE_MATH_DEFINES
+﻿#ifndef __MODELE_COMPONENT_HPP__
+#define __MODELE_COMPONENT_HPP__
 
-#include <glm/glm.hpp>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
-#include <vector>
-#include <iostream>
-#include <math.h>
-
-#include <common/shader.hpp>
 #include <common/objloader.hpp>
 
-#include "GameObject.hpp"
-#include "../World/Camera.hpp"
-#include "../Light/Material.hpp"
-#include "../Texture.hpp"
-#include "../Collision/Collision.hpp"
-#include "../Shader/GlobalShader.hpp"
+#include <vector>
+#include <glm/glm.hpp>
 
-class Modele : public GameObject {
-public: 
-	struct TextureContainer {
-		int id = -1;
-		Texture* texture = NULL;
-		bool destroyAtEnd;
-	};
+#include <Shader/GlobalShader.hpp>
+#include <Component.hpp>
+#include <Texture.hpp>
+#include <Collision/Collision.hpp>
+
+class ModeleComponent : public Component {
 private:
 	GlobalShader* shader;
-	Material material;
 protected:
+	//Modele
 	std::vector<glm::vec3> vertexArray;
 	std::vector<glm::vec2> texCoords;
 	std::vector<glm::vec3> normals;
 	std::vector<unsigned int> indices;
 
-	//Textures
+	//Material
+	Material material;
+
+	//Texture
+	struct TextureContainer {
+		int id = -1;
+		Texture* texture = NULL;
+		bool destroyAtEnd;
+	};
 	int lastTextureID = 0;
-
 	TextureContainer texture;
-
-	//COLLISION
-	Collision* collision = NULL;
 
 	//Buffers
 	GLuint VAO;
@@ -52,7 +41,40 @@ protected:
 	//---
 	bool hasData;
 
+	//Collisions
+	Collision* collision;
+
 public:
+
+	// --- CONSTRUCTEURS ET DESTRUCTEURS ---
+
+	ModeleComponent(GlobalShader* shader, std::string fileOff) : Component(Component::Type::MODELE) {
+		this->shader = shader;
+		std::vector<unsigned short> indices; //Triangles concat�n�s dans une liste
+		std::vector<std::vector<unsigned short> > triangles;
+
+		//Chargement du fichier de maillage
+		loadOFF(fileOff, this->vertexArray, indices, triangles);
+		for (int i = 0, max = indices.size(); i < max; i++) {
+			this->indices.push_back((int)indices[i]);
+		}
+		generateCollision();
+		loadBuffer();
+	}
+
+	ModeleComponent(GlobalShader* shader) : Component(Component::Type::MODELE) {
+		this->shader = shader;
+	}
+
+	ModeleComponent(GlobalShader* shader, std::vector<glm::vec3> indexed_vertices, std::vector<glm::vec3> normals, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords) : Component(Component::Type::MODELE) {
+		this->shader = shader;
+		this->normals = normals;
+		this->vertexArray = indexed_vertices;
+		this->indices = indices;
+		this->texCoords = texCoords;
+		generateCollision();
+		loadBuffer();
+	}
 
 	//--- BUFFERS ---
 	virtual void loadBuffer() {
@@ -73,88 +95,39 @@ public:
 
 		if (this->texCoords.size() > 0) {
 			glEnableVertexAttribArray(1);
-			glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+			glBindBuffer(GL_ARRAY_BUFFER, this->VBO[1]);
 			glBufferData(GL_ARRAY_BUFFER, this->texCoords.size() * sizeof(vec2), &this->texCoords[0], GL_STATIC_DRAW);
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 		}
 		if (this->normals.size() > 0) {
 			glEnableVertexAttribArray(2);
-			glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+			glBindBuffer(GL_ARRAY_BUFFER, this->VBO[2]);
 			glBufferData(GL_ARRAY_BUFFER, this->normals.size() * sizeof(vec3), &this->normals[0], GL_STATIC_DRAW);
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 		}
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(unsigned int), &this->indices[0], GL_STATIC_DRAW);
 
-		hasData = true;
-	}
-
-	// --- CONSTRUCTEURS ET DESTRUCTEURS ---
-
-	Modele(std::string id, GlobalShader* shader, std::string fileOff, GameObject* parent = NULL) : GameObject(id, parent) {
-		this->shader = shader;
-		std::vector<unsigned short> indices; //Triangles concat�n�s dans une liste
-		std::vector<std::vector<unsigned short> > triangles;
-
-		//Chargement du fichier de maillage
-		loadOFF(fileOff, this->vertexArray, indices, triangles);
-		for (int i = 0, max = indices.size(); i < max; i++) {
-			this->indices.push_back((int)indices[i]);
-		}
-		generateCollision();
-		loadBuffer();
-	}
-
-	Modele(std::string id, GlobalShader* shader, GameObject* parent = NULL) : GameObject(id, parent) {
-		this->shader = shader;
-	}
-
-	Modele(std::string id, std::vector<glm::vec3> indexed_vertices, std::vector<glm::vec3> normals, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, GlobalShader* shader, GameObject* parent = NULL) : GameObject(id, parent) {
-		this->shader = shader;
-		this->normals = normals;
-		this->vertexArray = indexed_vertices;
-		this->indices = indices;
-		this->texCoords = texCoords;
-
-		generateCollision();
-		loadBuffer();
+		this->hasData = true;
 	}
 
 	void generateCollision() {
-		if (this->collision == NULL) {
+		if (this->collision != NULL)
 			this->collision = new Collision(this->vertexArray);
-			this->addComponent(this->collision);
-		}
 	}
 
-	virtual ~Modele() {
-		if (this->texture.destroyAtEnd && this->texture.texture != NULL) {
-			free(this->texture.texture);
+	virtual void draw(Camera * camera, glm::mat4 transform) {
+		if (!hasData) {
+			return;
 		}
-
-		glDeleteVertexArrays(1, &this->VAO);
-		glDeleteBuffers(3, this->VBO);
-		glDeleteBuffers(1, &this->EBO);
-	}
-
-	// ---- METHODE ----
-	virtual void compute(Camera* camera, bool dfs = true) {
 		bool isInFOV = false;
 		std::vector<glm::vec3> boxCoords = this->collision->getBoundingBox()->getCoords();
 		for (int i = 0, max = boxCoords.size(); i < max && !isInFOV; i++) {
 			isInFOV = camera->isInFieldOfView(boxCoords[i]);
 		}
-		if (isInFOV) {
-			draw();
-		}
+		if (!isInFOV) return;
 
-		if (dfs)
-			GameObject::compute(camera, dfs);
-	}
-	void draw() {
-		if (!hasData) {
-			return;
-		}
+
 		this->shader->use();
 
 		glEnable(GL_TEXTURE_2D);
@@ -163,9 +136,7 @@ public:
 
 		//LIGHT TEST
 		this->shader->setLightTest();
-		this->shader->drawMesh(this->VAO, this->indices.size(), this->getTransformMatrix(), this->material);
-
-
+		this->shader->drawMesh(this->VAO, this->indices.size(), transform, this->material);
 	}
 
 	void fillTextureData(TextureContainer* container, Texture* texture, bool destroyAtEnd) {
@@ -175,8 +146,6 @@ public:
 		container->texture = texture;
 		container->destroyAtEnd = destroyAtEnd;
 	}
-
-	// ---- GETTER ET SETTER ---
 
 	Texture* getTexture() {
 		return this->texture.texture;
@@ -188,9 +157,7 @@ public:
 
 	void setTexture(Texture* texture, bool destroyAtEnd) {
 		this->fillTextureData(&this->texture, texture, destroyAtEnd);
-
 	}
-
 	void removeTexture() {
 		this->texture.texture = NULL;
 	}
@@ -203,7 +170,6 @@ public:
 		generateCollision();
 		loadBuffer();
 	}
-
 	std::vector<glm::vec3> getIndexedVertices() {
 		return this->vertexArray;
 	}
@@ -211,15 +177,9 @@ public:
 	std::vector<glm::vec3> getNormals() {
 		return this->normals;
 	}
-
-	Collision* getCollision() {
-		return this->collision;
-	}
-
 	GlobalShader* getShader() {
 		return this->shader;
 	}
-
 	std::vector<unsigned int> getIndices() {
 		return this->indices;
 	}
@@ -239,11 +199,13 @@ public:
 	GLuint getVAO() {
 		return this->VAO;
 	}
+	Collision* getCollision() {
+		return this->collision;
+	}
 
+	void setCollisionState(bool coll) {
+		this->collision->setActif(coll);
+	}
 };
-
-
-
-
 
 #endif

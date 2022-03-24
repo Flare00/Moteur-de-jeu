@@ -15,7 +15,7 @@ public:
 	}
 
 	virtual void Init() {
-		Camera* c = new Camera(vec3(-20, 30, -20), 45, -45);
+		/*Camera* c = new Camera(vec3(-20, 30, -20), 45, -45);
 		this->cameras.push_back(c);
 		//this->input = new Input(c);
 
@@ -140,7 +140,7 @@ public:
 		saturne->getTransform()->selfRotate(vec3(1, 0, 0), radians(5.14f));
 		uranus->getTransform()->selfRotate(vec3(1, 0, 0), radians(5.14f));
 		neptune->getTransform()->selfRotate(vec3(1, 0, 0), radians(5.14f));
-
+		*/
 	}
 
 	virtual void Draw(float deltaTime) {

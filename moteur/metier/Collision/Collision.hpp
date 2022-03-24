@@ -1,25 +1,24 @@
 #ifndef __COLLISION_H__
 #define __COLLISION_H__
 
-#include "../Component.hpp"
-#include "BoundingBox.hpp"
-
+#include <Component.hpp>
+#include <Collision/BoundingBox.hpp>
 
 class Collision : public Component {
 private:
 	BoundingBox* boundingBox = NULL;
 	bool actif;
 public:
-	Collision(bool actif = false) : Component(Component::Type::Collision) {
+	Collision(bool actif = false) : Component(Component::Type::COLLISION){
 		this->actif = actif;
 	}
 
-	Collision(std::vector<glm::vec3> indexed_vertices, bool actif = true) : Component(Component::Type::Collision) {
+	Collision(std::vector<glm::vec3> indexed_vertices, bool actif = true) : Component(Component::Type::COLLISION) {
 		this->boundingBox = new BoundingBox(indexed_vertices);
 		this->actif = actif;
 	}
 
-	Collision(BoundingBox* b, bool actif = true) : Component(Component::Type::Collision) {
+	Collision(BoundingBox* b, bool actif = true) : Component(Component::Type::COLLISION) {
 		this->boundingBox = b;
 		this->actif = actif;
 	}

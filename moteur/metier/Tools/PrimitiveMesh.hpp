@@ -4,11 +4,11 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-#include "../GameObject/Modele.hpp"
+#include <GameObject/ModeleComponent.hpp>
 
 class PrimitiveMesh {
 public :
-	static void generate_plane(Modele* modele, int res_x, int res_y, float size_x, float size_y) {
+	static void generate_plane(ModeleComponent* modele, int res_x, int res_y, float size_x, float size_y) {
 		std::vector<glm::vec3> indexed_vertices;
 		std::vector<glm::vec3> normals;
 		std::vector<unsigned int> indices;
@@ -41,7 +41,7 @@ public :
 		modele->setData(indexed_vertices, indices, texCoords, normals);
 	}
 
-	static void generate_uv_sphere(Modele* modele, int nbMeridien, int nbParalleles) {
+	static void generate_uv_sphere(ModeleComponent* modele, int nbMeridien, int nbParalleles) {
 		std::vector<glm::vec3> indexed_vertices;
 		std::vector<glm::vec3> normals;
 		std::vector<unsigned int> indices;

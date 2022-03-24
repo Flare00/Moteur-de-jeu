@@ -8,18 +8,18 @@
 class Physique {
 public:
 	static void computePhysique(GameObject* scene, float delta) {
-		std::vector<GameObject*> collisionGO = scene->getAllGameObjectByComponentType(Component::Type::Collision);
-		std::vector<Component*> gravitys = scene->getAllComponentsByTypeRecursive(Component::Type::Gravity);
+		std::vector<GameObject*> collisionGO = scene->getAllGameObjectByComponentType(Component::Type::COLLISION);
+		std::vector<Component*> gravitys = scene->getAllComponentsByTypeRecursive(Component::Type::GRAVITY);
 
 		for (int i = 0, max = collisionGO.size(); i < max;  i++) {
 			for (int j = i + 1; j < max; j++) {
-				Collision* c1 = (Collision*)collisionGO[i]->getOneComponentByType(Component::Type::Collision);
-				Collision* c2 = (Collision*)collisionGO[j]->getOneComponentByType(Component::Type::Collision);
+				Collision* c1 = (Collision*)collisionGO[i]->getOneComponentByType(Component::Type::COLLISION);
+				Collision* c2 = (Collision*)collisionGO[j]->getOneComponentByType(Component::Type::COLLISION);
 				c1->apply(collisionGO[i]->getTransformMatrix());
 				c2->apply(collisionGO[j]->getTransformMatrix());
 				if (Collision::computeCollision(c1, c2)) {
-					Gravity* g1 = (Gravity*)collisionGO[i]->getOneComponentByType(Component::Type::Gravity);
-					Gravity* g2 = (Gravity*)collisionGO[j]->getOneComponentByType(Component::Type::Gravity);
+					Gravity* g1 = (Gravity*)collisionGO[i]->getOneComponentByType(Component::Type::GRAVITY);
+					Gravity* g2 = (Gravity*)collisionGO[j]->getOneComponentByType(Component::Type::GRAVITY);
 					if (g1 != NULL) {
 						g1->setCollision(true);
 					}

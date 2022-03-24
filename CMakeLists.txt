@@ -4,19 +4,6 @@ project (Tutorials)
 
 find_package(OpenGL REQUIRED)
 
-
-if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )
-    message( FATAL_ERROR "Please select another Build Directory ! (and give it a clever name, like bin_Visual2012_64bits/)" )
-endif()
-if( CMAKE_SOURCE_DIR MATCHES " " )
-	message( "Your Source Directory contains spaces. If you experience problems when compiling, this can be the cause." )
-endif()
-if( CMAKE_BINARY_DIR MATCHES " " )
-	message( "Your Build Directory contains spaces. If you experience problems when compiling, this can be the cause." )
-endif()
-
-
-
 # Compile external dependencies 
 add_subdirectory (external)
 
@@ -60,12 +47,15 @@ add_definitions(
 add_executable(moteur
 		common/shader.hpp
 		common/shader.cpp
+		common/objloader.hpp
+		common/objloader.cpp
+		common/shader.cpp
         moteur/Moteur.cpp
         moteur/Shaders/vertex_shader.glsl
 		moteur/Shaders/fragment_shader.glsl
 		moteur/Shaders/terrain_vertex_shader.glsl
-		moteur/Shaders/terrain_fragment_shader.glsl
-   "moteur/metier/World/InputCollision.hpp" "moteur/metier/Global.hpp")
+		moteur/Shaders/terrain_fragment_shader.glsl)
+
 target_link_libraries(moteur
 	${ALL_LIBS}
 )

@@ -10,7 +10,7 @@ private:
 	GameObject* parent;
 public:
 
-	Gravity(GameObject* parent) : Component(Type::Gravity) {
+	Gravity(GameObject* parent) : Component(Component::Type::GRAVITY) {
 		this->parent = parent;
 	}
 	void setCollision(bool collision) {
