@@ -17,7 +17,7 @@
 #include "../World/Camera.hpp"
 #include "../Light/Material.hpp"
 #include "../Texture.hpp"
-#include "../Collision/Collision.hpp"
+#include <Collision/RigidBody.hpp>
 #include "../Shader/GlobalShader.hpp"
 
 class Modele : public GameObject {
@@ -42,7 +42,7 @@ protected:
 	TextureContainer texture;
 
 	//COLLISION
-	Collision* collision = NULL;
+	RigidBody* rigidbody = NULL;
 
 	//Buffers
 	GLuint VAO;
@@ -101,7 +101,6 @@ public:
 		for (int i = 0, max = indices.size(); i < max; i++) {
 			this->indices.push_back((int)indices[i]);
 		}
-		generateCollision();
 		loadBuffer();
 	}
 
@@ -116,14 +115,21 @@ public:
 		this->indices = indices;
 		this->texCoords = texCoords;
 
-		generateCollision();
 		loadBuffer();
 	}
 
-	void generateCollision() {
-		if (this->collision == NULL) {
-			this->collision = new Collision(this->vertexArray);
-			this->addComponent(this->collision);
+	void setRigidBody(RigidBody* body) {
+		if(this->rigidbody != NULL)
+		{
+			delete this->rigidbody;
+		}
+		this->rigidbody = body;
+
+		this->addComponent(this->rigidbody);
+
+		if (this->vertexArray.size() > 0) 
+		{
+			this->rigidbody->generateCollision(this->vertexArray);
 		}
 	}
 
@@ -140,7 +146,7 @@ public:
 	// ---- METHODE ----
 	virtual void compute(Camera* camera, bool dfs = true) {
 		bool isInFOV = false;
-		std::vector<glm::vec3> boxCoords = this->collision->getBoundingBox()->getCoords();
+		std::vector<glm::vec3> boxCoords = this->rigidbody->getCollision()->getBoundingBox()->getCoords();
 		for (int i = 0, max = boxCoords.size(); i < max && !isInFOV; i++) {
 			isInFOV = camera->isInFieldOfView(boxCoords[i]);
 		}
@@ -200,7 +206,6 @@ public:
 		this->normals = normals;
 		this->indices = indices;
 		this->texCoords = texCoords;
-		generateCollision();
 		loadBuffer();
 	}
 
@@ -212,8 +217,11 @@ public:
 		return this->normals;
 	}
 
-	Collision* getCollision() {
-		return this->collision;
+	RigidBody* getRigidBody() {
+		return this->rigidbody;
+	}
+	void setCollisionState(bool coll) {
+		this->rigidbody->getCollision()->setActif(coll);
 	}
 
 	GlobalShader* getShader() {

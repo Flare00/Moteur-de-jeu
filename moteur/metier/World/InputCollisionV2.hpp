@@ -38,7 +38,7 @@ public :
 	{
         GLdouble xPos, yPos;
 		glfwGetCursorPos(global_window, &xPos, &yPos);
-		std::cout << "xPos : " << xPos << " | yPos : " << yPos << std::endl;
+		//std::cout << "xPos : " << xPos << " | yPos : " << yPos << std::endl;
 
 		if (this->firstMouseMovement > 0) {
 			firstMouseMovement--;

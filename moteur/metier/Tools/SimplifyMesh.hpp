@@ -108,9 +108,9 @@ public:
 Modele *simplify(Modele *m, int gridResolution)
 {
     // Init Model info
-    glm::vec3 m_Min = m->getCollision()->getBoundingBox()->getMin() - glm::vec3(0.0001f);
-    glm::vec3 m_Max = m->getCollision()->getBoundingBox()->getMax() + glm::vec3(0.0001f);
-    glm::vec3 range = m->getCollision()->getBoundingBox()->getSize();
+    glm::vec3 m_Min = m->getRigidBody()->getCollision()->getBoundingBox()->getMin() - glm::vec3(0.0001f);
+    glm::vec3 m_Max = m->getRigidBody()->getCollision()->getBoundingBox()->getMax() + glm::vec3(0.0001f);
+    glm::vec3 range = m->getRigidBody()->getCollision()->getBoundingBox()->getSize();
 
     // Cube Generation
     std::vector<CubeSimplify> cubeDecimation;

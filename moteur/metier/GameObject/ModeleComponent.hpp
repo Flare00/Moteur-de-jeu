@@ -9,7 +9,7 @@
 #include <Shader/GlobalShader.hpp>
 #include <Component.hpp>
 #include <Texture.hpp>
-#include <Collision/Collision.hpp>
+#include <Collision/RigidBody.hpp>
 
 class ModeleComponent : public Component {
 private:
@@ -41,9 +41,6 @@ protected:
 	//---
 	bool hasData;
 
-	//Collisions
-	Collision* collision;
-
 public:
 
 	// --- CONSTRUCTEURS ET DESTRUCTEURS ---
@@ -58,7 +55,6 @@ public:
 		for (int i = 0, max = indices.size(); i < max; i++) {
 			this->indices.push_back((int)indices[i]);
 		}
-		generateCollision();
 		loadBuffer();
 	}
 
@@ -72,7 +68,6 @@ public:
 		this->vertexArray = indexed_vertices;
 		this->indices = indices;
 		this->texCoords = texCoords;
-		generateCollision();
 		loadBuffer();
 	}
 
@@ -111,22 +106,24 @@ public:
 		this->hasData = true;
 	}
 
-	void generateCollision() {
-		if (this->collision != NULL)
-			this->collision = new Collision(this->vertexArray);
-	}
 
-	virtual void draw(Camera * camera, glm::mat4 transform) {
+
+	virtual void draw(Camera * camera, glm::mat4 transform, RigidBody * rigidbody = NULL) {
 		if (!hasData) {
 			return;
 		}
 		bool isInFOV = false;
-		std::vector<glm::vec3> boxCoords = this->collision->getBoundingBox()->getCoords();
-		for (int i = 0, max = boxCoords.size(); i < max && !isInFOV; i++) {
-			isInFOV = camera->isInFieldOfView(boxCoords[i]);
-		}
-		if (!isInFOV) return;
 
+		if(rigidbody !=NULL){
+			std::vector<glm::vec3> boxCoords =rigidbody->getCollision()->getBoundingBox()->getCoords();
+			for (int i = 0, max = boxCoords.size(); i < max && !isInFOV; i++) {
+				isInFOV = camera->isInFieldOfView(boxCoords[i]);
+			}
+		} else {
+			isInFOV = true; //TODO trouver une solution 
+		}
+
+		if (!isInFOV) return;
 
 		this->shader->use();
 
@@ -167,7 +164,6 @@ public:
 		this->normals = normals;
 		this->indices = indices;
 		this->texCoords = texCoords;
-		generateCollision();
 		loadBuffer();
 	}
 	std::vector<glm::vec3> getIndexedVertices() {
@@ -199,13 +195,7 @@ public:
 	GLuint getVAO() {
 		return this->VAO;
 	}
-	Collision* getCollision() {
-		return this->collision;
-	}
 
-	void setCollisionState(bool coll) {
-		this->collision->setActif(coll);
-	}
 };
 
 #endif

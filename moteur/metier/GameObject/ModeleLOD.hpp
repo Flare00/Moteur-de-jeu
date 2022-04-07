@@ -27,7 +27,7 @@ protected:
 	// 0 : High Poly, 1 : Low Poly, 2 : Impostor
 	ModeleComponent *modeles[3];
 	float distanceLOD[2];
-	Collision* collision;
+	RigidBody* rigidbody= NULL;
 public:
 	// --- CONSTRUCTEURS ET DESTRUCTEURS ---
 	ModeleLOD(std::string id, ModeleComponent * high, ModeleComponent * low = NULL, ModeleComponent * imposteur = NULL, GameObject *parent = NULL) : GameObject(id, parent)
@@ -37,7 +37,7 @@ public:
 		modeles[2] = imposteur;
 		distanceLOD[0] = 10.0f;
 		distanceLOD[1] = 100.0f;
-		this->addComponent(modeles[0]->getCollision());
+
 		this->addComponent(modeles[0]);
 		if (modeles[1] != NULL) 
 			this->addComponent(modeles[1]);
@@ -51,22 +51,15 @@ public:
 		distanceLOD[0] = 10.0f;
 		distanceLOD[1] = 100.0f;
 		this->addComponent(modeles[0]);
-		this->addComponent(modeles[0]->getCollision());
-	}
 
-	ModeleLOD(std::string id, GlobalShader *shader, GameObject *parent = NULL) : GameObject(id, parent)
-	{
-		modeles[0] = new ModeleComponent(shader);
-		this->addComponent(modeles[0]);
-		distanceLOD[0] = 10.0f;
-		distanceLOD[1] = 100.0f;
+
 	}
 
 	ModeleLOD(std::string id, std::vector<glm::vec3> indexed_vertices, std::vector<glm::vec3> normals, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, GlobalShader *shader, GameObject *parent = NULL) : GameObject(id, parent)
 	{
 		modeles[0] = new ModeleComponent(shader, indexed_vertices, normals, indices, texCoords);
 		this->addComponent(modeles[0]);
-		this->addComponent(modeles[0]->getCollision());
+
 		distanceLOD[0] = 10.0f;
 		distanceLOD[1] = 25.0f;
 	}
@@ -83,9 +76,9 @@ public:
 	virtual void compute(Camera *camera, bool dfs = true)
 	{
 		float distance = -1.0f;
-		modeles[0]->getCollision()->getBoundingBox()->applyTransformation(this->getTransformMatrix());
+		this->getRigidBody()->getCollision()->getBoundingBox()->applyTransformation(this->getTransformMatrix());
 
-		std::vector<glm::vec3> boxCoords = modeles[0]->getCollision()->getBoundingBox()->getCoords();
+		std::vector<glm::vec3> boxCoords = this->getRigidBody()->getCollision()->getBoundingBox()->getCoords();
 		for (int i = 0, max = boxCoords.size(); i < max && distance < 0.0f; i++)
 		{
 			distance = camera->isInFieldOfView(boxCoords[i]);
@@ -115,7 +108,7 @@ public:
 			level--;
 		}
 		if (level >= 0) {
-			modeles[level]->draw(camera, this->getTransformMatrix());
+			modeles[level]->draw(camera, this->getTransformMatrix(), this->rigidbody);
 		}
 	}
 
@@ -124,6 +117,28 @@ public:
 	ModeleComponent *getModele(int level)
 	{
 		return this->modeles[level];
+	}
+
+	void setRigidBody(RigidBody* body) {
+		if(this->rigidbody != NULL)
+		{
+			delete this->rigidbody;
+		}
+
+		this->rigidbody = body;
+		if (this->modeles[0]->getIndexedVertices().size() > 0) 
+		{
+			this->rigidbody->generateCollision(this->modeles[0]->getIndexedVertices());
+		}
+
+		this->addComponent(this->rigidbody);
+	}
+	RigidBody* getRigidBody() {
+		return this->rigidbody;
+	}
+
+	void setCollisionState(bool coll) {
+		this->rigidbody->getCollision()->setActif(coll);
 	}
 };
 

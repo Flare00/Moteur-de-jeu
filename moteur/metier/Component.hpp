@@ -8,7 +8,7 @@ public :
 	enum Type {
 		AUCUN,
 		COLLISION,
-		GRAVITY,
+		RIGIDBODY,
 		MODELE
 	};
 

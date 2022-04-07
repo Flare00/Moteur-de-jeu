@@ -5,10 +5,10 @@
 #include "../Shader/GlobalShader.hpp"
 #include "../GameObject/Modele.hpp"
 #include "../GameObject/ModeleLOD.hpp"
-#include <Collision/Gravity.hpp>
 #include <Collision/Physique.hpp>
 #include <World/InputCollision.hpp>
 #include <World/InputCollisionV2.hpp>
+#include <Collision/RigidBody.hpp>
 
 #include "Scene.hpp"
 
@@ -35,28 +35,31 @@ public :
 		Texture* texTerre = new Texture("Textures/SystemeSolaire/earth_daymap.jpg");
 		Texture* texSoleil = new Texture("Textures/SystemeSolaire/sun.jpg");
 		// Terrain
-		ModeleComponent* terrainHigh = new ModeleComponent(globalShader);
-		PrimitiveMesh::generate_plane(terrainHigh, precision, precision, 10.0f, 10.0f);
-		terrainHigh->setTexture(texTerre, true);
 
-		ModeleLOD* terrainLOD = new ModeleLOD("Terrain", terrainHigh);
-		terrainLOD->getTransform()->translate(glm::vec3(0, -5, 0));
+		ModeleComponent* soleilHigh = new ModeleComponent(globalShader);
+		PrimitiveMesh::generate_uv_sphere(soleilHigh, precision, precision);
+		soleilHigh->setTexture(texSoleil, true);
 
-		ModeleComponent* objetHigh = new ModeleComponent(globalShader);
-		ModeleComponent* objetLow = new ModeleComponent(globalShader);
+		ModeleLOD* SoleilLOD = new ModeleLOD("Spleil", soleilHigh);
+		SoleilLOD->getTransform()->translate(glm::vec3(-5, 0, 0));
+		SoleilLOD->setRigidBody(new RigidBody(SoleilLOD, false, 5.0f, glm::vec3(6.0f,0,0)));
 
-		PrimitiveMesh::generate_uv_sphere(objetHigh, precision, precision);
-		PrimitiveMesh::generate_uv_sphere(objetLow, low_precision, low_precision);
-		objetHigh->setTexture(texSoleil, true);
-		objetLow->setTexture(texSoleil, true);
+		ModeleComponent* TerreHigh = new ModeleComponent(globalShader);
+		ModeleComponent* TerreLow = new ModeleComponent(globalShader);
 
-		ModeleLOD* objetLOD = new ModeleLOD("Objet", objetHigh, objetLow);
-		objetLOD->addComponent(new Gravity(objetLOD));
+		PrimitiveMesh::generate_uv_sphere(TerreHigh, precision, precision);
+		PrimitiveMesh::generate_uv_sphere(TerreLow, low_precision, low_precision);
 
-		this->scene->addChild(terrainLOD);
-		this->scene->addChild(objetLOD);
+		TerreHigh->setTexture(texTerre, true);
+		TerreLow->setTexture(texTerre, true);
 
-		this->inputCol = new InputCollision(c, objetLOD);
+		ModeleLOD* TerreLOD = new ModeleLOD("Terre", TerreHigh, TerreLow);
+		TerreLOD->setRigidBody(new RigidBody(TerreLOD, false, 1.0f, glm::vec3(-6.0f,0,0)));
+		TerreLOD->getTransform()->translate(glm::vec3(5, 0, 0));
+		this->scene->addChild(SoleilLOD);
+		this->scene->addChild(TerreLOD);
+
+		this->inputCol = new InputCollision(c, TerreLOD);
 	}
 
 	virtual void Draw(float deltaTime) {

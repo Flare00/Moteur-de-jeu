@@ -58,6 +58,10 @@ public:
 		return this->boundingBox;
 	}
 
+	glm::vec3 getCenter(){
+		return this->boundingBox->getCenter();
+	}
+
 	void setBoundingBox(BoundingBox* b) {
 		this->boundingBox = b;
 	}
