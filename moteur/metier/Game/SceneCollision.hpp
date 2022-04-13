@@ -42,7 +42,7 @@ public :
 
 		ModeleLOD* SoleilLOD = new ModeleLOD("Spleil", soleilHigh);
 		SoleilLOD->getTransform()->translate(glm::vec3(-5, 0, 0));
-		SoleilLOD->setRigidBody(new RigidBody(SoleilLOD, false, 5.0f, glm::vec3(6.0f,0,0)));
+		SoleilLOD->setRigidBody(new RigidBody(SoleilLOD, false, 2.0f, glm::vec3(2.0f,0,0)));
 
 		ModeleComponent* TerreHigh = new ModeleComponent(globalShader);
 		ModeleComponent* TerreLow = new ModeleComponent(globalShader);
@@ -54,7 +54,7 @@ public :
 		TerreLow->setTexture(texTerre, true);
 
 		ModeleLOD* TerreLOD = new ModeleLOD("Terre", TerreHigh, TerreLow);
-		TerreLOD->setRigidBody(new RigidBody(TerreLOD, false, 1.0f, glm::vec3(-6.0f,0,0)));
+		TerreLOD->setRigidBody(new RigidBody(TerreLOD, false, 1.0f, glm::vec3(-2.0f,0,0)));
 		TerreLOD->getTransform()->translate(glm::vec3(5, 0, 0));
 		this->scene->addChild(SoleilLOD);
 		this->scene->addChild(TerreLOD);
@@ -71,6 +71,7 @@ public :
 			// Clear the screen
 			Physique::computePhysique(this->scene, deltaTime);
 		}
+		
 		this->scene->compute(this->cameras[this->activeCamera], true);
 	}
 };

@@ -9,7 +9,8 @@
 
 #include "../GameObject/Modele.hpp"
 
-class BoundingBox{
+class BoundingBox
+{
 private:
 	glm::mat4 transformation;
 	glm::vec3 max;
@@ -17,18 +18,25 @@ private:
 	glm::vec3 transformedMax;
 	glm::vec3 transformedMin;
 	glm::vec3 position;
+
 public:
-	BoundingBox(std::vector<glm::vec3> indexed_vertices){
-		if(indexed_vertices.size() > 0){
+	BoundingBox(std::vector<glm::vec3> indexed_vertices)
+	{
+		if (indexed_vertices.size() > 0)
+		{
 			this->max = (glm::vec3)indexed_vertices[0];
 			this->min = (glm::vec3)indexed_vertices[0];
 		}
-		for(int i = 1, max = indexed_vertices.size(); i < max; i++){
-			for(int j = 0; j < 3; j++){
-				if(this->max[j] < indexed_vertices[i][j]){
+		for (int i = 1, max = indexed_vertices.size(); i < max; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				if (this->max[j] < indexed_vertices[i][j])
+				{
 					this->max[j] = indexed_vertices[i][j];
 				}
-				if(this->min[j] > indexed_vertices[i][j]){
+				if (this->min[j] > indexed_vertices[i][j])
+				{
 					this->min[j] = indexed_vertices[i][j];
 				}
 			}
@@ -38,54 +46,98 @@ public:
 		this->transformedMin = this->min;
 	}
 
-	glm::vec3 getSize(){
-		return glm::vec3(abs(this->max.x - this->min.x), abs(this->max.y - this->min.y),abs(this->max.z - this->min.z));
+	glm::vec3 getSize()
+	{
+		return glm::vec3(abs(this->max.x - this->min.x), abs(this->max.y - this->min.y), abs(this->max.z - this->min.z));
 	}
 
-	void applyTransformation(glm::mat4 t) {
+	void applyTransformation(glm::mat4 t)
+	{
 		bool update = false;
-		for (int i = 0; i < 4 && !update; i++) {
-			for (int j = 0; j < 4 && !update; j++) {
-				if (this->transformation[i][j] != t[i][j]) {
+		for (int i = 0; i < 4 && !update; i++)
+		{
+			for (int j = 0; j < 4 && !update; j++)
+			{
+				if (this->transformation[i][j] != t[i][j])
+				{
 					this->transformation[i][j] = t[i][j];
 					update = true;
 				}
 			}
 		}
-		if (update) {
+		if (update)
+		{
 			computeTransformedMinMax();
 		}
 	}
 
-	glm::vec3 getMax(){
+	glm::vec3 getMax()
+	{
 		return this->transformedMax;
 	}
-	
-	glm::vec3 getMin(){
+
+	glm::vec3 getMin()
+	{
 		return this->transformedMin;
 	}
 
-	bool isPointIn(vec3 point) {
+	bool isPointIn(vec3 point)
+	{
 		vec3 max = getMax();
 		vec3 min = getMin();
-		return point.x <= max.x && point.y <= max.y && point.z <= max.z && 
-			point.x >= min.x && min.y >= max.y && min.z >= max.z;
+		return point.x <= max.x && point.y <= max.y && point.z <= max.z &&
+			   point.x >= min.x && min.y >= max.y && min.z >= max.z;
 	}
 
-	bool isIntersection(BoundingBox* box) {
+	bool isInCollision(glm::vec3 v)
+	{
+		return (v.x <= this->getMax().x && v.x >= this->getMin().x) &&
+			   (v.y <= this->getMax().y && v.y >= this->getMin().y) &&
+			   (v.z <= this->getMax().z && v.z >= this->getMin().z);
+	}
+
+	std::vector<glm::vec3> getIntersectPoint(BoundingBox *box)
+	{
+		std::vector<glm::vec3> res;
+		std::vector<glm::vec3> tmp = getCoords();
+
+		for (int i = 0, maxTmp = tmp.size(); i < maxTmp; i++)
+		{
+			if (box->isInCollision(tmp[i]))
+			{
+				res.push_back(tmp[i]);
+			}
+		}
+
+		tmp = box->getCoords();
+		for (int i = 0, maxTmp = tmp.size(); i < maxTmp; i++)
+		{
+			if (this->isInCollision(tmp[i]))
+			{
+				res.push_back(tmp[i]);
+			}
+		}
+		
+		return res;
+	}
+
+	bool isIntersection(BoundingBox *box)
+	{
 		glm::vec3 aMin = getMin();
 		glm::vec3 aMax = getMax();
 		glm::vec3 bMin = box->getMin();
 		glm::vec3 bMax = box->getMax();
 		return aMin.x <= bMax.x && aMax.x >= bMin.x &&
-			aMin.y <= bMax.y && aMax.y >= bMin.y &&
-			aMin.z <= bMax.z && aMax.z >= bMin.z;
+			   aMin.y <= bMax.y && aMax.y >= bMin.y &&
+			   aMin.z <= bMax.z && aMax.z >= bMin.z;
 	}
 
-	std::vector<glm::vec3> getCoords() {
+	std::vector<glm::vec3> getCoords()
+	{
 		std::vector<glm::vec3> coords(8);
 		glm::vec3 size = getSize();
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 8; i++)
+		{
 			coords[i] = min;
 		}
 		coords[1].x += size.x;
@@ -107,8 +159,9 @@ public:
 
 		coords[7].y += size.y;
 
-		for (int i = 0; i < 8; i++) {
-			glm::vec4 tmpCoord = this->transformation* glm::vec4(coords[i], 1.0f) ;
+		for (int i = 0; i < 8; i++)
+		{
+			glm::vec4 tmpCoord = this->transformation * glm::vec4(coords[i], 1.0f);
 			coords[i].x = tmpCoord.x;
 			coords[i].y = tmpCoord.y;
 			coords[i].z = tmpCoord.z;
@@ -116,33 +169,44 @@ public:
 		return coords;
 	}
 
-	glm::vec3 getCenter() {
+	glm::vec3 getCenter()
+	{
 		return getMin() + (getSize() / 2.0f);
 	}
-private :
-	void computeTransformedMinMax() {
+
+private:
+	void computeTransformedMinMax()
+	{
 		std::vector<glm::vec3> coords = getCoords();
-		if (coords.size() > 0) {
+		if (coords.size() > 0)
+		{
 			this->transformedMin = coords[0];
 			this->transformedMax = coords[0];
 
-			for (int i = 1, max = coords.size(); i < max; i++) {
-				if (coords[i].x < transformedMin.x) {
+			for (int i = 1, max = coords.size(); i < max; i++)
+			{
+				if (coords[i].x < transformedMin.x)
+				{
 					transformedMin.x = coords[i].x;
 				}
-				if (coords[i].y < transformedMin.y) {
+				if (coords[i].y < transformedMin.y)
+				{
 					transformedMin.y = coords[i].y;
 				}
-				if (coords[i].z < transformedMin.z) {
+				if (coords[i].z < transformedMin.z)
+				{
 					transformedMin.z = coords[i].z;
 				}
-				if (coords[i].x > transformedMax.x) {
+				if (coords[i].x > transformedMax.x)
+				{
 					transformedMax.x = coords[i].x;
 				}
-				if (coords[i].y > transformedMax.y) {
+				if (coords[i].y > transformedMax.y)
+				{
 					transformedMax.y = coords[i].y;
 				}
-				if (coords[i].z > transformedMax.z) {
+				if (coords[i].z > transformedMax.z)
+				{
 					transformedMax.z = coords[i].z;
 				}
 			}
