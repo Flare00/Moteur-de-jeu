@@ -30,8 +30,8 @@ uniform vec3 u_camera_pos;
 uniform int u_light_number;
 uniform float u_gamma_correction;
 
-uniform sampler2D u_texture;
-uniform int u_has_texture = 0;
+uniform sampler2D u_textures[32];
+uniform int u_nb_texture = 0;
 
 vec3 calculateLight(Light light, vec3 normal, vec3 cameraDir){
 
@@ -63,10 +63,10 @@ void main(){
     }
     lightVec = pow(lightVec, vec3(1.0/u_gamma_correction));
 
-	if(u_has_texture == 0){
+	if(u_nb_texture == 0){
 		color = (vec4(lightVec,1) * vec4(TexCoord , 0, 1 ));
 	} else {
-		color = (vec4(lightVec,1) * texture2D(u_texture, vec2(-TexCoord.x, TexCoord.y)));
+		color = (vec4(lightVec,1) * texture2D(u_textures[0], vec2(-TexCoord.x, TexCoord.y)));
 	}
 }
 

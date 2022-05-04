@@ -51,7 +51,7 @@ public :
 
 		ModeleComponent* soleilHigh = new ModeleComponent(globalShader);
 		PrimitiveMesh::generate_uv_sphere(soleilHigh, precision, precision);
-		soleilHigh->setTexture(texSoleil, true);
+		soleilHigh->addTexture(texSoleil, true);
 
 		ModeleLOD* SoleilLOD = new ModeleLOD("Spleil", soleilHigh);
 		SoleilLOD->getTransform()->translate(glm::vec3(-5, 0, 0));
@@ -63,8 +63,8 @@ public :
 		PrimitiveMesh::generate_uv_sphere(TerreHigh, precision, precision);
 		PrimitiveMesh::generate_uv_sphere(TerreLow, low_precision, low_precision);
 
-		TerreHigh->setTexture(texTerre, true);
-		TerreLow->setTexture(texTerre, true);
+		TerreHigh->addTexture(texTerre, true);
+		TerreLow->addTexture(texTerre, true);
 
 		ModeleLOD* TerreLOD = new ModeleLOD("Terre", TerreHigh, TerreLow);
 		TerreLOD->setRigidBody(new RigidBody(TerreLOD, false, 1.0f, glm::vec3(-2.0f,0,0)));
@@ -93,7 +93,6 @@ public :
 		}
 
 		this->text2D->DrawText(std::to_string(fps), -1, 1, 0.9f);
-
 	}
 };
 

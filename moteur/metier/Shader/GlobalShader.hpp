@@ -31,8 +31,8 @@ protected:
 	GLuint u_model;
 
 	//fragment
-	GLuint u_texture;
-	GLuint u_has_texture;
+	std::vector<GLuint> u_textures;
+	GLuint u_nb_texture;
 
 	//Light number
 	GLuint u_light_number;
@@ -44,11 +44,16 @@ protected:
 	U_Light u_lights[MAX_LIGHT];
 	std::vector<Light> lights;
 
+	float nbTexture = 0;
+
 public:
 	GlobalShader(std::string vertex, std::string fragment) : Shader(vertex, fragment) {
 		this->u_model = glGetUniformLocation(this->id, "u_model");
-		this->u_texture = glGetUniformLocation(this->id, "u_texture");
-		this->u_has_texture = glGetUniformLocation(this->id, "u_has_texture");
+
+		for (int i = 0; i < 32; i++) {
+			this->u_textures.push_back(glGetUniformLocation(this->id, (std::string("u_textures[") + std::to_string(i) + std::string("]")).c_str()));
+		}
+		this->u_nb_texture = glGetUniformLocation(this->id, "u_nb_texture");
 
 		this->u_material.ambiant = glGetUniformLocation(this->id, "u_material.ambiant");
 		this->u_material.diffuse = glGetUniformLocation(this->id, "u_material.diffuse");
@@ -85,16 +90,12 @@ public:
 
 	void drawTexture(Texture* texture, int id) {
 		if (texture != NULL) {
-			texture->draw(this->u_texture, id);
-			glUniform1i(this->u_has_texture, 1);
-		}
-		else {
-			glUniform1i(this->u_has_texture, 0);
+			texture->draw(this->u_textures[id], id);
 		}
 	}
 
 	void drawMesh(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix, Material material) {
-
+		glUniform1i(this->u_nb_texture, this->u_textures.size());
 
 		//Load Vertex
 		glUniformMatrix4fv(this->u_model, 1, GL_FALSE, &transformMatrix[0][0]);
