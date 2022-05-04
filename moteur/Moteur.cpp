@@ -74,8 +74,8 @@ int main(void)
 	}
 
 	glfwWindowHint(GLFW_SAMPLES, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
@@ -98,6 +98,8 @@ int main(void)
 		glfwTerminate();
 		return -1;
 	}
+
+	printf("OpenGL version supported by this platform : %s\n", glGetString(GL_VERSION));
 
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(global_window, GLFW_STICKY_KEYS, GL_TRUE);
