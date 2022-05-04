@@ -40,34 +40,44 @@ public:
 	{
 		// Texte
 		Text2DShader *textShader = new Text2DShader("Shaders/text2d_vertex.glsl", "Shaders/text2d_fragment.glsl", glm::ortho(0.0f, 1.0f * screen_width, 0.0f, 1.0f * screen_height));
-
 		Texture *atlasText = new Texture("Textures/Font/Atlas_Monofonto.jpg");
 		text2D = new Text2D(textShader, atlasText, 128, 256);
 
+		//Set Camera
 		Camera *c = new Camera(vec3(0, -2, -16), 90, 0);
 		this->cameras.push_back(c);
-
+		//Set global Shader
 		globalShader = new GlobalShader("Shaders/vertex_shader.glsl", "Shaders/fragment_shader.glsl");
 		this->activeCamera = 0;
-
+		//Set Texture
 		Texture *texTerre = new Texture("Textures/SystemeSolaire/earth_daymap.jpg");
 		Texture *texSoleil = new Texture("Textures/SystemeSolaire/sun.jpg");
 
+		//Test
+		ModeleComponent* testHigh = new ModeleComponent(globalShader);
+		PrimitiveMesh::generate_plane(testHigh, 8, 8, 10, 10);
+		testHigh->addTexture(texTerre, false);
+
+		ModeleLOD* test = new ModeleLOD("Test", testHigh);
+		test->getTransform()->translate(glm::vec3(0, 2, 0));
+		test->setRigidBody(new RigidBody(test));
 		// Terrain
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");
 		Texture *textureTerrain = new Texture("Textures/HeightMap/test.png");
 		Texture *heightMapTerrain = new Texture("Textures/HeightMap/test.png");
 		Terrain *terrain = new Terrain("Terrain", shaderTerrain, textureTerrain, heightMapTerrain);
-		terrain->getTransform()->translate(glm::vec3(0, -5, 0));
+		terrain->getTransform()->translate(glm::vec3(0, -1, 0));
 
+		//soleil
 		ModeleComponent *soleilHigh = new ModeleComponent(globalShader);
 		PrimitiveMesh::generate_uv_sphere(soleilHigh, precision, precision);
 		soleilHigh->addTexture(texSoleil, true);
 
-		ModeleLOD *SoleilLOD = new ModeleLOD("Spleil", soleilHigh);
+		ModeleLOD *SoleilLOD = new ModeleLOD("Soleil", soleilHigh);
 		SoleilLOD->getTransform()->translate(glm::vec3(-5, 0, 0));
 		SoleilLOD->setRigidBody(new RigidBody(SoleilLOD, false, 2.0f, glm::vec3(2.0f, 0, 0)));
 
+		//Terre
 		ModeleComponent *TerreHigh = new ModeleComponent(globalShader);
 		ModeleComponent *TerreLow = new ModeleComponent(globalShader);
 
@@ -81,10 +91,13 @@ public:
 		TerreLOD->setRigidBody(new RigidBody(TerreLOD, false, 1.0f, glm::vec3(-2.0f, 0, 0)));
 		TerreLOD->getTransform()->translate(glm::vec3(5, 0, 0));
 
+		//Add to scene
 		this->scene->addChild(SoleilLOD);
-		this->scene->addChild(terrain);
 		this->scene->addChild(TerreLOD);
+		this->scene->addChild(test);
+		this->scene->addChild(terrain);
 
+		//Set inputCollision
 		this->inputCol = new InputCollision(c, TerreLOD);
 	}
 

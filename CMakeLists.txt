@@ -43,15 +43,10 @@ add_definitions(
 
 # Moteur
 add_executable(moteur
-		
-		
-		common/objloader.hpp
+		 common/objloader.hpp
 		common/objloader.cpp
         moteur/Moteur.cpp
-        moteur/Shaders/vertex_shader.glsl
-		moteur/Shaders/fragment_shader.glsl
-		moteur/Shaders/terrain_vertex_shader.glsl
-		moteur/Shaders/terrain_fragment_shader.glsl "moteur/metier/Tools/LoadShader.hpp")
+)
 
 
 target_link_libraries(moteur
@@ -62,7 +57,7 @@ set_target_properties(moteur PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR 
 create_target_launcher(moteur WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/moteur/")
 
 SOURCE_GROUP(common REGULAR_EXPRESSION ".*/common/.*" )
-SOURCE_GROUP(shaders REGULAR_EXPRESSION ".*Shaders/.*shader$" )
+SOURCE_GROUP(shaders REGULAR_EXPRESSION ".*Shaders/.*glsl$" )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/moteur/Shaders/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Shaders/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/moteur/Textures/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Textures/)

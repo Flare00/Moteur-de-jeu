@@ -20,7 +20,6 @@ protected:
 public:
     GlobalShaderExtended(std::string vertex, std::string fragment, std::string tessControl, std::string tessEval, std::string geometry = "") : GlobalShader(vertex, fragment, geometry, tessControl, tessEval)
     {
-        glPatchParameteri(GL_PATCH_VERTICES, 4);
         this->u_heightmap = glGetUniformLocation(this->id, "u_heightmap");
     }
 
@@ -32,9 +31,15 @@ public:
         }
     }
 
-    virtual void drawMesh(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix, Material material, bool tess = false)
+    virtual void drawMesh(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix)
     {
-        GlobalShader::drawMesh(VAO, size_indice, transformMatrix, material, true);
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glUniform1i(this->u_nb_texture, this->u_textures.size());
+        glUniformMatrix4fv(this->u_model, 1, GL_FALSE, &transformMatrix[0][0]);
+
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_PATCHES, 0, size_indice);
+
     }
 };
 

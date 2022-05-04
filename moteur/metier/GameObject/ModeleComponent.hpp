@@ -149,7 +149,8 @@ public:
 
 		// LIGHT TEST
 		this->shader->setLight();
-		this->shader->drawMesh(this->VAO, this->indices.size(), transform, this->material);
+		this->shader->drawMaterial(this->material);
+		this->shader->drawMesh(this->VAO, this->indices.size(), transform);
 	}
 
 	Texture *getTexture(int i)

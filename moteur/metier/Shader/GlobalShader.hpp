@@ -94,6 +94,10 @@ public:
 
 	void drawMaterial(Material material)
 	{
+		glUniform3fv(this->u_material.ambiant, 1, &material.getAmbiant()[0]);
+		glUniform3fv(this->u_material.diffuse, 1, &material.getDiffuse()[0]);
+		glUniform3fv(this->u_material.specular, 1, &material.getSpecular()[0]);
+		glUniform1f(this->u_material.shininess, material.getShininess());
 	}
 
 	void drawTexture(Texture *texture, int id)
@@ -104,18 +108,14 @@ public:
 		}
 	}
 
-	virtual void drawMesh(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix, Material material, bool tess = false)
+	virtual void drawMesh(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix)
 	{
 		glUniform1i(this->u_nb_texture, this->u_textures.size());
 
 		// Load Vertex
 		glUniformMatrix4fv(this->u_model, 1, GL_FALSE, &transformMatrix[0][0]);
-		glUniform3fv(this->u_material.ambiant, 1, &material.getAmbiant()[0]);
-		glUniform3fv(this->u_material.diffuse, 1, &material.getDiffuse()[0]);
-		glUniform3fv(this->u_material.specular, 1, &material.getSpecular()[0]);
-		glUniform1f(this->u_material.shininess, material.getShininess());
+
 		// Bind VAO
-		glBindVertexArray(VAO);
 
 		if (global_wireframe)
 		{
@@ -126,15 +126,8 @@ public:
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 
-		// Draw
-		if (tess)
-		{
-			glDrawArrays(GL_PATCHES, 0, 4 * 64 * 64);
-		}
-		else
-		{
-			glDrawElements(GL_TRIANGLES, size_indice, GL_UNSIGNED_INT, 0);
-		}
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, size_indice, GL_UNSIGNED_INT, 0);
 	}
 };
 

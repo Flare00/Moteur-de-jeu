@@ -33,7 +33,7 @@ protected:
 	// RIGIDBODY (collision)
 
 public:
-	Terrain(std::string id, GlobalShaderExtended *shader, Texture *texture, Texture *heightMap, float width = 64, float height = 64, int resX = 64, int resY = 64, GameObject *parent = NULL) : GameObject(id, parent)
+	Terrain(std::string id, GlobalShaderExtended *shader, Texture *texture, Texture *heightMap, float width =32, float height = 32, int resX = 8, int resY = 8, GameObject *parent = NULL) : GameObject(id, parent)
 	{
 		this->width = width;
 		this->height = height;
@@ -41,7 +41,7 @@ public:
 		this->resY = resY;
 		this->shader = shader;
 		this->modele = new ModeleHeightComponent(shader);
-		PrimitiveMesh::generate_plane(modele, resX, resY, width, height);
+		PrimitiveMesh::generate_plane_terrain(modele, resX, resY, width, height);
 		this->modele->addTexture(texture, true);
 		this->modele->setHeightMap(heightMap, true);
 	}

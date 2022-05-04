@@ -75,26 +75,30 @@ public:
 	virtual void compute(Camera *camera, bool dfs = true)
 	{
 		float distance = -1.0f;
-		this->getRigidBody()->getCollision()->getBoundingBox()->applyTransformation(this->getTransformMatrix());
-
-		std::vector<glm::vec3> boxCoords = this->getRigidBody()->getCollision()->getBoundingBox()->getCoords();
-		for (int i = 0, max = boxCoords.size(); i < max && distance < 0.0f; i++)
-		{
-			distance = camera->isInFieldOfView(boxCoords[i]);
-		}
-
-		if (distance >= 0.0f)
-		{
-			int level = 2;
-			if (distance <= this->distanceLOD[0])
+		if (this->getRigidBody() != NULL) {
+			this->getRigidBody()->getCollision()->getBoundingBox()->applyTransformation(this->getTransformMatrix());
+			std::vector<glm::vec3> boxCoords = this->getRigidBody()->getCollision()->getBoundingBox()->getCoords();
+			for (int i = 0, max = boxCoords.size(); i < max && distance < 0.0f; i++)
 			{
-				level = 0;
+				distance = camera->isInFieldOfView(boxCoords[i]);
 			}
-			else if (distance <= this->distanceLOD[1])
+
+			if (distance >= 0.0f)
 			{
-				level = 1;
+				int level = 2;
+				if (distance <= this->distanceLOD[0])
+				{
+					level = 0;
+				}
+				else if (distance <= this->distanceLOD[1])
+				{
+					level = 1;
+				}
+				draw(camera, level);
 			}
-			draw(camera, level);
+			else {
+				draw(camera, 0);
+			}
 		}
 
 		if (dfs)

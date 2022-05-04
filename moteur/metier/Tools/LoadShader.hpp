@@ -76,7 +76,7 @@ GLuint LoadShaders(std::string vertexPath, std::string fragmentPath, std::string
 				tesselationControlData = ReadFile(tesselationControlPath.c_str());
 				if (tesselationControlData.length() > 0) {
 					TesselationControlShaderID = glCreateShader(GL_TESS_CONTROL_SHADER);
-					printf("Compiling shader : %s\n", tesselationControlPath);
+					printf("Compiling shader : %s\n", tesselationControlPath.c_str());
 					if (CompileShader(TesselationControlShaderID, tesselationControlData) == GL_FALSE) return 0;
 				}
 				else {

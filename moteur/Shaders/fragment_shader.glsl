@@ -68,5 +68,13 @@ void main(){
 	} else {
 		color = (vec4(lightVec,1) * texture2D(u_textures[0], vec2(-TexCoord.x, TexCoord.y)));
 	}
+
+    /*if(gl_FrontFacing){
+        color = vec4(1,0,0,1);
+    } else {
+        color = vec4(0,1,0,1);
+    
+    }*/
+
 }
 

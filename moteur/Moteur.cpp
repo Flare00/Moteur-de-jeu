@@ -123,6 +123,7 @@ int main(void)
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_FRAMEBUFFER_SRGB);
+	glPatchParameteri(GL_PATCH_VERTICES, 4);
 
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
