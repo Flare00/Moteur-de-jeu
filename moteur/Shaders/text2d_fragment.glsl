@@ -9,5 +9,5 @@ void main()
 {    
     //color = (vec4(1) * texture2D(u_text, vec2(TexCoords.x, TexCoords.y)));
 
-    color = vec4(u_textColor, texture2D(u_text, vec2(TexCoords.x, TexCoords.y)).a);
+    color = vec4(u_textColor, texture2D(u_text, vec2(TexCoords.x, TexCoords.y)).r);
 }

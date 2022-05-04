@@ -15,7 +15,7 @@ class Texture
 {
 private:
 	std::string path;
-	int width, height, nbChan;
+	int width, height;
 
 	unsigned int texture_index;
 	unsigned char *texture_data;
@@ -39,24 +39,23 @@ public:
 		this->texture_data = stbi_load(path.c_str(), &w, &h, &nbC, 4);
 		this->width = w;
 		this->height = h;
-		this->nbChan = nbC;
 
 		if (this->texture_data)
 		{
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->texture_data);
 			glBindTexture(GL_TEXTURE_2D, this->texture_index);
 
-			if (powerOfTwo(w) && powerOfTwo(h))
+			/*if (powerOfTwo(w) && powerOfTwo(h))
 			{
 				glGenerateMipmap(GL_TEXTURE_2D);
 			}
 			else
-			{
+			{*/
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			}
+			//}
 			this->loaded = true;
 		}
 		else

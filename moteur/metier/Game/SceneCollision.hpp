@@ -36,8 +36,8 @@ public :
 		//Texte
 		Text2DShader * textShader = new Text2DShader("Shaders/text2d_vertex.glsl", "Shaders/text2d_fragment.glsl", glm::ortho(0.0f, 1.0f * screen_width, 0.0f, 1.0f * screen_height));
 
-		Texture * atlasText = new Texture("Textures/Font/Atlas_Monofonto.png");
-		text2D = new Text2D(textShader, atlasText, 32,64);
+		Texture * atlasText = new Texture("Textures/Font/Atlas_Monofonto.jpg");
+		text2D = new Text2D(textShader, atlasText, 128,256);
 
 		Camera* c = new Camera(vec3(0, -2, -16), 90, 0);
 		this->cameras.push_back(c);
@@ -92,7 +92,7 @@ public :
 			this->cooldownFPS = 1.0f;
 		}
 
-		this->text2D->DrawText(std::to_string(fps), -1, 1);
+		this->text2D->DrawText(std::to_string(fps), -1, 1, 0.9f);
 
 	}
 };

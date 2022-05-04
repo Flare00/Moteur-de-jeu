@@ -42,12 +42,12 @@ public:
 
 	}
 
-	void DrawText(std::string texte, float x, float y) {
+	void DrawText(std::string texte, float x, float y, float scale) {
 		this->shader->use();
 		std::vector<vec2> vertices;
 		std::vector<vec2> uv;
-		float sizeX = 0.05f;
-		float sizeY = 2 * sizeX;
+		float sizeX = 0.05f * scale;
+		float sizeY = (((float)heightChar)/ (float)widthChar) *sizeX;
 		for (int i = 0, max = texte.length(); i < max; i++) {
 			glm::vec2 vTL = glm::vec2(x + (i * sizeX), y );
 			glm::vec2 vTR = glm::vec2(x + (i * sizeX) + sizeX, y );
