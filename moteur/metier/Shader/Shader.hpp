@@ -15,22 +15,25 @@
 
 #include <World/Camera.hpp>
 #include <Tools/LoadShader.hpp>
-class Shader {
+class Shader
+{
 protected:
 	GLuint id;
 	std::string vertex;
 	std::string fragment;
 
-	//vertex
+	// vertex
 	GLuint u_view;
 	GLuint u_projection;
 	GLuint u_camera_transformation;
 
-	//fragement
+	// fragement
 	GLuint u_camera_pos;
+
 public:
-	Shader(std::string vertex, std::string fragment) {
-		this->id = LoadShaders(vertex.c_str(), fragment.c_str());
+	Shader(std::string vertex, std::string fragment, std::string geometry = "", std::string tessControl = "", std::string tessEval = "")
+	{
+		this->id = LoadShaders(vertex, fragment, geometry, tessControl, tessEval);
 		this->vertex = vertex;
 		this->fragment = fragment;
 
@@ -41,15 +44,18 @@ public:
 		this->u_camera_pos = glGetUniformLocation(this->id, "u_camera_pos");
 	}
 
-	virtual ~Shader() {
+	virtual ~Shader()
+	{
 		glDeleteProgram(id);
 	}
 
-	void use() {
+	void use()
+	{
 		glUseProgram(id);
 	}
 
-	void drawView(Camera* camera) {
+	void drawView(Camera *camera)
+	{
 		glUseProgram(id);
 		glUniformMatrix4fv(this->u_view, 1, GL_FALSE, &camera->getViewMatrix()[0][0]);
 		glUniformMatrix4fv(this->u_projection, 1, GL_FALSE, &camera->getProjection()[0][0]);
@@ -57,14 +63,10 @@ public:
 		glUniform3fv(this->u_camera_pos, 1, &camera->getPosition()[0]);
 	}
 
-	GLuint getProgramID() {
+	GLuint getProgramID()
+	{
 		return this->id;
 	}
-
-
-
-
 };
-
 
 #endif

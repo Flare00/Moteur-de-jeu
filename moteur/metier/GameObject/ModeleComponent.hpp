@@ -33,6 +33,7 @@ protected:
 		bool destroyAtEnd;
 	};
 	std::vector<TextureContainer> textures;
+	int heightMapId;
 
 	// Buffers
 	GLuint VAO;

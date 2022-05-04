@@ -51,10 +51,10 @@ public:
 			}
 			else
 			{*/
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			//}
 			this->loaded = true;
 		}
@@ -72,12 +72,19 @@ public:
 		glUniform1i(u_texture, index);
 	}
 
-	int getWidth() {
+	int getWidth()
+	{
 		return this->width;
 	}
-	
-	int getHeight() {
+
+	int getHeight()
+	{
 		return this->height;
+	}
+
+	unsigned char *getData()
+	{
+		return this->texture_data;
 	}
 };
 
