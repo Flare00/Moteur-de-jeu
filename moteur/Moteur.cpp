@@ -121,6 +121,7 @@ int main(void)
 	// Cull triangles which normal is not towards the camera
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_FRAMEBUFFER_SRGB);
 
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);

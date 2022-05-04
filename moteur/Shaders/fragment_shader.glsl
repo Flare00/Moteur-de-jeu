@@ -28,6 +28,7 @@ uniform Light u_lights[MAX_LIGHT];
 uniform vec3 u_camera_pos;
 
 uniform int u_light_number;
+uniform float u_gamma_correction;
 
 uniform sampler2D u_texture;
 uniform int u_has_texture = 0;
@@ -52,7 +53,6 @@ vec3 calculateLight(Light light, vec3 normal, vec3 cameraDir){
 
 void main(){
     //color = vec4(u_lights[0].intensity,0,0, 1);
-
     vec3 norm = normalize(Normal);
     vec3 cameraDir = normalize(u_camera_pos - FragPos);
 
@@ -61,7 +61,7 @@ void main(){
     for(int i = 0; i < u_light_number; i++){
         lightVec += calculateLight(u_lights[i], norm, cameraDir);
     }
-
+    lightVec = pow(lightVec, vec3(1.0/u_gamma_correction));
 
 	if(u_has_texture == 0){
 		color = (vec4(lightVec,1) * vec4(TexCoord , 0, 1 ));

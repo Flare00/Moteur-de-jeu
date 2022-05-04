@@ -37,6 +37,9 @@ protected:
 	//Light number
 	GLuint u_light_number;
 
+	//Gamma correction
+	GLuint u_gamma_correction;
+
 	U_Material u_material;
 	U_Light u_lights[MAX_LIGHT];
 	std::vector<Light> lights;
@@ -52,6 +55,8 @@ public:
 		this->u_material.specular = glGetUniformLocation(this->id, "u_material.specular");
 		this->u_material.shininess = glGetUniformLocation(this->id, "u_material.shininess");
 
+		this->u_gamma_correction = glGetUniformLocation(this->id, "u_gamma_correction");
+
 		this->u_light_number = glGetUniformLocation(this->id, "u_light_number");
 		for (int i = 0; i < MAX_LIGHT; i++) {
 			this->u_lights[i].position = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].position")).c_str());
@@ -64,6 +69,7 @@ public:
 
 	void setLight() {
 		int nbLight = (lights.size() < MAX_LIGHT ? lights.size() : MAX_LIGHT);
+		glUniform1f(this->u_gamma_correction, 2.2f);
 		glUniform1i(this->u_light_number, nbLight);
 		//Load Lights
 		for (int i = 0; i < nbLight; i++) {
