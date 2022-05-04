@@ -1,12 +1,17 @@
 #ifndef __GLOBAL_SHADER_H__
 #define __GLOBAL_SHADER_H__
 
-#define NB_LIGHT 1
+#define MAX_LIGHT 128
 #include <string>
+#include <vector>
+
 #include "Shader.hpp"
 #include "Transformation.hpp"
 #include "Texture.hpp"
 #include <Global.hpp>
+#include <Light/Light.hpp>
+
+
 class GlobalShader : public Shader {
 protected:
 	struct U_Material {
@@ -29,8 +34,12 @@ protected:
 	GLuint u_texture;
 	GLuint u_has_texture;
 
+	//Light number
+	GLuint u_light_number;
+
 	U_Material u_material;
-	U_Light u_lights[NB_LIGHT];
+	U_Light u_lights[MAX_LIGHT];
+	std::vector<Light> lights;
 
 public:
 	GlobalShader(std::string vertex, std::string fragment) : Shader(vertex, fragment) {
@@ -43,20 +52,25 @@ public:
 		this->u_material.specular = glGetUniformLocation(this->id, "u_material.specular");
 		this->u_material.shininess = glGetUniformLocation(this->id, "u_material.shininess");
 
-		for (int i = 0; i < NB_LIGHT; i++) {
-			std::string lightID = std::string("u_lights[") + std::to_string(i) + std::string("]");
-			this->u_lights[i].position = glGetUniformLocation(this->id, (lightID + ".position").c_str());
-			this->u_lights[i].color = glGetUniformLocation(this->id, (lightID + ".color").c_str());
-			this->u_lights[i].position = glGetUniformLocation(this->id, (lightID + ".intensity").c_str());
+		this->u_light_number = glGetUniformLocation(this->id, "u_light_number");
+		for (int i = 0; i < MAX_LIGHT; i++) {
+			this->u_lights[i].position = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].position")).c_str());
+			this->u_lights[i].color = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].color")).c_str());
+			this->u_lights[i].intensity = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].intensity")).c_str());
 		}
+
+		lights.push_back(Light(vec3(0, 2, 2), vec3(1, 0, 0), 2.0f));
+		lights.push_back(Light(vec3(0, 0, -1), vec3(0, 1, 0), 2.0f));
 	}
 
-	void setLightTest() {
-		this->use();
-		for (int i = 0; i < 1; i++) {
-			glUniform3fv(this->u_lights[i].position, 1, &vec3(0, 5, 0)[0]);
-			glUniform3fv(this->u_lights[i].color, 1, &vec3(255, 255, 255)[0]);
-			glUniform1f(this->u_lights[i].intensity, 150.0f);
+	void setLight() {
+		int nbLight = (lights.size() < MAX_LIGHT ? lights.size() : MAX_LIGHT);
+		glUniform1i(this->u_light_number, nbLight);
+		//Load Lights
+		for (int i = 0; i < nbLight; i++) {
+			glUniform3fv(u_lights[i].position, 1, &(lights[i].getPosition())[0]);
+			glUniform3fv(u_lights[i].color, 1, &(lights[i].getColor())[0]);
+			glUniform1f(u_lights[i].intensity, lights[i].getIntensity());
 		}
 	}
 
@@ -75,6 +89,8 @@ public:
 	}
 
 	void drawMesh(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix, Material material) {
+
+
 		//Load Vertex
 		glUniformMatrix4fv(this->u_model, 1, GL_FALSE, &transformMatrix[0][0]);
 		glUniform3fv(this->u_material.ambiant, 1, &material.getAmbiant()[0]);

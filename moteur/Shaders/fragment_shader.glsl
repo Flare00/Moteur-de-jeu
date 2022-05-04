@@ -21,42 +21,48 @@ in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoord;
 
-#define NB_LIGHTS 1
+#define MAX_LIGHT 128
 //uniform data
 uniform Material u_material;
-uniform Light u_lights[NB_LIGHTS];
+uniform Light u_lights[MAX_LIGHT];
 uniform vec3 u_camera_pos;
+
+uniform int u_light_number;
 
 uniform sampler2D u_texture;
 uniform int u_has_texture = 0;
 
 vec3 calculateLight(Light light, vec3 normal, vec3 cameraDir){
+
+    float attenuation = 1.0 / distance(light.position, FragPos);
+    vec3 lCI = light.color * light.intensity * attenuation;
+    //ambiant
+    vec3 ambient = lCI * u_material.ambiant;
+    //diffuse
     vec3 lightDir = normalize(light.position - FragPos);
     float diff = max(dot(normal, lightDir), 0.0);
-
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(cameraDir, reflectDir),0.0), u_material.shininess);
-    float distance = length(light.position - FragPos);
-    float attenuation = 1.0 / distance;
-
-    vec3 lCI = light.color * light.intensity;
-    vec3 ambient = lCI * u_material.ambiant;
     vec3 diffuse = diff * lCI * u_material.diffuse;
+    //speculaire
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(cameraDir, reflectDir),0.0), 32);
+
     vec3 specular = spec * lCI * u_material.specular;
     return (ambient + diffuse + specular);
 }
 
 void main(){
+    //color = vec4(u_lights[0].intensity,0,0, 1);
 
     vec3 norm = normalize(Normal);
     vec3 cameraDir = normalize(u_camera_pos - FragPos);
 
-    vec3 lightVec = vec3(1.0f);
-    /*
-    for(int i = 0; i < NB_LIGHTS; i++){
-            lightVec += calculateLight(u_lights[i], norm, cameraDir);
+    vec3 lightVec = vec3(0.0f);
+
+    for(int i = 0; i < u_light_number; i++){
+        lightVec += calculateLight(u_lights[i], norm, cameraDir);
     }
-    */
+
+
 	if(u_has_texture == 0){
 		color = (vec4(lightVec,1) * vec4(TexCoord , 0, 1 ));
 	} else {

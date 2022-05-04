@@ -54,7 +54,7 @@ add_executable(moteur
         moteur/Shaders/vertex_shader.glsl
 		moteur/Shaders/fragment_shader.glsl
 		moteur/Shaders/terrain_vertex_shader.glsl
-		moteur/Shaders/terrain_fragment_shader.glsl)
+		moteur/Shaders/terrain_fragment_shader.glsl "moteur/metier/Light/Light.hpp")
 
 target_link_libraries(moteur
 	${ALL_LIBS}

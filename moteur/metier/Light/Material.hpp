@@ -11,7 +11,7 @@ private :
 	vec3 specular;
 	float shininess;
 public :
-	Material(vec3 ambiant = vec3(0), vec3 diffuse = vec3(1), vec3 specular = vec3(1), float shininess = 0) {
+	Material(vec3 ambiant = vec3(0.05f), vec3 diffuse = vec3(1.0f), vec3 specular = vec3(0.2f), float shininess = 0.2f) {
 		this->ambiant = ambiant;
 		this->diffuse = diffuse;
 		this->specular = specular;

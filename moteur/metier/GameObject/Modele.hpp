@@ -168,7 +168,7 @@ public:
 		this->shader->drawTexture(this->texture.texture, this->texture.id);
 
 		//LIGHT TEST
-		this->shader->setLightTest();
+		this->shader->setLight();
 		this->shader->drawMesh(this->VAO, this->indices.size(), this->getTransformMatrix(), this->material);
 
 

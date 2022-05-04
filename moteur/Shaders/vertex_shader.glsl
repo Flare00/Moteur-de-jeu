@@ -18,11 +18,11 @@ out vec2 TexCoord;
 
 
 void main(){
-        FragPos = aPos;
-        Normal = aNormal;
+        FragPos = vec3(u_model * vec4(aPos, 1.0f));
+        Normal = mat3(transpose(inverse(u_model))) * aNormal;
         TexCoord = aTexCoord;
 
         mat4 mvp = u_projection * u_view * u_model;
-        gl_Position = u_camera_transformation * mvp * vec4(FragPos,1);
+        gl_Position = u_camera_transformation * mvp * vec4(aPos, 1.0f);
 }
 
