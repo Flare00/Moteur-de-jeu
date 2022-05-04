@@ -1,19 +1,20 @@
 #ifndef __SHADER_H__
 #define __SHADER_H__
 #include <stdio.h>
+#include <string>
+#include <sstream>
 // Include GLEW
 #include <GL/glew.h>
 
 // Include GLFW
 #include <GLFW/glfw3.h>
+
 #include <glm/glm.hpp>
+
 #include <iostream>
 
-#include <common/shader.hpp>
-
-#include "../World/Camera.hpp"
-
-
+#include <World/Camera.hpp>
+#include <Tools/LoadShader.hpp>
 class Shader {
 protected:
 	GLuint id;
@@ -59,6 +60,10 @@ public:
 	GLuint getProgramID() {
 		return this->id;
 	}
+
+
+
+
 };
 
 

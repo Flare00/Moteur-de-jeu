@@ -9,7 +9,6 @@
 #include <iostream>
 #include <math.h>
 
-#include <common/shader.hpp>
 #include <common/objloader.hpp>
 
 #include <Light/Material.hpp>

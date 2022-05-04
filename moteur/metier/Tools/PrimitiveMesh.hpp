@@ -1,6 +1,8 @@
 #ifndef __PRIMITIVE_MESH_H__
 #define __PRIMITIVE_MESH_H__
+#define _USE_MATH_DEFINES
 
+#include <math.h>
 #include <glm/glm.hpp>
 #include <vector>
 

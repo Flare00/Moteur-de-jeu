@@ -10,6 +10,7 @@
 #include "Texture.hpp"
 #include <Global.hpp>
 #include <Light/Light.hpp>
+#include <Light/Material.hpp>
 
 
 class GlobalShader : public Shader {
@@ -84,7 +85,7 @@ public:
 		}
 	}
 
-	void drawMaterial(Material) {
+	void drawMaterial(Material material) {
 
 	}
 

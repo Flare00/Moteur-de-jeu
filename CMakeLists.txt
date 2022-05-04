@@ -43,16 +43,15 @@ add_definitions(
 
 # Moteur
 add_executable(moteur
-		common/shader.hpp
-		common/shader.cpp
+		
+		
 		common/objloader.hpp
 		common/objloader.cpp
-		common/shader.cpp
         moteur/Moteur.cpp
         moteur/Shaders/vertex_shader.glsl
 		moteur/Shaders/fragment_shader.glsl
 		moteur/Shaders/terrain_vertex_shader.glsl
-		moteur/Shaders/terrain_fragment_shader.glsl)
+		moteur/Shaders/terrain_fragment_shader.glsl "moteur/metier/Tools/LoadShader.hpp")
 
 
 target_link_libraries(moteur

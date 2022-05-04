@@ -7,8 +7,6 @@
 #include <vector>
 #include <cmath>
 
-#include "../GameObject/Modele.hpp"
-
 class BoundingBox
 {
 private:

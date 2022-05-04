@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-class CubeSimplify
+/*class CubeSimplify
 {
 private:
     glm::vec3 c_vecMin;
@@ -255,6 +255,6 @@ Modele *simplify(Modele *m, int gridResolution)
     res->setTexture(m->getTexture(), false);
 
     return res;
-}
+}*/
 
 #endif // !_SIMPLIFY_MESH_H__

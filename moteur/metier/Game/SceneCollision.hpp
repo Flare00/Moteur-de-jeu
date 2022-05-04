@@ -4,10 +4,9 @@
 #include <string>
 #include <glm/glm.hpp>
 
-#include "../Tools/PrimitiveMesh.hpp"
-#include "../Shader/GlobalShader.hpp"
-#include "../GameObject/Modele.hpp"
-#include "../GameObject/ModeleLOD.hpp"
+#include <Tools/PrimitiveMesh.hpp>
+#include <Shader/GlobalShader.hpp>
+#include <GameObject/ModeleLOD.hpp>
 #include <Collision/Physique.hpp>
 #include <World/InputCollision.hpp>
 #include <World/InputCollisionV2.hpp>

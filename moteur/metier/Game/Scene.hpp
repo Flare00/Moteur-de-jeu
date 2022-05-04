@@ -4,15 +4,14 @@
 #include <vector>
 #include <string>
 
-#include "../World/Camera.hpp"
-#include "../World/Input.hpp"
+#include <World/Camera.hpp>
+#include <World/Input.hpp>
 
-#include "../GameObject/GameObject.hpp"
-#include "../GameObject/Modele.hpp"
-#include "../Transformation.hpp"
-#include "../Texture.hpp"
-#include "../World/Camera.hpp"
-#include "../World/Input.hpp"
+#include <GameObject/GameObject.hpp>
+#include <Transformation.hpp>
+#include <Texture.hpp>
+#include <World/Camera.hpp>
+#include <World/Input.hpp>
 
 class Scene {
 protected:

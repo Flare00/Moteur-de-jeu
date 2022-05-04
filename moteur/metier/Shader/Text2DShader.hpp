@@ -7,7 +7,7 @@
 
 #include "Texture.hpp"
 #include <Global.hpp>
-
+#include <Tools/LoadShader.hpp>
 class Text2DShader{
 protected:
 	GLuint id;
