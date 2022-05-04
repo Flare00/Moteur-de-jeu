@@ -52,9 +52,9 @@ GLuint LoadShaders(std::string vertexPath, std::string fragmentPath, std::string
 			GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 			GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
-			printf("Compiling shader : %s\n", vertexPath);
+			printf("Compiling shader : %s\n", vertexPath.c_str());
 			if (CompileShader(VertexShaderID, vertexData) == GL_FALSE) return 0;
-			printf("Compiling shader : %s\n", fragmentPath);
+			printf("Compiling shader : %s\n", fragmentPath.c_str());
 			if (CompileShader(FragmentShaderID, fragmentData) == GL_FALSE) return 0;
 
 			GLuint GeometryShaderID;
@@ -64,7 +64,7 @@ GLuint LoadShaders(std::string vertexPath, std::string fragmentPath, std::string
 				geometryData = ReadFile(geometryPath);
 				if (geometryData.length() > 0) {
 					GeometryShaderID = glCreateShader(GL_GEOMETRY_SHADER);
-					printf("Compiling shader : %s\n", geometryPath);
+					printf("Compiling shader : %s\n", geometryPath.c_str());
 					if (CompileShader(GeometryShaderID, geometryData) == GL_FALSE) return 0;
 				}
 				else {
@@ -73,7 +73,7 @@ GLuint LoadShaders(std::string vertexPath, std::string fragmentPath, std::string
 			}
 
 			if (tesselationControlPath.length() > 0) {
-				tesselationControlData = ReadFile(tesselationControlPath);
+				tesselationControlData = ReadFile(tesselationControlPath.c_str());
 				if (tesselationControlData.length() > 0) {
 					TesselationControlShaderID = glCreateShader(GL_TESS_CONTROL_SHADER);
 					printf("Compiling shader : %s\n", tesselationControlPath);
@@ -88,7 +88,7 @@ GLuint LoadShaders(std::string vertexPath, std::string fragmentPath, std::string
 				tesselationEvalData = ReadFile(tesselationEvalPath);
 				if (tesselationEvalData.length() > 0) {
 					TesselationEvalShaderID = glCreateShader(GL_TESS_EVALUATION_SHADER);
-					printf("Compiling shader : %s\n", tesselationEvalPath);
+					printf("Compiling shader : %s\n", tesselationEvalPath.c_str());
 					if (CompileShader(TesselationEvalShaderID, tesselationEvalData) == GL_FALSE) return 0;
 				}
 				else {
