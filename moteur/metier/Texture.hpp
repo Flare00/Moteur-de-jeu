@@ -72,6 +72,14 @@ public:
 		glBindTexture(GL_TEXTURE_2D, this->texture_index);
 		glUniform1i(u_texture, index);
 	}
+
+	int getWidth() {
+		return this->width;
+	}
+	
+	int getHeight() {
+		return this->height;
+	}
 };
 
 #endif

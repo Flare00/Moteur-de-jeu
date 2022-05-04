@@ -5,5 +5,8 @@ bool global_pause = false;
 bool global_stop = false;
 GLFWwindow* global_window;
 
+int screen_width = 1024;
+int screen_height = 768;
+
 #endif // !__GLOBAL_HPP__
 

@@ -6,6 +6,7 @@
 #include <time.h>       /* time */
 #include <fstream>
 #include <string>
+
 // Include GLEW
 #include <GL/glew.h>
 
@@ -23,35 +24,33 @@ using namespace glm;
 #include <Global.hpp>
 #include <Game/Game.hpp>
 
-
 // settings
 const unsigned int SCR_WIDTH = 1024;
 const unsigned int SCR_HEIGHT = 768;
-
-// timing
-float deltaTime = 0.0f;	// time between current frame and last frame
-float lastFrame = 0.0f;
 
 Game* game;
 
 void mainLoop() {
 	game = new Game();
-	double lastTime = glfwGetTime();
-	int nbFrames = 0;
+	double lastFrame = 0.0f;
+	double currentFrame = glfwGetTime();
+	double deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
+
 	do {
 		// Measure speed
 		// per-frame time logic
 		// --------------------
-		float currentFrame = glfwGetTime();
+		double currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-
+		// FPS : float fps = 1.0f/deltaTime;
 		// input
 		// -----
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		game->Loop(deltaTime);
+		game->Loop((float)deltaTime);
 
 		// Swap buffers
 		glfwSwapBuffers(global_window);
@@ -64,6 +63,8 @@ void mainLoop() {
 
 int main(void)
 {
+	screen_width = SCR_WIDTH;
+	screen_height = SCR_HEIGHT;
 	// Initialise GLFW
 	if (!glfwInit())
 	{

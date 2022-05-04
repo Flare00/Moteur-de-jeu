@@ -7,7 +7,6 @@ find_package(OpenGL REQUIRED)
 # Compile external dependencies 
 add_subdirectory (external)
 
-
 # On Visual 2005 and above, this module can set the debug working directory
 cmake_policy(SET CMP0026 OLD)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/external/rpavlik-cmake-modules-fe2273")
@@ -28,7 +27,6 @@ include_directories(
 	moteur/metier
 	.
 )
-
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
 	glfw
@@ -54,10 +52,11 @@ add_executable(moteur
         moteur/Shaders/vertex_shader.glsl
 		moteur/Shaders/fragment_shader.glsl
 		moteur/Shaders/terrain_vertex_shader.glsl
-		moteur/Shaders/terrain_fragment_shader.glsl "moteur/metier/Light/Light.hpp")
+		moteur/Shaders/terrain_fragment_shader.glsl)
+
 
 target_link_libraries(moteur
-	${ALL_LIBS}
+	${ALL_LIBS} 
 )
 # Xcode and Visual working directories
 set_target_properties(moteur PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/moteur/")

@@ -1,6 +1,9 @@
 #ifndef __SCENE_COLLISION_H__
 #define __SCENE_COLLISION_H__
 
+#include <string>
+#include <glm/glm.hpp>
+
 #include "../Tools/PrimitiveMesh.hpp"
 #include "../Shader/GlobalShader.hpp"
 #include "../GameObject/Modele.hpp"
@@ -9,8 +12,10 @@
 #include <World/InputCollision.hpp>
 #include <World/InputCollisionV2.hpp>
 #include <Collision/RigidBody.hpp>
-
+#include <Text2D.hpp>
 #include "Scene.hpp"
+
+#include <Global.hpp>
 
 class SceneCollision : public Scene {
 private:
@@ -20,12 +25,20 @@ private:
 	int low_precision = 8;
 
 	InputCollision* inputCol;
-
+	Text2D* text2D;
+	int fps = 0;
+	float cooldownFPS = 0.1f;
 public :
 	SceneCollision() {
 	}
 
 	virtual void Init() {
+		//Texte
+		Text2DShader * textShader = new Text2DShader("Shaders/text2d_vertex.glsl", "Shaders/text2d_fragment.glsl", glm::ortho(0.0f, 1.0f * screen_width, 0.0f, 1.0f * screen_height));
+
+		Texture * atlasText = new Texture("Textures/Font/Atlas_Monofonto.png");
+		text2D = new Text2D(textShader, atlasText, 32,64);
+
 		Camera* c = new Camera(vec3(0, -2, -16), 90, 0);
 		this->cameras.push_back(c);
 
@@ -63,7 +76,8 @@ public :
 	}
 
 	virtual void Draw(float deltaTime) {
-
+		this->cooldownFPS -= deltaTime;
+		//Process input
 		inputCol->processInput(deltaTime);
 		if (!global_pause) {
 			if (globalShader != NULL && this->activeCamera >= 0 && this->activeCamera < this->cameras.size())
@@ -71,8 +85,15 @@ public :
 			// Clear the screen
 			Physique::computePhysique(this->scene, deltaTime);
 		}
-		
 		this->scene->compute(this->cameras[this->activeCamera], true);
+		//compute FPS
+		if (this->cooldownFPS <= 0) {
+			fps = 1.0f / deltaTime;
+			this->cooldownFPS = 1.0f;
+		}
+
+		this->text2D->DrawText(std::to_string(fps), -1, 1);
+
 	}
 };
 

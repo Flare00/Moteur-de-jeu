@@ -10,10 +10,9 @@ add_definitions(
 	-DGLEW_STATIC
 	-D_CRT_SECURE_NO_WARNINGS
 )
-
 ### GLFW ###
-
 add_subdirectory (glfw-3.3.7)
+
 
 include_directories(
 	glfw-3.3.7/include/GLFW/

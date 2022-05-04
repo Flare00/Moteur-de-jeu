@@ -49,7 +49,6 @@ public:
 	}
 
 	void drawView(Camera* camera) {
-		
 		glUseProgram(id);
 		glUniformMatrix4fv(this->u_view, 1, GL_FALSE, &camera->getViewMatrix()[0][0]);
 		glUniformMatrix4fv(this->u_projection, 1, GL_FALSE, &camera->getProjection()[0][0]);
