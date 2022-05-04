@@ -59,8 +59,7 @@ public:
 			this->u_lights[i].intensity = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].intensity")).c_str());
 		}
 
-		lights.push_back(Light(vec3(0, 2, 2), vec3(1, 0, 0), 2.0f));
-		lights.push_back(Light(vec3(0, 0, -1), vec3(0, 1, 0), 2.0f));
+		lights.push_back(Light(vec3(0, 1, -2), vec3(1, 1, 1), 3.0f));
 	}
 
 	void setLight() {
