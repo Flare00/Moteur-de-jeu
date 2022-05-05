@@ -127,10 +127,9 @@ public:
 				Intersection::CollisionData data = CollisionComponent::computeCollision(r1->getCollision(), r2->getCollision());
 				if (data.collide)
 				{
-					printf("COLLISION");
 					applyImpulse(r1, r2, data);
-					//rigidbodiesGO[i]->getTransform()->translate(data.normal * (data.profondeur / r1->getMass() * 0.45f));
-					//rigidbodiesGO[j]->getTransform()->translate(data.normal * (data.profondeur / r2->getMass() * 0.45f));
+					rigidbodiesGO[i]->getTransform()->translate(data.normal * (data.profondeur / r1->getMass() * 0.45f));
+					rigidbodiesGO[j]->getTransform()->translate(data.normal * (data.profondeur / r2->getMass() * 0.45f));
 				}
 			}
 		}

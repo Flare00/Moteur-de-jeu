@@ -121,7 +121,6 @@ public:
 				intersectionAABBtoModele(a, b, &result);
 			}
 		}
-		std::cout << result.collide << std::endl;
 		return result;
 	}
 };
