@@ -8,10 +8,11 @@ class RigidBody : public Component
 {
 private:
     GameObject *parent;
-    CollisionComponent* collision = NULL;
-    CollisionComponent* collisionModele = NULL;
+    CollisionComponent *collision = NULL;
+    CollisionComponent *collisionModele = NULL;
     glm::vec3 vitesse;
     glm::vec3 forces;
+    glm::vec3 correction;
     float masse;
     float coefRestit;
     float friction;
@@ -23,39 +24,47 @@ public:
         this->staticObj = staticObj;
 
         this->parent = parent;
-        if (staticObj) {
+        if (staticObj)
+        {
             this->masse = FLT_MAX;
 
             std::cout << "Masse : " << this->masse << std::endl;
         }
-        else {
+        else
+        {
             this->masse = m;
             this->vitesse = v;
         }
         this->coefRestit = cR;
         this->friction = f;
         this->forces = glm::vec3(0.0f);
+        this->correction = glm::vec3(0.0f);
     }
     ~RigidBody() {}
 
     void generateBoundingBox(std::vector<glm::vec3> vertexArray)
     {
-        this->collision = new CollisionComponent( vertexArray);
+        this->collision = new CollisionComponent(vertexArray);
     }
 
-    void generateSphereCollision(glm::vec3 center, float radius) 
+    void generateSphereCollision(glm::vec3 center, float radius)
     {
         this->collision = new CollisionComponent(center, radius);
     }
 
     void generateModeleCollision(std::vector<glm::vec3> vertexArray, std::vector<unsigned int> indices)
     {
-        this->collisionModele = new CollisionComponent( vertexArray, indices);
+        this->collisionModele = new CollisionComponent(vertexArray, indices);
     }
 
     void addForces(glm::vec3 force)
     {
         this->forces += force * (1.0f / this->masse);
+    }
+
+    void addCorrection(glm::vec3 correction)
+    {
+        this->correction += correction;
     }
 
     void setVitesse(glm::vec3 v)
@@ -78,6 +87,8 @@ public:
             }
 
             parent->getTransform()->translate(vitesse * deltaTime);
+            parent->getTransform()->translate(correction * this->getInvMass());
+            this->correction = glm::vec3(0.0f);
             this->forces = glm::vec3(0.0f);
         }
     }
@@ -87,11 +98,10 @@ public:
         return this->collision;
     }
 
-    CollisionComponent* getCollisionModele()
+    CollisionComponent *getCollisionModele()
     {
         return this->collisionModele;
     }
-
 
     glm::vec3 computeVitesseRelative(RigidBody *r)
     {
@@ -123,7 +133,8 @@ public:
         return this->friction;
     }
 
-    bool isStatic() {
+    bool isStatic()
+    {
         return this->staticObj;
     }
 };

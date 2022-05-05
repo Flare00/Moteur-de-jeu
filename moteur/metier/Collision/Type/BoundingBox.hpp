@@ -97,15 +97,13 @@ public:
 		{
 			glm::vec3 pmax = max - p;
 			float tmp = p[0], tmpMax = pmax[0];
-			for (int i = 1; i < 3; i++)
+			for (int i = 0; i < 3; i++)
 			{
-				tmp = glm::max(tmp, p[i]);
-				tmpMax = glm::max(tmpMax, pmax[i]);
+				res = glm::max(glm::min(p[i], pmax[i]), res);
 			}
-			res = glm::min(tmp, tmpMax);
 		}
 
-		return res;
+		return res + 0.001f;
 	}
 
 	virtual glm::vec3 getCenter()

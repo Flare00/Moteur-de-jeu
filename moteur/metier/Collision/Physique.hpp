@@ -126,23 +126,26 @@ public:
 				Intersection::CollisionData data = CollisionComponent::computeCollision(r1->getCollision(), r2->getCollision());
 				if (data.collide)
 				{
-					for (int k = 0; k < 20; k++)
+					for (int k = 0; k < 10; k++)
 					{
 						applyImpulse(r1, r2, data);
 					}
 
-						/*float precision = 0.05f;
+					float invMass = (r1->getInvMass() + r2->getInvMass());
+					if (invMass != 0.0f)
+					{
+						float precision = 0.01f;
+						std::cout << data.profondeur << std::endl;
 						float distance = glm::max(data.profondeur - precision, 0.0f);
-						float invMass = (r1->getInvMass() + r2->getInvMass());
-						if (invMass != 0.0f)
-						{
-							float scalar = distance / invMass;
-							glm::vec3 correction = data.normal * scalar * 0.45f;
-							rigidbodiesGO[i]->getTransform()->translate(correction * r1->getInvMass());
-							rigidbodiesGO[i]->getTransform()->translate(-correction * r2->getInvMass());
-							// rigidbodiesGO[i]->getTransform()->translate(data.normal * (data.profondeur / (r2->getMass() + r1->getMass()) * 0.45f));
-							// rigidbodiesGO[j]->getTransform()->translate(-data.normal * (data.profondeur / (r2->getMass() + r1->getMass()) * 0.45f));
-						}*/
+
+						float scalar = distance / invMass;
+						glm::vec3 correction = data.normal * scalar * 0.45f;
+						r1->addCorrection(-correction);
+						r2->addCorrection(correction);
+
+						// rigidbodiesGO[i]->getTransform()->translate(data.normal * (data.profondeur / (r2->getMass() + r1->getMass()) * 0.45f));
+						// rigidbodiesGO[j]->getTransform()->translate(-data.normal * (data.profondeur / (r2->getMass() + r1->getMass()) * 0.45f));
+					}
 				}
 			}
 		}
