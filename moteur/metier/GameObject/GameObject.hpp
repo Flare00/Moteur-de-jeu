@@ -11,7 +11,7 @@
 #include "../World/Camera.hpp"
 
 class GameObject {
-private:
+protected:
 	std::string identifier;
 	Transformation* transform;
 	GameObject* parent;
@@ -34,7 +34,7 @@ public:
 
 	~GameObject() {
 		free(this->parent);
-		for (int i = 0, max = this->childs.size(); i < max; i++) {
+		for (size_t i = 0, max = this->childs.size(); i < max; i++) {
 			free(this->childs[i]);
 		}
 		free(this->transform);
@@ -59,7 +59,7 @@ public:
 	}
 
 	void computeDFS(Camera * camera) {
-		for (int i = 0, max = this->childs.size(); i < max; i++) {
+		for (size_t i = 0, max = this->childs.size(); i < max; i++) {
 			this->childs[i]->compute(camera, true);
 		}
 	}
@@ -75,7 +75,7 @@ public:
 				current->compute(camera, false);
 			}
 			std::vector<GameObject*> currentChilds = current->getChilds();
-			for (int i = 0, max = currentChilds.size(); i < max; i++) {
+			for (size_t i = 0, max = currentChilds.size(); i < max; i++) {
 				parcours.push_back(currentChilds[i]);
 			}
 		}
@@ -94,7 +94,7 @@ public:
 	//Retourne un enfant selon sont identifiant, seulement si enfant directe de l'objet courant.
 	GameObject* findDirectChild(std::string identifier) {
 		GameObject* res = NULL;
-		for (int i = 0, max = this->childs.size(); i < max && res == NULL; i++) {
+		for (size_t i = 0, max = this->childs.size(); i < max && res == NULL; i++) {
 			if (this->childs[i]->getIdentifier().compare(identifier) == 0) {
 				res = this->childs[i];
 			}
@@ -105,7 +105,7 @@ public:
 	//Retourne un enfant selon sont identifiant si l'enfant se trouve dans la g�n�alogie. Parcours DFS
 	GameObject* findChild(std::string identifier) {
 		GameObject* res = NULL;
-		for (int i = 0, max = this->childs.size(); i < max && res == NULL; i++) {
+		for (size_t i = 0, max = this->childs.size(); i < max && res == NULL; i++) {
 			if (this->childs[i]->getIdentifier().compare(identifier) == 0) {
 				res = this->childs[i];
 			}
@@ -161,7 +161,7 @@ public:
 		return this->composants;
 	}
 	std::vector<Component*> getComponentsByType(Component::Type type) {
-		int i = 0, max = this->composants.size();
+		size_t i = 0, max = this->composants.size();
 		std::vector<Component*> res;
 		while (i < max) {
 			if (this->composants[i]->getType() == type) {
@@ -173,7 +173,7 @@ public:
 	}
 
 	Component* getOneComponentByType(Component::Type type) {
-		int i = 0, max = this->composants.size();
+		size_t i = 0, max = this->composants.size();
 		Component* res = NULL;
 		while (i < max && res == NULL) {
 			if (this->composants[i]->getType() == type) {
@@ -185,7 +185,7 @@ public:
 	}
 
 	bool hasOneComponentByType(Component::Type type) {
-		int i = 0, max = this->composants.size();
+		size_t i = 0, max = this->composants.size();
 		bool res = false;
 		while (i < max && !res) {
 			if (this->composants[i]->getType() == type) {
@@ -198,7 +198,7 @@ public:
 
 	std::vector<Component*> getAllComponentsByTypeRecursive(Component::Type type) {
 		std::vector<Component*> res = this->getComponentsByType(type);
-		for (int i = 0, max = this->childs.size(); i < max; i++) {
+		for (size_t i = 0, max = this->childs.size(); i < max; i++) {
 			std::vector<Component*> tmp = this->childs[i]->getAllComponentsByTypeRecursive(type);
 			res.insert(res.end(), tmp.begin(), tmp.end());
 		}
@@ -210,7 +210,7 @@ public:
 		if (hasOneComponentByType(type)) {
 			res.push_back(this);
 		}
-		for (int i = 0, max = this->childs.size(); i < max; i++) {
+		for (size_t i = 0, max = this->childs.size(); i < max; i++) {
 			std::vector<GameObject*> tmp = this->childs[i]->getAllGameObjectByComponentType(type);
 			res.insert(res.end(), tmp.begin(), tmp.end());
 		}

@@ -10,6 +10,8 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
+#include <World/Frustum.hpp>
+
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
 const float ROLL = 0.0f;
@@ -27,7 +29,7 @@ enum CameraAxe {
 
 class Camera {
 public:
-
+	Frustum frustum;
 	//transformation
 	glm::mat4 transformation;
 
@@ -170,14 +172,26 @@ public:
 		return this->position;
 	}
 
-	float isInFieldOfView(glm::vec3 point) {
-		float v = glm::distance(this->position, point);
-		if (v <= this->distanceMax) {
-			return v;
-		}
-		return -1.0f;
+	float distanceFromCamera(glm::vec3 point) {
+		return glm::distance(this->position, point);
 	}
 
+	void frustumUpdate() {
+		this->frustum.update(this->getProjection(), this->getViewMatrix());
+	}
+
+	bool isInFrustum(Collision* collision) {
+		bool result = true;
+		switch (collision->getType()) {
+		case Collision::BOUNDING_BOX:
+			result = this->frustum.isVisible((BoundingBox*)collision);
+			break;
+		case Collision::SPHERE:
+			result = this->frustum.isVisible((SphereCollision*)collision);
+			break;
+		}
+		return result;
+	}
 
 private:
 	void updateVectors() {

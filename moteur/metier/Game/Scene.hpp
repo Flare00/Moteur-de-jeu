@@ -31,7 +31,7 @@ public:
 
 	~Scene() {
 		free(this->input);
-		for (int i = 0, max = this->cameras.size(); i < max; i++) {
+		for (size_t i = 0, max = this->cameras.size(); i < max; i++) {
 			free(this->cameras[i]);
 		}
 		free(this->scene);

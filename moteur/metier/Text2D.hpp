@@ -48,7 +48,7 @@ public:
 		std::vector<vec2> uv;
 		float sizeX = 0.05f * scale;
 		float sizeY = (((float)heightChar)/ (float)widthChar) *sizeX;
-		for (int i = 0, max = texte.length(); i < max; i++) {
+		for (size_t i = 0, max = texte.length(); i < max; i++) {
 			glm::vec2 vTL = glm::vec2(x + (i * sizeX), y );
 			glm::vec2 vTR = glm::vec2(x + (i * sizeX) + sizeX, y );
 			glm::vec2 vBR = glm::vec2(x + (i * sizeX) + sizeX, y - sizeY);
@@ -89,7 +89,7 @@ public:
 		glBufferData(GL_ARRAY_BUFFER, uv.size() * sizeof(vec2), &uv[0], GL_STATIC_DRAW);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-		this->shader->draw(this->VAO, vertices.size(), this->texture);
+		this->shader->draw(this->VAO, (GLsizei)vertices.size(), this->texture);
 	}
 
 	~Text2D() {

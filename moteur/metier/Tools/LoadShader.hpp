@@ -12,7 +12,7 @@ std::string ReadFile(std::string path) {
 		return retour;
 	}
 	else {
-		printf("Impossible to open %s. Are you in the right directory ?\n", path);
+		printf("Impossible to open %s. Are you in the right directory ?\n", path.c_str());
 		getchar();
 		return "";
 	}

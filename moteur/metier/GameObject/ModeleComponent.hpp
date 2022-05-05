@@ -54,7 +54,7 @@ public:
 
 		// Chargement du fichier de maillage
 		loadOFF(fileOff, this->vertexArray, indices, triangles);
-		for (int i = 0, max = indices.size(); i < max; i++)
+		for (size_t i = 0, max = indices.size(); i < max; i++)
 		{
 			this->indices.push_back((int)indices[i]);
 		}
@@ -84,7 +84,6 @@ public:
 
 		glGenVertexArrays(1, &this->VAO);
 		glGenBuffers(3, this->VBO);
-		glGenBuffers(1, &this->EBO);
 
 		glBindVertexArray(VAO);
 
@@ -108,10 +107,21 @@ public:
 			glBufferData(GL_ARRAY_BUFFER, this->normals.size() * sizeof(vec3), &this->normals[0], GL_STATIC_DRAW);
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 		}
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(unsigned int), &this->indices[0], GL_STATIC_DRAW);
+		if (this->indices.size() > 0) {
+			glGenBuffers(1, &this->EBO);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(unsigned int), &this->indices[0], GL_STATIC_DRAW);
+		}
 
 		this->hasData = true;
+	}
+
+	~ModeleComponent() {
+		glDeleteVertexArrays(1, &this->VAO);
+		glDeleteBuffers(3, this->VBO);
+		if (this->indices.size() > 0) {
+			glDeleteBuffers(1, &this->EBO);
+		}
 	}
 
 	virtual void draw(Camera *camera, glm::mat4 transform, RigidBody *rigidbody = NULL)
@@ -120,15 +130,12 @@ public:
 		{
 			return;
 		}
+
 		bool isInFOV = false;
 
 		if (rigidbody != NULL)
 		{
-			std::vector<glm::vec3> boxCoords = rigidbody->getCollision()->getBoundingBox()->getCoords();
-			for (int i = 0, max = boxCoords.size(); i < max && !isInFOV; i++)
-			{
-				isInFOV = camera->isInFieldOfView(boxCoords[i]);
-			}
+			isInFOV = camera->isInFrustum(rigidbody->getCollision()->getCollision());
 		}
 		else
 		{
@@ -142,15 +149,14 @@ public:
 
 		glEnable(GL_TEXTURE_2D);
 
-		for (int i = 0, max = textures.size(); i < max; i++)
+		for (size_t i = 0, max = textures.size(); i < max; i++)
 		{
-			this->shader->drawTexture(this->textures[i].texture, i);
+			this->shader->drawTexture(this->textures[i].texture, (int)i);
 		}
-
 		// LIGHT TEST
 		this->shader->setLight();
 		this->shader->drawMaterial(this->material);
-		this->shader->drawMesh(this->VAO, this->indices.size(), transform);
+		this->shader->drawMesh(this->VAO, (GLsizei)this->indices.size(), transform);
 	}
 
 	Texture *getTexture(int i)
@@ -187,9 +193,18 @@ public:
 	void setData(std::vector<glm::vec3> indexed_vertices, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, std::vector<glm::vec3> normals)
 	{
 		this->vertexArray = indexed_vertices;
-		this->normals = normals;
 		this->indices = indices;
 		this->texCoords = texCoords;
+		this->normals = normals;
+
+		loadBuffer();
+	}
+
+	void setData(std::vector<glm::vec3> indexed_vertices, std::vector<glm::vec2> texCoords)
+	{
+		this->vertexArray = indexed_vertices;
+		this->texCoords = texCoords;
+
 		loadBuffer();
 	}
 	std::vector<glm::vec3> getIndexedVertices()

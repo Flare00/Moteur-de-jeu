@@ -79,10 +79,33 @@ public:
 			}
 		}
 
-		for (int i = 0, max = indexed_vertices.size(); i < max; i++) {
-			indices.push_back(i);
+		for (size_t i = 0, max = indexed_vertices.size(); i < max; i++) {
+			indices.push_back((unsigned int)i);
 		}
 		modele->setData(indexed_vertices, indices, texCoords, normals);
+	}
+
+	static void generate_plane_terrain_collision(ModeleComponent* modele, int res_x, int res_y, float size_x, float size_y) {
+		std::vector<glm::vec3> indexed_vertices;
+		std::vector<glm::vec3> normals;
+		std::vector<unsigned int> indices;
+
+		std::vector<glm::vec2> texCoords;
+
+		float subSizeX = (size_x / (float)res_x);
+		float subSizeY = (size_x / (float)res_x);
+		float centerX = size_x / 2.0f;
+		float centerY = size_y / 2.0f;
+
+		for (int i = 0; i <= res_x; i++) {
+			float pointX = subSizeX * i;
+			for (int j = 0; j <= res_y; j++) {
+				float pointY = subSizeY * j;
+				indexed_vertices.push_back(glm::vec3(pointX - centerX, 0.0f, pointY - centerY));
+				texCoords.push_back(glm::vec2(i / (float)res_x, j / (float)res_y));
+			}
+		}
+		modele->setData(indexed_vertices, texCoords);
 	}
 
 	static void generate_uv_sphere(ModeleComponent* modele, int nbMeridien, int nbParalleles) {
@@ -91,10 +114,10 @@ public:
 		std::vector<unsigned int> indices;
 		std::vector<glm::vec2> texCoords;
 		for (int j = 0; j <= nbParalleles; j++) {
-			float parallele = (M_PI * (float)j) / ((float)nbParalleles);
+			float parallele = (float)(M_PI * (float)j) / ((float)nbParalleles);
 			for (int i = 0; i <= nbMeridien; i++) {
 				//Coordinate
-				float meridien = (2.0f * M_PI * (float)i) / ((float)nbMeridien);
+				float meridien = (float)(2.0f * M_PI * (float)i) / ((float)nbMeridien);
 				float x = sin(parallele) * cos(meridien);
 				float y = cos(parallele);
 				float z = sin(parallele) * sin(meridien);

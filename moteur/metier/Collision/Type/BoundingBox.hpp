@@ -1,16 +1,16 @@
-
-#ifndef _BOUNDING_BOX_H_
-#define _BOUNDING_BOX_H_
+#ifndef __BOUNDING_BOX_HPP__
+#define __BOUNDING_BOX_HPP__
 
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
 #include <cmath>
 
-class BoundingBox
+#include "Collision.hpp"
+
+class BoundingBox : public Collision
 {
 private:
-	glm::mat4 transformation;
 	glm::vec3 max;
 	glm::vec3 min;
 	glm::vec3 transformedMax;
@@ -18,14 +18,14 @@ private:
 	glm::vec3 position;
 
 public:
-	BoundingBox(std::vector<glm::vec3> indexed_vertices)
+	BoundingBox(std::vector<glm::vec3> indexed_vertices) : Collision(TypeCollision::BOUNDING_BOX)
 	{
 		if (indexed_vertices.size() > 0)
 		{
 			this->max = (glm::vec3)indexed_vertices[0];
 			this->min = (glm::vec3)indexed_vertices[0];
 		}
-		for (int i = 1, max = indexed_vertices.size(); i < max; i++)
+		for (size_t i = 1, max = indexed_vertices.size(); i < max; i++)
 		{
 			for (int j = 0; j < 3; j++)
 			{
@@ -49,7 +49,7 @@ public:
 		return glm::vec3(abs(this->max.x - this->min.x), abs(this->max.y - this->min.y), abs(this->max.z - this->min.z));
 	}
 
-	void applyTransformation(glm::mat4 t)
+	virtual void applyTransformation(glm::mat4 t)
 	{
 		bool update = false;
 		for (int i = 0; i < 4 && !update; i++)
@@ -94,43 +94,13 @@ public:
 			   (v.z <= this->getMax().z && v.z >= this->getMin().z);
 	}
 
-	std::vector<glm::vec3> getIntersectPoint(BoundingBox *box)
+
+	virtual glm::vec3 getCenter()
 	{
-		std::vector<glm::vec3> res;
-		std::vector<glm::vec3> tmp = getCoords();
-
-		for (int i = 0, maxTmp = tmp.size(); i < maxTmp; i++)
-		{
-			if (box->isInCollision(tmp[i]))
-			{
-				res.push_back(tmp[i]);
-			}
-		}
-
-		tmp = box->getCoords();
-		for (int i = 0, maxTmp = tmp.size(); i < maxTmp; i++)
-		{
-			if (this->isInCollision(tmp[i]))
-			{
-				res.push_back(tmp[i]);
-			}
-		}
-		
-		return res;
+		return getMin() + (getSize() / 2.0f);
 	}
 
-	bool isIntersection(BoundingBox *box)
-	{
-		glm::vec3 aMin = getMin();
-		glm::vec3 aMax = getMax();
-		glm::vec3 bMin = box->getMin();
-		glm::vec3 bMax = box->getMax();
-		return aMin.x <= bMax.x && aMax.x >= bMin.x &&
-			   aMin.y <= bMax.y && aMax.y >= bMin.y &&
-			   aMin.z <= bMax.z && aMax.z >= bMin.z;
-	}
-
-	std::vector<glm::vec3> getCoords()
+	virtual std::vector<glm::vec3> getCoords()
 	{
 		std::vector<glm::vec3> coords(8);
 		glm::vec3 size = getSize();
@@ -167,11 +137,6 @@ public:
 		return coords;
 	}
 
-	glm::vec3 getCenter()
-	{
-		return getMin() + (getSize() / 2.0f);
-	}
-
 private:
 	void computeTransformedMinMax()
 	{
@@ -181,7 +146,7 @@ private:
 			this->transformedMin = coords[0];
 			this->transformedMax = coords[0];
 
-			for (int i = 1, max = coords.size(); i < max; i++)
+			for (size_t i = 1, max = coords.size(); i < max; i++)
 			{
 				if (coords[i].x < transformedMin.x)
 				{

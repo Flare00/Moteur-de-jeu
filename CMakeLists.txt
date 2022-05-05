@@ -46,7 +46,7 @@ add_executable(moteur
 		 common/objloader.hpp
 		common/objloader.cpp
         moteur/Moteur.cpp
-)
+  "moteur/metier/World/Frustum.hpp")
 
 
 target_link_libraries(moteur

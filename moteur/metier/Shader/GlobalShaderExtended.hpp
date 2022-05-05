@@ -34,7 +34,7 @@ public:
     virtual void drawMesh(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix)
     {
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glUniform1i(this->u_nb_texture, this->u_textures.size());
+        glUniform1i(this->u_nb_texture, (GLint)this->u_textures.size());
         glUniformMatrix4fv(this->u_model, 1, GL_FALSE, &transformMatrix[0][0]);
 
         glBindVertexArray(VAO);

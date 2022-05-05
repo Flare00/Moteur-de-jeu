@@ -4,12 +4,16 @@
 #include <vector>
 #include <Component.hpp>
 #include "RigidBody.hpp"
+#include <Collision/CollisionComponent.hpp>
 
 #define EPSILON 0.00001f
+
+glm::vec3 GRAVITY = glm::vec3(0, -9.8, 0);
 
 class Physique
 {
 public:
+
 	static bool compareEpsilon(float x)
 	{
 		return abs(x) <= EPSILON * glm::max(abs(1.0f), abs(x));
@@ -25,6 +29,7 @@ public:
 			return;
 
 		glm::vec3 vitesseR = r1->computeVitesseRelative(r2);
+
 		glm::vec3 normalR = glm::normalize(r2->getCollision()->getCenter() - r1->getCollision()->getCenter());
 
 		float dotR = glm::dot(vitesseR, normalR);
@@ -35,7 +40,7 @@ public:
 		float numerator = -(1.0f + e) * dotR;
 		float magnitude = numerator / iMassSum;
 
-		std::vector<glm::vec3> ptsCollide = Collision::getContactPoint(r1->getCollision(), r2->getCollision());
+		std::vector<glm::vec3> ptsCollide = CollisionComponent::getContactPoint(r1->getCollision(), r2->getCollision());
 		if (ptsCollide.size() > 0 && magnitude != 0.0f)
 		{
 			magnitude /= (float)ptsCollide.size();
@@ -108,24 +113,32 @@ public:
 		std::vector<GameObject *> rigidbodiesGO = scene->getAllGameObjectByComponentType(Component::Type::RIGIDBODY);
 		std::vector<Component *> rigidbodies = scene->getAllComponentsByTypeRecursive(Component::Type::RIGIDBODY);
 
-		for (int i = 0, max = rigidbodiesGO.size(); i < max; i++)
+		for (size_t i = 0, max = rigidbodiesGO.size(); i < max; i++)
 		{
-			for (int j = i + 1; j < max; j++)
+			for (size_t j = i + 1; j < max; j++)
 			{
+
 				RigidBody *r1 = (RigidBody *)rigidbodiesGO[i]->getOneComponentByType(Component::Type::RIGIDBODY);
 				RigidBody *r2 = (RigidBody *)rigidbodiesGO[j]->getOneComponentByType(Component::Type::RIGIDBODY);
 				r1->getCollision()->apply(rigidbodiesGO[i]->getTransformMatrix());
 				r2->getCollision()->apply(rigidbodiesGO[j]->getTransformMatrix());
-				if (Collision::computeCollision(r1->getCollision(), r2->getCollision()))
+				
+				if (CollisionComponent::computeCollision(r1->getCollision(), r2->getCollision()))
 				{
+					std::cout << rigidbodiesGO[i]->getIdentifier() << " VS " << rigidbodiesGO[j]->getIdentifier() << std::endl;
+					glm::vec3 a = rigidbodiesGO[i]->getTransform()->getTranslation();
+					glm::vec3 b = rigidbodiesGO[j]->getTransform()->getTranslation();
+					printf("[%f, %f, %f] VS [%f, %f, %f]\n", a.x, a.y, a.z, b.x, b.y, b.z);
 					applyImpulse(r1, r2);
 				}
 			}
 		}
 
-		for (int i = 0, max = rigidbodies.size(); i < max; i++)
+		for (size_t i = 0, max = rigidbodies.size(); i < max; i++)
 		{
-			((RigidBody *)rigidbodies[i])->applyVitesse(delta, 1.0f);
+			RigidBody* r = (RigidBody*)rigidbodies[i];
+			r->addForces(GRAVITY);
+			r->applyVitesse(delta, 1.0f-(0.02f*delta));
 		}
 	}
 };

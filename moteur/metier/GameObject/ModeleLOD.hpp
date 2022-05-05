@@ -13,7 +13,7 @@
 
 #include <Light/Material.hpp>
 #include <Texture.hpp>
-#include <Collision/Collision.hpp>
+#include <Collision/CollisionComponent.hpp>
 #include <Shader/GlobalShader.hpp>
 #include <Tools/SimplifyMesh.hpp>
 
@@ -76,11 +76,11 @@ public:
 	{
 		float distance = -1.0f;
 		if (this->getRigidBody() != NULL) {
-			this->getRigidBody()->getCollision()->getBoundingBox()->applyTransformation(this->getTransformMatrix());
-			std::vector<glm::vec3> boxCoords = this->getRigidBody()->getCollision()->getBoundingBox()->getCoords();
-			for (int i = 0, max = boxCoords.size(); i < max && distance < 0.0f; i++)
+			this->getRigidBody()->getCollision()->apply(this->getTransformMatrix());
+			std::vector<glm::vec3> boxCoords = this->getRigidBody()->getCollision()->getCoords();
+			for (size_t i = 0, max = boxCoords.size(); i < max && distance < 0.0f; i++)
 			{
-				distance = camera->isInFieldOfView(boxCoords[i]);
+				distance = camera->distanceFromCamera(boxCoords[i]);
 			}
 
 			if (distance >= 0.0f)
@@ -99,6 +99,9 @@ public:
 			else {
 				draw(camera, 0);
 			}
+		}
+		else {
+			draw(camera, 0);
 		}
 
 		if (dfs)
@@ -131,7 +134,8 @@ public:
 		this->rigidbody = body;
 		if (this->modeles[0]->getIndexedVertices().size() > 0) 
 		{
-			this->rigidbody->generateCollision(this->modeles[0]->getIndexedVertices());
+			this->rigidbody->generateBoundingBox(this->modeles[0]->getIndexedVertices());
+			this->rigidbody->generateModeleCollision(this->modeles[0]->getIndexedVertices(), this->modeles[0]->getIndices());
 		}
 
 		this->addComponent(this->rigidbody);

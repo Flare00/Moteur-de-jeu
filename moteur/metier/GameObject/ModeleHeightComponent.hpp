@@ -39,8 +39,18 @@ public:
 
     virtual void draw(Camera *camera, glm::mat4 transform, RigidBody *rigidbody = NULL)
     {
-        this->shader->drawHeightMap(heightMap.texture, textures.size());
-        ModeleComponent::draw(camera, transform, rigidbody);
+        bool isInFOV = true;
+        if (rigidbody != NULL) {
+            isInFOV = camera->isInFrustum(rigidbody->getCollision()->getCollision());
+        }
+        if (isInFOV) {
+
+            this->shader->use();
+
+            glEnable(GL_TEXTURE_2D);
+            this->shader->drawHeightMap(heightMap.texture, (int)textures.size());
+            ModeleComponent::draw(camera, transform, rigidbody);
+        }
     }
 
     void setHeightMap(Texture *t, bool destroyEnd)

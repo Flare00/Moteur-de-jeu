@@ -31,6 +31,7 @@ private:
 	int fps = 0;
 	float cooldownFPS = 0.1f;
 
+	bool wait1Frame = true;
 public:
 	SceneCollision()
 	{
@@ -53,20 +54,12 @@ public:
 		Texture *texTerre = new Texture("Textures/SystemeSolaire/earth_daymap.jpg");
 		Texture *texSoleil = new Texture("Textures/SystemeSolaire/sun.jpg");
 
-		//Test
-		ModeleComponent* testHigh = new ModeleComponent(globalShader);
-		PrimitiveMesh::generate_plane(testHigh, 8, 8, 10, 10);
-		testHigh->addTexture(texTerre, false);
-
-		ModeleLOD* test = new ModeleLOD("Test", testHigh);
-		test->getTransform()->translate(glm::vec3(0, 2, 0));
-		test->setRigidBody(new RigidBody(test));
 		// Terrain
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");
 		Texture *textureTerrain = new Texture("Textures/HeightMap/test.png");
 		Texture *heightMapTerrain = new Texture("Textures/HeightMap/test.png");
 		Terrain *terrain = new Terrain("Terrain", shaderTerrain, textureTerrain, heightMapTerrain);
-		terrain->getTransform()->translate(glm::vec3(0, -1, 0));
+		terrain->getTransform()->translate(glm::vec3(0, -10, 0));
 
 		//soleil
 		ModeleComponent *soleilHigh = new ModeleComponent(globalShader);
@@ -74,9 +67,8 @@ public:
 		soleilHigh->addTexture(texSoleil, true);
 
 		ModeleLOD *SoleilLOD = new ModeleLOD("Soleil", soleilHigh);
-		SoleilLOD->getTransform()->translate(glm::vec3(-5, 0, 0));
-		SoleilLOD->setRigidBody(new RigidBody(SoleilLOD, false, 2.0f, glm::vec3(2.0f, 0, 0)));
-
+		SoleilLOD->getTransform()->translate(glm::vec3(3,5, 1));
+		SoleilLOD->setRigidBody(new RigidBody(SoleilLOD, false, 2.0f, glm::vec3(-2.0f, 0, 0)));
 		//Terre
 		ModeleComponent *TerreHigh = new ModeleComponent(globalShader);
 		ModeleComponent *TerreLow = new ModeleComponent(globalShader);
@@ -88,13 +80,12 @@ public:
 		TerreLow->addTexture(texTerre, true);
 
 		ModeleLOD *TerreLOD = new ModeleLOD("Terre", TerreHigh, TerreLow);
-		TerreLOD->setRigidBody(new RigidBody(TerreLOD, false, 1.0f, glm::vec3(-2.0f, 0, 0)));
-		TerreLOD->getTransform()->translate(glm::vec3(5, 0, 0));
+		TerreLOD->getTransform()->translate(glm::vec3(1, 0, 0));
+		TerreLOD->setRigidBody(new RigidBody(TerreLOD, false, 1.0f, glm::vec3(0, -2, 0)));
 
 		//Add to scene
 		this->scene->addChild(SoleilLOD);
 		this->scene->addChild(TerreLOD);
-		this->scene->addChild(test);
 		this->scene->addChild(terrain);
 
 		//Set inputCollision
@@ -108,18 +99,31 @@ public:
 		inputCol->processInput(deltaTime);
 		if (!global_pause)
 		{
-			if (globalShader != NULL && this->activeCamera >= 0 && this->activeCamera < this->cameras.size())
-				globalShader->drawView(this->cameras[this->activeCamera]);
-			if (shaderTerrain != NULL && this->activeCamera >= 0 && this->activeCamera < this->cameras.size())
-				shaderTerrain->drawView(this->cameras[this->activeCamera]);
+			if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size()) {
+
+				this->cameras[activeCamera]->frustumUpdate();
+
+				if (globalShader != NULL) {}
+					globalShader->drawView(this->cameras[this->activeCamera]);
+				if (shaderTerrain != NULL)
+					shaderTerrain->drawView(this->cameras[this->activeCamera]);
+			}
+
 			// Clear the screen
-			Physique::computePhysique(this->scene, deltaTime);
+			if (wait1Frame) {
+				Physique::computePhysique(this->scene, deltaTime);
+			}
+			else {
+				wait1Frame = false;
+			}
 		}
-		this->scene->compute(this->cameras[this->activeCamera], true);
+		if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size()) {
+			this->scene->compute(this->cameras[this->activeCamera], true);
+		}
 		// compute FPS
 		if (this->cooldownFPS <= 0)
 		{
-			fps = 1.0f / deltaTime;
+			fps = (int)(1.0f / deltaTime);
 			this->cooldownFPS = 1.0f;
 		}
 

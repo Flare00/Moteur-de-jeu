@@ -80,7 +80,7 @@ public:
 
 	void setLight()
 	{
-		int nbLight = (lights.size() < MAX_LIGHT ? lights.size() : MAX_LIGHT);
+		GLint nbLight = (lights.size() < MAX_LIGHT ? (GLint)lights.size() : MAX_LIGHT);
 		glUniform1f(this->u_gamma_correction, 2.2f);
 		glUniform1i(this->u_light_number, nbLight);
 		// Load Lights
@@ -110,7 +110,7 @@ public:
 
 	virtual void drawMesh(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix)
 	{
-		glUniform1i(this->u_nb_texture, this->u_textures.size());
+		glUniform1i(this->u_nb_texture, (GLint)this->u_textures.size());
 
 		// Load Vertex
 		glUniformMatrix4fv(this->u_model, 1, GL_FALSE, &transformMatrix[0][0]);
