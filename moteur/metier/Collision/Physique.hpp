@@ -123,7 +123,31 @@ public:
 				r1->getCollision()->apply(rigidbodiesGO[i]->getTransformMatrix());
 				r2->getCollision()->apply(rigidbodiesGO[j]->getTransformMatrix());
 
-				Intersection::CollisionData data = CollisionComponent::computeCollision(r1->getCollision(), r2->getCollision());
+				Intersection::CollisionData data;
+				data = CollisionComponent::computeCollision(r1->getCollision(), r2->getCollision());
+				if ((r1->hasModeleCollision() || r2->hasModeleCollision()) && data.collide)
+				{
+					CollisionComponent *c1;
+					CollisionComponent *c2;
+					if (r1->hasModeleCollision())
+					{
+						c1 = r1->getCollisionModele();
+					}
+					else
+					{
+						c1 = r1->getCollision();
+					}
+					if (r2->hasModeleCollision())
+					{
+						c2 = r2->getCollisionModele();
+					}
+					else
+					{
+						c2 = r2->getCollision();
+					}
+					data = CollisionComponent::computeCollision(c1, c2);
+				}
+
 				if (data.collide)
 				{
 					for (int k = 0; k < 10; k++)

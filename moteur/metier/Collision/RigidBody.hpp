@@ -137,6 +137,11 @@ public:
     {
         return this->staticObj;
     }
+
+    bool hasModeleCollision()
+    {
+        return this->collisionModele != NULL;
+    }
 };
 
 #endif

@@ -53,6 +53,16 @@ public:
 		}
 		return res;
 	}
+	static Intersection::CollisionData isCollision(CollisionComponent *c1, CollisionComponent *c2)
+	{
+		Intersection::CollisionData res;
+		res.collide = false;
+		if (c1->isActif() && c2->isActif())
+		{
+			res = Intersection::intersection(c1->getCollision(), c2->getCollision());
+		}
+		return res;
+	}
 
 	// Getter ans Setter
 	bool isActif()
