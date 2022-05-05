@@ -67,8 +67,8 @@ public:
 		soleilHigh->addTexture(texSoleil, true);
 
 		ModeleLOD *SoleilLOD = new ModeleLOD("Soleil", soleilHigh);
-		SoleilLOD->getTransform()->translate(glm::vec3(3,5, 1));
-		SoleilLOD->setRigidBody(new RigidBody(SoleilLOD, false, 2.0f, glm::vec3(-2.0f, 0, 0)));
+		SoleilLOD->getTransform()->translate(glm::vec3(-5,0, 0));
+		SoleilLOD->setRigidBody(new RigidBody(SoleilLOD, false, 2.0f, glm::vec3(5, 0, 0)));
 		//Terre
 		ModeleComponent *TerreHigh = new ModeleComponent(globalShader);
 		ModeleComponent *TerreLow = new ModeleComponent(globalShader);
@@ -80,8 +80,8 @@ public:
 		TerreLow->addTexture(texTerre, true);
 
 		ModeleLOD *TerreLOD = new ModeleLOD("Terre", TerreHigh, TerreLow);
-		TerreLOD->getTransform()->translate(glm::vec3(1, 0, 0));
-		TerreLOD->setRigidBody(new RigidBody(TerreLOD, false, 1.0f, glm::vec3(0, -2, 0)));
+		TerreLOD->getTransform()->translate(glm::vec3(5, 0, 0));
+		TerreLOD->setRigidBody(new RigidBody(TerreLOD, false, 1.0f, glm::vec3(-5, 0, 0)));
 
 		//Add to scene
 		this->scene->addChild(SoleilLOD);

@@ -11,12 +11,7 @@
 class CollisionComponent : public Component
 {
 public :
-	struct CollisionData {
-		bool collide;
-		vec3 normal;
-		float profondeur;
-		std::vector<glm::vec3> contacts;
-	};
+
 
 private:
 	Collision *collision = NULL;
@@ -48,25 +43,13 @@ public:
 		delete this->collision;
 	}
 
-	static std::vector<glm::vec3> getContactPoint(CollisionComponent *c1, CollisionComponent *c2)
+	static Intersection::CollisionData computeCollision(CollisionComponent *c1, CollisionComponent *c2)
 	{
-		std::vector<glm::vec3> res;
-
-		res = Intersection::intersectionPoints(c1->getCollision(), c2->getCollision());
-
-		return res;
-	}
-
-	static bool computeCollision(CollisionComponent *c1, CollisionComponent *c2)
-	{
-		bool res = false;
+		Intersection::CollisionData res;
+		res.collide = false;
 		if (c1->isActif() && c2->isActif())
 		{
-			if (Intersection::isIntersection(c1->getCollision(), c2->getCollision()))
-			{
-				// do phase 2
-				res = true;
-			}
+			res = Intersection::intersection(c1->getCollision(), c2->getCollision());
 		}
 		return res;
 	}

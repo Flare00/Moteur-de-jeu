@@ -1,5 +1,6 @@
 #ifndef __FRUSTUM_HPP__
 #define __FRUSTUM_HPP__
+
 #include <vector>;
 #include <glm/glm.hpp>
 #include <Collision/Type/BoundingBox.hpp>

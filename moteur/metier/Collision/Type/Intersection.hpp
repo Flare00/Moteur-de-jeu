@@ -6,7 +6,15 @@
 #include "Collision.hpp"
 
 class Intersection {
+
+
 public:
+	struct CollisionData {
+		bool collide;
+		vec3 normal;
+		float profondeur;
+		std::vector<glm::vec3> contacts;
+	};
 	// --- Is Intersection ---
 	static bool isIntersectionAABBtoAABB(BoundingBox* a, BoundingBox* b) {
 		glm::vec3 aMin = a->getMin();
@@ -28,70 +36,92 @@ public:
 		return false;
 	}
 
-	static bool isIntersection(Collision* c1, Collision* c2) {
-		bool result = false;
-		if (c1->getType() == Collision::BOUNDING_BOX && c2->getType() == Collision::BOUNDING_BOX) {
-			result = isIntersectionAABBtoAABB((BoundingBox*)c1, (BoundingBox*)c2);
-		}
-		else if (c1->getType() == Collision::MODELE && c2->getType() == Collision::MODELE) {
-			result = isIntersectionModeleToModele((ModeleCollision*)c1, (ModeleCollision*)c2);
-		}
-		else if (c1->getType() == Collision::BOUNDING_BOX && c2->getType() == Collision::MODELE) {
-			result = isIntersectionAABBtoModele((BoundingBox*)c1, (ModeleCollision*)c2);
-		}
-		else if (c1->getType() == Collision::MODELE && c2->getType() == Collision::BOUNDING_BOX) {
-			result = isIntersectionAABBtoModele((BoundingBox*)c2, (ModeleCollision*)c1);
-		}
-		return result;
-	}
-
 	// --- Intersection Points ---
-	static std::vector<glm::vec3> intersectionPointsAABBtoAABB(BoundingBox* a, BoundingBox* b) {
-		std::vector<glm::vec3> res;
+	static void intersectionAABBtoAABB(BoundingBox* a, BoundingBox* b, CollisionData* data) {
+		std::vector<glm::vec3> contacts;
 		std::vector<glm::vec3> tmp = a->getCoords();
-
+		float distance = 0.0f;
 		for (size_t i = 0, maxTmp = tmp.size(); i < maxTmp; i++)
 		{
-			if (b->isInCollision(tmp[i]))
+			float dist = b->inCollision(tmp[i]);
+			if (dist >= 0.0f)
 			{
-				res.push_back(tmp[i]);
+				contacts.push_back(tmp[i]);
+				distance = glm::max(distance, dist);
 			}
 		}
 
 		tmp = b->getCoords();
 		for (size_t i = 0, maxTmp = tmp.size(); i < maxTmp; i++)
 		{
-			if (a->isInCollision(tmp[i]))
+			float dist = a->inCollision(tmp[i]);
+			if (dist >= 0.0f)
 			{
-				res.push_back(tmp[i]);
+				contacts.push_back(tmp[i]);
+				distance = glm::max(distance, dist);
 			}
 		}
-
-		return res;
+		data->profondeur = distance;
+		data->contacts = contacts;
 	}
 
-	static std::vector<glm::vec3> intersectionPointsModeleToModele(ModeleCollision* a, ModeleCollision* b) {
-		return std::vector<glm::vec3>();
+	static void intersectionModeleToModele(ModeleCollision* a, ModeleCollision* b, CollisionData* data) {
+		std::vector<glm::vec3> contacts;
+
+		//todo
+
+		if (contacts.size() > 0) {
+			data->collide = false;
+		}
+		data->contacts = contacts;
 	}
 
-	static std::vector<glm::vec3> intersectionPointsAABBtoModele(BoundingBox* a, ModeleCollision* b) {
-		return std::vector<glm::vec3>();
+	static void intersectionAABBtoModele(BoundingBox* a, ModeleCollision* b, CollisionData* data) {
+		std::vector<glm::vec3> contacts;
+
+		//todo
+		if (contacts.size() > 0) {
+			data->collide = false;
+		}
+		data->contacts = contacts;
 	}
 
-	static std::vector<glm::vec3> intersectionPoints(Collision* c1, Collision* c2) {
-		std::vector<glm::vec3> result = std::vector<glm::vec3>();
+	static CollisionData intersection(Collision* c1, Collision* c2) {
+		CollisionData result;
 		if (c1->getType() == Collision::BOUNDING_BOX && c2->getType() == Collision::BOUNDING_BOX) {
-			result = intersectionPointsAABBtoAABB((BoundingBox*)c1, (BoundingBox*)c2);
+			BoundingBox* a = (BoundingBox*)c1;
+			BoundingBox* b = (BoundingBox*)c2;
+			result.collide = isIntersectionAABBtoAABB(a, b);
+			if (result.collide) {
+				intersectionAABBtoAABB(a, b, &result);
+				result.normal = c2->getCenter() - c1->getCenter();
+			}
 		}
 		else if (c1->getType() == Collision::MODELE && c2->getType() == Collision::MODELE) {
-			result = intersectionPointsModeleToModele((ModeleCollision*)c1, (ModeleCollision*)c2);
+			ModeleCollision* a = (ModeleCollision*)c1;
+			ModeleCollision* b = (ModeleCollision*)c2;
+			result.collide = isIntersectionModeleToModele(a, b);
+			if (result.collide) {
+				intersectionModeleToModele(a, b, &result);
+			}
 		}
 		else if (c1->getType() == Collision::BOUNDING_BOX && c2->getType() == Collision::MODELE) {
-			result = intersectionPointsAABBtoModele((BoundingBox*)c1, (ModeleCollision*)c2);
+			BoundingBox* a = (BoundingBox*)c1;
+			ModeleCollision* b = (ModeleCollision*)c2;
+			result.collide = isIntersectionAABBtoModele(a, b);
+			if (result.collide) {
+				 intersectionAABBtoModele(a, b, &result);
+			}
 		}
 		else if (c1->getType() == Collision::MODELE && c2->getType() == Collision::BOUNDING_BOX) {
-			result = intersectionPointsAABBtoModele((BoundingBox*)c2, (ModeleCollision*)c1);
+			BoundingBox* a = (BoundingBox*)c1;
+			ModeleCollision* b = (ModeleCollision*)c2;
+			result.collide = isIntersectionAABBtoModele(a, b);
+			if (result.collide) {
+				intersectionAABBtoModele(a, b, &result);
+			}
 		}
+		std::cout << result.collide << std::endl;
 		return result;
 	}
 };

@@ -87,11 +87,24 @@ public:
 			   point.x >= min.x && min.y >= max.y && min.z >= max.z;
 	}
 
-	bool isInCollision(glm::vec3 v)
+	float inCollision(glm::vec3 v)
 	{
-		return (v.x <= this->getMax().x && v.x >= this->getMin().x) &&
-			   (v.y <= this->getMax().y && v.y >= this->getMin().y) &&
-			   (v.z <= this->getMax().z && v.z >= this->getMin().z);
+		float res = -1.0f;
+		glm::vec3 p = v - this->getMin();
+		glm::vec3 max = this->getMax() - this->getMin();
+
+
+		if (glm::all(glm::lessThanEqual(p, max)) && glm::all(glm::greaterThanEqual(p,vec3(0)))) {
+			glm::vec3 pmax = max - p;
+			float tmp = p[0], tmpMax = pmax[0];
+			for (int i = 1; i < 3; i++) {
+				tmp = glm::min(tmp, p[i]);
+				tmpMax = glm::min(tmpMax, pmax[i]);
+			}
+			res = glm::min(tmp, tmpMax);
+		}
+
+		return res;
 	}
 
 

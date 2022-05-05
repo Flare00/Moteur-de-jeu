@@ -5,6 +5,7 @@
 #include <Component.hpp>
 #include "RigidBody.hpp"
 #include <Collision/CollisionComponent.hpp>
+#include <Collision/Type/Intersection.hpp>
 
 #define EPSILON 0.00001f
 
@@ -19,7 +20,7 @@ public:
 		return abs(x) <= EPSILON * glm::max(abs(1.0f), abs(x));
 	}
 
-	static void applyImpulse(RigidBody *r1, RigidBody *r2)
+	static void applyImpulse(RigidBody* r1, RigidBody* r2, Intersection::CollisionData data)
 	{
 		// MASS
 		float iMassR1 = r1->getInvMass();
@@ -30,7 +31,7 @@ public:
 
 		glm::vec3 vitesseR = r1->computeVitesseRelative(r2);
 
-		glm::vec3 normalR = glm::normalize(r2->getCollision()->getCenter() - r1->getCollision()->getCenter());
+		glm::vec3 normalR = glm::normalize(data.normal);
 
 		float dotR = glm::dot(vitesseR, normalR);
 		if (dotR > 0.0f)
@@ -40,7 +41,7 @@ public:
 		float numerator = -(1.0f + e) * dotR;
 		float magnitude = numerator / iMassSum;
 
-		std::vector<glm::vec3> ptsCollide = CollisionComponent::getContactPoint(r1->getCollision(), r2->getCollision());
+		std::vector<glm::vec3> ptsCollide = data.contacts;
 		if (ptsCollide.size() > 0 && magnitude != 0.0f)
 		{
 			magnitude /= (float)ptsCollide.size();
@@ -123,13 +124,13 @@ public:
 				r1->getCollision()->apply(rigidbodiesGO[i]->getTransformMatrix());
 				r2->getCollision()->apply(rigidbodiesGO[j]->getTransformMatrix());
 				
-				if (CollisionComponent::computeCollision(r1->getCollision(), r2->getCollision()))
+				Intersection::CollisionData data = CollisionComponent::computeCollision(r1->getCollision(), r2->getCollision());
+				if (data.collide)
 				{
-					std::cout << rigidbodiesGO[i]->getIdentifier() << " VS " << rigidbodiesGO[j]->getIdentifier() << std::endl;
-					glm::vec3 a = rigidbodiesGO[i]->getTransform()->getTranslation();
-					glm::vec3 b = rigidbodiesGO[j]->getTransform()->getTranslation();
-					printf("[%f, %f, %f] VS [%f, %f, %f]\n", a.x, a.y, a.z, b.x, b.y, b.z);
-					applyImpulse(r1, r2);
+					printf("COLLISION");
+					applyImpulse(r1, r2, data);
+					//rigidbodiesGO[i]->getTransform()->translate(data.normal * (data.profondeur / r1->getMass() * 0.45f));
+					//rigidbodiesGO[j]->getTransform()->translate(data.normal * (data.profondeur / r2->getMass() * 0.45f));
 				}
 			}
 		}
@@ -137,7 +138,7 @@ public:
 		for (size_t i = 0, max = rigidbodies.size(); i < max; i++)
 		{
 			RigidBody* r = (RigidBody*)rigidbodies[i];
-			r->addForces(GRAVITY);
+			//r->addForces(GRAVITY);
 			r->applyVitesse(delta, 1.0f-(0.02f*delta));
 		}
 	}
