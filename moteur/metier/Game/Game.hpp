@@ -12,6 +12,7 @@ private :
 	size_t activeScene = -1;
 	size_t nbScene = 0;
 	std::vector<Scene*> scenes;
+
 public :
 	Game() {
 		//Add a Scene
@@ -28,6 +29,7 @@ public :
 	}
 
 	void Loop(float deltaTime) {
+
 		if (this->activeScene >= 0 && this->activeScene < this->nbScene) {
 			this->scenes[activeScene]->Draw(deltaTime);
 		}

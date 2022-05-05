@@ -27,6 +27,7 @@ using namespace glm;
 // settings
 const unsigned int SCR_WIDTH = 1024;
 const unsigned int SCR_HEIGHT = 768;
+const int limiteur = 60;
 
 Game* game;
 
@@ -36,7 +37,7 @@ void mainLoop() {
 	double currentFrame = glfwGetTime();
 	double deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
-
+	double sumDelta = 0.0f;
 	do {
 		// Measure speed
 		// per-frame time logic
@@ -44,17 +45,21 @@ void mainLoop() {
 		double currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
+		sumDelta += deltaTime;
 		// FPS : float fps = 1.0f/deltaTime;
 		// input
 		// -----
+		if (sumDelta >= 1.0f / limiteur) {
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			game->Loop((float)sumDelta);
 
-		game->Loop((float)deltaTime);
-
-		// Swap buffers
-		glfwSwapBuffers(global_window);
-		glfwPollEvents();
+			// Swap buffers
+			glfwSwapBuffers(global_window);
+			glfwPollEvents();
+			sumDelta = 0.0f;
+		}
 	} // Check if the ESC key was pressed or the global_window was closed
 	while (!global_stop && glfwWindowShouldClose(global_window) == 0);
 }
