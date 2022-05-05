@@ -14,13 +14,12 @@ glm::vec3 GRAVITY = glm::vec3(0, -9.8, 0);
 class Physique
 {
 public:
-
 	static bool compareEpsilon(float x)
 	{
 		return abs(x) <= EPSILON * glm::max(abs(1.0f), abs(x));
 	}
 
-	static void applyImpulse(RigidBody* r1, RigidBody* r2, Intersection::CollisionData data)
+	static void applyImpulse(RigidBody *r1, RigidBody *r2, Intersection::CollisionData data)
 	{
 		// MASS
 		float iMassR1 = r1->getInvMass();
@@ -48,12 +47,12 @@ public:
 		}
 
 		glm::vec3 impulse = normalR * magnitude;
-		
+
 		/*
 		r1->addForces(-impulse);
 		r2->addForces(impulse);
 		*/
-		
+
 		r1->setVitesse(r1->getVitesse() - impulse * iMassR1);
 		r2->setVitesse(r2->getVitesse() + impulse * iMassR2);
 
@@ -123,22 +122,36 @@ public:
 				RigidBody *r2 = (RigidBody *)rigidbodiesGO[j]->getOneComponentByType(Component::Type::RIGIDBODY);
 				r1->getCollision()->apply(rigidbodiesGO[i]->getTransformMatrix());
 				r2->getCollision()->apply(rigidbodiesGO[j]->getTransformMatrix());
-				
+
 				Intersection::CollisionData data = CollisionComponent::computeCollision(r1->getCollision(), r2->getCollision());
 				if (data.collide)
 				{
-					applyImpulse(r1, r2, data);
-					rigidbodiesGO[i]->getTransform()->translate(data.normal * (data.profondeur / r1->getMass() * 0.45f));
-					rigidbodiesGO[j]->getTransform()->translate(data.normal * (data.profondeur / r2->getMass() * 0.45f));
+					for (int i = 0; i < 20; i++)
+					{
+
+						applyImpulse(r1, r2, data);
+						float precision = 0.05f;
+						float distance = glm::max(data.profondeur - precision, 0.0f);
+						float invMass = (r1->getInvMass() + r2->getInvMass());
+						if (invMass != 0.0f)
+						{
+							float scalar = distance / invMass;
+							glm::vec3 correction = data.normal * scalar * 0.45f;
+							rigidbodiesGO[i]->getTransform()->translate(correction * r1->getInvMass());
+							rigidbodiesGO[i]->getTransform()->translate(-correction * r2->getInvMass());
+							// rigidbodiesGO[i]->getTransform()->translate(data.normal * (data.profondeur / (r2->getMass() + r1->getMass()) * 0.45f));
+							// rigidbodiesGO[j]->getTransform()->translate(-data.normal * (data.profondeur / (r2->getMass() + r1->getMass()) * 0.45f));
+						}
+					}
 				}
 			}
 		}
 
 		for (size_t i = 0, max = rigidbodies.size(); i < max; i++)
 		{
-			RigidBody* r = (RigidBody*)rigidbodies[i];
-			//r->addForces(GRAVITY);
-			r->applyVitesse(delta, 1.0f-(0.02f*delta));
+			RigidBody *r = (RigidBody *)rigidbodies[i];
+			// r->addForces(GRAVITY);
+			r->applyVitesse(delta, 1.0f - (0.02f * delta));
 		}
 	}
 };

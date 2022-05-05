@@ -93,20 +93,20 @@ public:
 		glm::vec3 p = v - this->getMin();
 		glm::vec3 max = this->getMax() - this->getMin();
 
-
-		if (glm::all(glm::lessThanEqual(p, max)) && glm::all(glm::greaterThanEqual(p,vec3(0)))) {
+		if (glm::all(glm::lessThanEqual(p, max)) && glm::all(glm::greaterThanEqual(p, vec3(0))))
+		{
 			glm::vec3 pmax = max - p;
 			float tmp = p[0], tmpMax = pmax[0];
-			for (int i = 1; i < 3; i++) {
-				tmp = glm::min(tmp, p[i]);
-				tmpMax = glm::min(tmpMax, pmax[i]);
+			for (int i = 1; i < 3; i++)
+			{
+				tmp = glm::max(tmp, p[i]);
+				tmpMax = glm::max(tmpMax, pmax[i]);
 			}
 			res = glm::min(tmp, tmpMax);
 		}
 
 		return res;
 	}
-
 
 	virtual glm::vec3 getCenter()
 	{
