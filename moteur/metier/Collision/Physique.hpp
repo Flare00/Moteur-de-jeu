@@ -125,7 +125,8 @@ public:
 
 				Intersection::CollisionData data;
 				data = CollisionComponent::computeCollision(r1->getCollision(), r2->getCollision());
-				if ((r1->hasModeleCollision() || r2->hasModeleCollision()) && data.collide && false)
+				/* // beaucoup trop gourmand
+				if ((r1->hasModeleCollision() || r2->hasModeleCollision()) && data.collide)
 				{
 					std::cout << "MODELE\n";
 					CollisionComponent *c1;
@@ -150,7 +151,7 @@ public:
 					data = CollisionComponent::computeCollision(c1, c2);
 					std::cout << "B\n";
 
-				}
+				}*/
 
 				if (data.collide)
 				{
@@ -164,7 +165,7 @@ public:
 					{
 						float precision = 0.01f;
 						std::cout << data.profondeur << std::endl;
-						float distance = glm::max(data.profondeur + precision, 0.0f) +1.0f;
+						float distance = glm::max(data.profondeur + precision, 0.0f) ;
 
 						float scalar = distance / invMass;
 						glm::vec3 correction = data.normal * scalar * 0.45f;
