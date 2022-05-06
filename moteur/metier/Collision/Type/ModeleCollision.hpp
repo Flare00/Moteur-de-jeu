@@ -88,7 +88,7 @@ public:
 	virtual std::vector<glm::vec3> getCoords()
 	{
 		std::vector<vec3> coords(this->vertices);
-		for (size_t i = 0, max = coords.size(); i < max; i++)
+		for (size_t i, max = coords.size(); i < max; i++)
 		{
 			vec4 tmp = this->transformation * glm::vec4(coords[i], 1.0f);
 			coords[i].x = tmp.x;

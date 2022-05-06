@@ -1,6 +1,3 @@
-if(MSVC AND NOT "${MSVC_VERSION}" LESS 1400)
-	add_definitions( "/MP" )
-endif()
 
 add_definitions(
 	-DTW_STATIC
@@ -53,7 +50,7 @@ target_link_libraries(GLEW_210
 )
 
 ### BULLET ###
-#[[
+
 add_subdirectory(bullet3-3.24/src/LinearMath)
 add_subdirectory(bullet3-3.24/src/Bullet3Common)
 add_subdirectory(bullet3-3.24/src/BulletCollision)
@@ -74,4 +71,3 @@ add_library( BULLET3_324 STATIC
 	${BULLET_SRC}
 )
 target_link_libraries(BULLET3_324 LinearMath Bullet3Common BulletCollision BulletDynamics BulletSoftBody BulletInverseDynamics)
-]]

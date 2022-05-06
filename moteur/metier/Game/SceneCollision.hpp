@@ -17,7 +17,6 @@
 #include <Global.hpp>
 
 #include <Physique/PhysiqueBullet.hpp>
-#include <Collision/Physique.hpp>
 
 class SceneCollision : public Scene
 {
@@ -25,7 +24,7 @@ private:
 	GlobalShader *globalShader = NULL;
 	GlobalShaderExtended *shaderTerrain = NULL;
 
-	int precision = 16;
+	int precision = 4;
 	int low_precision = 4;
 
 	InputCollision *inputCol;
@@ -35,13 +34,14 @@ private:
 
 	bool wait1Frame = true;
 
-
+	PhysiqueBullet* bullet;
 public:
 	SceneCollision()
 	{
 	}
 
 	~SceneCollision() {
+		delete bullet;
 	}
 
 	virtual void Init()
@@ -65,7 +65,7 @@ public:
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");
 		Texture *textureTerrain = new Texture("Textures/HeightMap/test.png");
 		Texture *heightMapTerrain = new Texture("Textures/HeightMap/test.png");
-		Terrain *terrain = new Terrain("Terrain", shaderTerrain, textureTerrain, heightMapTerrain, 2.0f);
+		Terrain *terrain = new Terrain("Terrain", shaderTerrain, textureTerrain, heightMapTerrain);
 		terrain->getTransform()->translate(glm::vec3(0, -10, 0));
 
 		//soleil
@@ -91,12 +91,15 @@ public:
 		TerreLOD->setRigidBody(new RigidBody(TerreLOD, false, 1.0f, glm::vec3(-5, 0, 0)));
 
 		//Add to scene
-		//this->scene->addChild(SoleilLOD);
+		this->scene->addChild(SoleilLOD);
 		this->scene->addChild(TerreLOD);
 		this->scene->addChild(terrain);
 
 		//Set inputCollision
 		this->inputCol = new InputCollision(c, TerreLOD);
+
+		bullet = new PhysiqueBullet();
+		bullet->init();
 	}
 
 	virtual void Draw(float deltaTime)
@@ -117,13 +120,14 @@ public:
 					shaderTerrain->drawView(this->cameras[this->activeCamera]);
 			}
 
+			bullet->loop(deltaTime);
 			// Clear the screen
-			if (wait1Frame) {
+			/*if (wait1Frame) {
 				Physique::computePhysique(this->scene, deltaTime);
 			}
 			else {
 				wait1Frame = false;
-			}
+			}*/
 		}
 		if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size()) {
 			this->scene->compute(this->cameras[this->activeCamera], true);

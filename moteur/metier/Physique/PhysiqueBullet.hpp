@@ -1,6 +1,6 @@
 #ifndef __PHYSIQUE_BULLET_HPP__
 #define __PHYSIQUE_BULLET_HPP__
-/*
+
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 
@@ -8,16 +8,13 @@
 #include <BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 
-#include "DebugDrawer.hpp"
-
 #define ARRAY_SIZE_Y 5
 #define ARRAY_SIZE_X 5
 #define ARRAY_SIZE_Z 5
 
 
-
 class PhysiqueBullet {
-
+	
 public:
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	btSequentialImpulseConstraintSolver* solver;
@@ -26,16 +23,44 @@ public:
 	btDefaultCollisionConfiguration* collisionConfig;
 
 	btBoxShape* box;
-	btAlignedObjectArray<btCollisionShape*> collisionShapes;
-
-	DebugDrawer debug;
-
 	PhysiqueBullet() {
-
 
 	}
 
+	~PhysiqueBullet() {
+		if (dynamicsWorld)
+		{
+			int i;
+			for (i = dynamicsWorld->getNumConstraints() - 1; i >= 0; i--)
+			{
+				dynamicsWorld->removeConstraint(dynamicsWorld->getConstraint(i));
+			}
+			for (i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
+			{
+				btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
+				btRigidBody* body = btRigidBody::upcast(obj);
+				if (body && body->getMotionState())
+				{
+					delete body->getMotionState();
+				}
+				dynamicsWorld->removeCollisionObject(obj);
+				delete obj;
+			}
+		}
+		//delete collision shapes
+		/*for (int j = 0; j < collisionShapes.size(); j++)
+		{
+			btCollisionShape* shape = collisionShapes[j];
+			delete shape;
+		}
+		collisionShapes.clear();*/
 
+		delete dynamicsWorld;
+		delete solver;
+		delete overlappingPairCache;
+		delete dispatcher;
+		delete collisionConfig;
+	}
 
 	void init() {
 		//Mise en place de la configuration pour collision
@@ -50,15 +75,13 @@ public:
 		//Genere le monde dynamique
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfig);
 		//Ajoute la gravité
-		dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
+		dynamicsWorld->setGravity(btVector3(0, -10, 0));
 
-		this->debug.DBG_DrawWireframe;
-		this->debug.setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+		if (dynamicsWorld->getDebugDrawer())
+			dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints);
 
-		dynamicsWorld->setDebugDrawer(&this->debug);
-		//End Init
 		box = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
-		collisionShapes.push_back(box);
+		//collisionShapes.push_back(box);
 
 
 		btTransform groundTransform;
@@ -68,7 +91,7 @@ public:
 		createRigidBody(mass, groundTransform, box, btVector4(0, 0, 1, 1));
 
 		btBoxShape* colShape = new btBoxShape(btVector3(.1, .1, .1));
-		collisionShapes.push_back(colShape);
+		//collisionShapes.push_back(colShape);
 
 		btTransform startTransform;
 		startTransform.setIdentity();
@@ -100,7 +123,6 @@ public:
 	void loop(float deltaTime) {
 		if (dynamicsWorld) {
 			dynamicsWorld->stepSimulation(deltaTime);
-			dynamicsWorld->debugDrawWorld();
 		}
 	}
 
@@ -117,6 +139,8 @@ public:
 
 		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 
+#define USE_MOTIONSTATE 1
+#ifdef USE_MOTIONSTATE
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 
 		btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape, localInertia);
@@ -124,50 +148,17 @@ public:
 		btRigidBody* body = new btRigidBody(cInfo);
 		//body->setContactProcessingThreshold(m_defaultContactProcessingThreshold);
 
+#else
+		btRigidBody* body = new btRigidBody(mass, 0, shape, localInertia);
+		body->setWorldTransform(startTransform);
+#endif  //
+
 		body->setUserIndex(-1);
 		dynamicsWorld->addRigidBody(body);
 		return body;
 	}
 
-	~PhysiqueBullet() {
-		if (dynamicsWorld)
-		{
-			int i;
-			for (i = dynamicsWorld->getNumConstraints() - 1; i >= 0; i--)
-			{
-				dynamicsWorld->removeConstraint(dynamicsWorld->getConstraint(i));
-			}
-			for (i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
-			{
-				btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
-				btRigidBody* body = btRigidBody::upcast(obj);
-				if (body && body->getMotionState())
-				{
-					delete body->getMotionState();
-				}
-				dynamicsWorld->removeCollisionObject(obj);
-				delete obj;
-			}
-		}
-		//delete collision shapes
-		for (int j = 0; j < collisionShapes.size(); j++)
-		{
-			btCollisionShape* shape = collisionShapes[j];
-			delete shape;
-		}
-		collisionShapes.clear();
-
-		delete dynamicsWorld;
-		delete solver;
-		delete overlappingPairCache;
-		delete dispatcher;
-		delete collisionConfig;
-	}
 
 
-	void addToPhysique() {
-
-	}
-
-};*/
+};
 #endif

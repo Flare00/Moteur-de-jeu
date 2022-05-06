@@ -17,13 +17,9 @@ protected:
 	GLuint u_limit_top;
 	GLuint u_limit_bottom;
 	GLuint u_limit_blur;
-
-	GLuint u_height;
 public:
 	TerrainShader(std::string vertex, std::string fragment) : GlobalShader(vertex, fragment) {
 		this->use();
-		
-		this->u_height = glGetUniformLocation(this->id, "u_height");
 
 		this->u_heightmap = glGetUniformLocation(this->id, "u_heightmap");
 		this->u_has_heightmap = glGetUniformLocation(this->id, "u_has_heightmap");
@@ -36,12 +32,10 @@ public:
 		this->u_limit_blur = glGetUniformLocation(this->id, "u_limit_blur");
 	}
 
-	void drawHeightMap(Texture* texture, int id, float height) {
+	void drawHeightMap(Texture* texture, int id) {
 		if (texture != NULL) {
-
 			texture->draw( this->u_heightmap, id);
 			glUniform1i(this->u_has_heightmap, 1);
-			glUniform1f(this->u_height, 1);
 		}
 		else {
 			glUniform1i(this->u_has_heightmap, 0);

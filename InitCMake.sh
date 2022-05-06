@@ -15,7 +15,8 @@ fi
 echo "CMake"
 cmake . -B"$DIR"
 
-echo "make -C $DIR -j"
 
-make -C "$DIR" -j
+#echo "Build"
+#cmake --build "$DIR/" --config Debug
 
+$SHELL 

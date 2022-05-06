@@ -249,16 +249,6 @@ public:
 	{
 		return this->VAO;
 	}
-
-	glm::vec3 getMinCoord() {
-		glm::vec3 res = glm::vec3(FLT_MAX);
-		for (size_t i = 0, max = this->vertexArray.size(); i < max; i++) {
-			res.x = glm::min(res.x, this->vertexArray[i].x);
-			res.y = glm::min(res.y, this->vertexArray[i].y);
-			res.z = glm::min(res.z, this->vertexArray[i].z);
-		}
-		return res;
-	}
 };
 
 #endif

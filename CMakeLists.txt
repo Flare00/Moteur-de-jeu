@@ -3,6 +3,7 @@ cmake_minimum_required (VERSION 3.0)
 project (Moteur)
 find_package(OpenGL REQUIRED)
 
+set(BULLET_PHYSICS_SOURCE_DIR "${CMAKE_SOURCE_DIR}/external/bullet3-3.24")
 # Compile external dependencies 
 add_subdirectory(external)
 
@@ -25,7 +26,7 @@ include_directories(
 	external/glm-0.9.8.5/
 	external/glew-2.1.0/include/
 	external/stb/
-	#external/bullet3-3.24/src/
+	external/bullet3-3.24/src/
 	
 	common/
 )
@@ -34,7 +35,7 @@ set(ALL_LIBS
 	${OPENGL_LIBRARY}
 	glfw
 	GLEW_210
-	#BULLET3_324
+	BULLET3_324
 )
 
 add_definitions(
@@ -49,7 +50,7 @@ add_definitions(
 add_executable(moteur
 		 common/objloader.hpp
 		common/objloader.cpp
-        moteur/Moteur.cpp  "moteur/metier/Physique/DebugDrawer.hpp" "moteur/metier/Shader/DebugShader.hpp" "moteur/metier/Collision/Type/TerrainCollision.hpp")
+        moteur/Moteur.cpp)
 
 
 target_link_libraries(moteur
