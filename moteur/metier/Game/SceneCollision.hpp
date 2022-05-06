@@ -65,7 +65,7 @@ public:
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");
 		Texture *textureTerrain = new Texture("Textures/HeightMap/test.png");
 		Texture *heightMapTerrain = new Texture("Textures/HeightMap/test.png");
-		Terrain *terrain = new Terrain("Terrain", shaderTerrain, textureTerrain, heightMapTerrain);
+		Terrain *terrain = new Terrain("Terrain", shaderTerrain, textureTerrain, heightMapTerrain, 2.0f);
 		terrain->getTransform()->translate(glm::vec3(0, -10, 0));
 
 		//soleil
@@ -91,7 +91,7 @@ public:
 		TerreLOD->setRigidBody(new RigidBody(TerreLOD, false, 1.0f, glm::vec3(-5, 0, 0)));
 
 		//Add to scene
-		this->scene->addChild(SoleilLOD);
+		//this->scene->addChild(SoleilLOD);
 		this->scene->addChild(TerreLOD);
 		this->scene->addChild(terrain);
 

@@ -3,7 +3,9 @@
 #include <cmath>
 #include <GameObject/GameObject.hpp>
 #include <Component.hpp>
-#include "CollisionComponent.hpp"
+#include "CollisionComponent.hpp""
+#include <GameObject/ModeleComponent.hpp>
+
 class RigidBody : public Component
 {
 private:
@@ -26,9 +28,7 @@ public:
         this->parent = parent;
         if (staticObj)
         {
-            this->masse = FLT_MAX;
-
-            std::cout << "Masse : " << this->masse << std::endl;
+            this->masse = 1.0f;
         }
         else
         {
@@ -52,10 +52,17 @@ public:
         this->collision = new CollisionComponent(center, radius);
     }
 
+    void generateTerrainCollision(Texture* texture, std::vector<glm::vec3> vertex, float height)
+    {
+        this->collision = new CollisionComponent(texture, vertex, height);
+    }
+
     void generateModeleCollision(std::vector<glm::vec3> vertexArray, std::vector<unsigned int> indices)
     {
         this->collisionModele = new CollisionComponent(vertexArray, indices);
     }
+
+
 
     void addForces(glm::vec3 force)
     {
@@ -142,6 +149,11 @@ public:
     {
         return this->collisionModele != NULL;
     }
+
+    GameObject* getParent() {
+        return this->parent;
+    }
 };
+
 
 #endif

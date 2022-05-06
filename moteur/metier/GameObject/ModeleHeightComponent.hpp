@@ -18,6 +18,7 @@ private:
 
 protected:
     TextureContainer heightMap;
+    float zHeight;
 
 public:
     // --- CONSTRUCTEURS ET DESTRUCTEURS ---
@@ -48,15 +49,16 @@ public:
             this->shader->use();
 
             glEnable(GL_TEXTURE_2D);
-            this->shader->drawHeightMap(heightMap.texture, (int)textures.size());
+            this->shader->drawHeightMap(heightMap.texture, (int)textures.size(), zHeight);
             ModeleComponent::draw(camera, transform, rigidbody);
         }
     }
 
-    void setHeightMap(Texture *t, bool destroyEnd)
+    void setHeightMap(Texture *t, bool destroyEnd, float zHeight)
     {
         heightMap.texture = t;
         heightMap.destroyAtEnd = destroyEnd;
+        this->zHeight = zHeight;
     }
 };
 

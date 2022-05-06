@@ -19,7 +19,7 @@ public:
 		return abs(x) <= EPSILON * glm::max(abs(1.0f), abs(x));
 	}
 
-	static void applyImpulse(RigidBody *r1, RigidBody *r2, Intersection::CollisionData data)
+	static void applyImpulse(RigidBody* r1, RigidBody* r2, Intersection::CollisionData data)
 	{
 		// MASS
 		float iMassR1 = r1->getInvMass();
@@ -32,7 +32,10 @@ public:
 
 		glm::vec3 normalR = glm::normalize(data.normal);
 
+
+
 		float dotR = glm::dot(vitesseR, normalR);
+
 		if (dotR > 0.0f)
 			return;
 
@@ -108,72 +111,88 @@ public:
 		r2->addForces(tangentImpuse);
 	}
 
-	static void computePhysique(GameObject *scene, float delta)
+	static void computePhysique(GameObject* scene, float delta)
 	{
-		std::vector<GameObject *> rigidbodiesGO = scene->getAllGameObjectByComponentType(Component::Type::RIGIDBODY);
-		std::vector<Component *> rigidbodies = scene->getAllComponentsByTypeRecursive(Component::Type::RIGIDBODY);
+		std::vector<GameObject*> rigidbodiesGO = scene->getAllGameObjectByComponentType(Component::Type::RIGIDBODY);
+		std::vector<Component*> rigidbodies = scene->getAllComponentsByTypeRecursive(Component::Type::RIGIDBODY);
 
 		for (size_t i = 0, max = rigidbodiesGO.size(); i < max; i++)
 		{
 			for (size_t j = i + 1; j < max; j++)
 			{
-
-				RigidBody *r1 = (RigidBody *)rigidbodiesGO[i]->getOneComponentByType(Component::Type::RIGIDBODY);
-				RigidBody *r2 = (RigidBody *)rigidbodiesGO[j]->getOneComponentByType(Component::Type::RIGIDBODY);
+				RigidBody* r1 = (RigidBody*)rigidbodiesGO[i]->getOneComponentByType(Component::Type::RIGIDBODY);
+				RigidBody* r2 = (RigidBody*)rigidbodiesGO[j]->getOneComponentByType(Component::Type::RIGIDBODY);
 				r1->getCollision()->apply(rigidbodiesGO[i]->getTransformMatrix());
 				r2->getCollision()->apply(rigidbodiesGO[j]->getTransformMatrix());
+				if (r1->getCollision()->getCollision()->getType() == Collision::TERRAIN || r2->getCollision()->getCollision()->getType() == Collision::TERRAIN) {
+					std::cout << "TERRAIN\n";
+					float dist = CollisionComponent::computeZDistanceToTerrain(r1->getCollision(), r2->getCollision());
+					std::cout << "Dist : " << dist << std::endl;
 
-				Intersection::CollisionData data;
-				data = CollisionComponent::computeCollision(r1->getCollision(), r2->getCollision());
-				/* // beaucoup trop gourmand
-				if ((r1->hasModeleCollision() || r2->hasModeleCollision()) && data.collide)
-				{
-					std::cout << "MODELE\n";
-					CollisionComponent *c1;
-					CollisionComponent *c2;
-					if (r1->hasModeleCollision())
-					{
-						c1 = r1->getCollisionModele();
+					if (glm::abs(dist) < 0.05f) {
+						if (r1->getCollision()->getCollision()->getType() == Collision::TERRAIN) {
+							glm::vec3 vitesse = r2->getVitesse();
+							vitesse.y = 0;
+							r2->setVitesse(vitesse);
+						}
+						else {
+							glm::vec3 vitesse = r1->getVitesse();
+							vitesse.y = 0;
+							r1->setVitesse(vitesse);
+						}
 					}
-					else
-					{
-						c1 = r1->getCollision();
-					}
-					if (r2->hasModeleCollision())
-					{
-						c2 = r2->getCollisionModele();
-					}
-					else
-					{
-						c2 = r2->getCollision();
-					}
-					std::cout << "A\n";
-					data = CollisionComponent::computeCollision(c1, c2);
-					std::cout << "B\n";
+				}
+				else {
 
-				}*/
-
-				if (data.collide)
-				{
-					for (int k = 0; k < 10; k++)
+					Intersection::CollisionData data;
+					data = CollisionComponent::computeCollision(r1->getCollision(), r2->getCollision());
+					/* // beaucoup trop gourmand
+					if ((r1->hasModeleCollision() || r2->hasModeleCollision()) && data.collide)
 					{
-						applyImpulse(r1, r2, data);
-					}
+						std::cout << "Modele" << std::endl;
+						CollisionComponent *c1;
+						CollisionComponent *c2;
+						if (r1->hasModeleCollision())
+						{
+							c1 = r1->getCollisionModele();
+						}
+						else
+						{
+							c1 = r1->getCollision();
+						}
+						if (r2->hasModeleCollision())
+						{
+							c2 = r2->getCollisionModele();
+						}
+						else
+						{
+							c2 = r2->getCollision();
+						}
+						data = CollisionComponent::computeCollision(c1, c2);
+					}*/
 
-					float invMass = (r1->getInvMass() + r2->getInvMass());
-					if (invMass != 0.0f)
+					if (data.collide)
 					{
-						float precision = 0.01f;
-						std::cout << data.profondeur << std::endl;
-						float distance = glm::max(data.profondeur + precision, 0.0f) ;
+						for (int k = 0; k < 10; k++)
+						{
+							applyImpulse(r1, r2, data);
+						}
 
-						float scalar = distance / invMass;
-						glm::vec3 correction = data.normal * scalar * 0.45f;
-						r1->addCorrection(-correction);
-						r2->addCorrection(correction);
+						float invMass = (r1->getInvMass() + r2->getInvMass());
+						if (invMass != 0.0f)
+						{
+							float precision = 0.01f;
+							std::cout << data.profondeur << std::endl;
+							float distance = glm::max(data.profondeur + precision, 0.0f);
 
-						// rigidbodiesGO[i]->getTransform()->translate(data.normal * (data.profondeur / (r2->getMass() + r1->getMass()) * 0.45f));
-						// rigidbodiesGO[j]->getTransform()->translate(-data.normal * (data.profondeur / (r2->getMass() + r1->getMass()) * 0.45f));
+							float scalar = distance / invMass;
+							glm::vec3 correction = data.normal * scalar * 0.45f;
+							r1->addCorrection(-correction);
+							r2->addCorrection(correction);
+
+							// rigidbodiesGO[i]->getTransform()->translate(data.normal * (data.profondeur / (r2->getMass() + r1->getMass()) * 0.45f));
+							// rigidbodiesGO[j]->getTransform()->translate(-data.normal * (data.profondeur / (r2->getMass() + r1->getMass()) * 0.45f));
+						}
 					}
 				}
 			}
@@ -181,8 +200,8 @@ public:
 
 		for (size_t i = 0, max = rigidbodies.size(); i < max; i++)
 		{
-			RigidBody *r = (RigidBody *)rigidbodies[i];
-			// r->addForces(GRAVITY);
+			RigidBody* r = (RigidBody*)rigidbodies[i];
+			r->addForces(GRAVITY);
 			r->applyVitesse(delta, 1.0f - (0.02f * delta));
 		}
 	}

@@ -135,8 +135,18 @@ public:
 		if (this->modeles[0]->getIndexedVertices().size() > 0) 
 		{
 			this->rigidbody->generateBoundingBox(this->modeles[0]->getIndexedVertices());
-			this->rigidbody->generateModeleCollision(this->modeles[0]->getIndexedVertices(), this->modeles[0]->getIndices());
 		}
+
+		this->addComponent(this->rigidbody);
+	}
+	void setRigidBody(RigidBody* body, glm::vec3 center, float radius) {
+		if (this->rigidbody != NULL)
+		{
+			delete this->rigidbody;
+		}
+
+		this->rigidbody = body;
+		this->rigidbody->generateSphereCollision(center, radius);
 
 		this->addComponent(this->rigidbody);
 	}

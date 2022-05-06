@@ -11,7 +11,8 @@ public :
 	enum TypeCollision {
 		BOUNDING_BOX,
 		SPHERE,
-		MODELE
+		MODELE,
+		TERRAIN,
 	};
 protected :
 	glm::mat4 transformation;

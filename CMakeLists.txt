@@ -49,7 +49,7 @@ add_definitions(
 add_executable(moteur
 		 common/objloader.hpp
 		common/objloader.cpp
-        moteur/Moteur.cpp  "moteur/metier/Physique/DebugDrawer.hpp" "moteur/metier/Shader/DebugShader.hpp")
+        moteur/Moteur.cpp  "moteur/metier/Physique/DebugDrawer.hpp" "moteur/metier/Shader/DebugShader.hpp" "moteur/metier/Collision/Type/TerrainCollision.hpp")
 
 
 target_link_libraries(moteur

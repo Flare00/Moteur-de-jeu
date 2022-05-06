@@ -18,7 +18,8 @@ private:
 	int width, height;
 
 	unsigned int texture_index;
-	unsigned char *texture_data;
+	unsigned char* texture_data;
+	std::vector<glm::vec3> data_vector;
 
 	bool loaded;
 
@@ -62,6 +63,15 @@ public:
 		{
 			this->loaded = false;
 		}
+		
+		for (int i = 0; i < this->height; i++) {
+			for (int j = 0; j < this->width; j++) {
+				unsigned char* pixelOffset = this->texture_data + (j + width * i) * nbC;
+				this->data_vector.push_back(glm::vec3((int)pixelOffset[0], (int)pixelOffset[1], (int)pixelOffset[2]));
+			}
+		}
+
+
 		stbi_image_free(this->texture_data);
 	}
 
@@ -82,9 +92,14 @@ public:
 		return this->height;
 	}
 
-	unsigned char *getData()
+	unsigned char* getData()
 	{
 		return this->texture_data;
+	}
+
+	std::vector<glm::vec3> getDataVector()
+	{
+		return this->data_vector;
 	}
 };
 

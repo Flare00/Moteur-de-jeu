@@ -79,15 +79,10 @@ public:
 		std::vector<ModeleCollision::Triangle> tA = a->getTriangle();
 		std::vector<ModeleCollision::Triangle> tB = b->getTriangle();
 
-		std::cout << "A\n";
 		for (size_t i = 0, maxA = tA.size(); i < maxA; i++)
 		{
-			std::cout << "I : " << i << std::endl;
-
 			for (size_t j = 0, maxB = tB.size(); j < maxB; j++)
 			{
-
-				std::cout << "I : " << i << " | J : " << j << std::endl;
 
 				glm::vec3 normA = glm::triangleNormal(tA[i].x, tA[i].y, tA[i].z);
 				glm::vec3 normB = glm::triangleNormal(tB[j].x, tB[j].y, tB[j].z);
@@ -99,7 +94,6 @@ public:
 
 				if (normA == glm::abs(normB))
 				{
-					std::cout << "B1" << std::endl;
 					listPa.push_back(tA[i].x);
 					listPa.push_back(tA[i].y);
 					listPa.push_back(tA[i].z);
@@ -109,8 +103,6 @@ public:
 				}
 				else
 				{
-					std::cout << "B2" << std::endl;
-
 					std::vector<glm::vec3> tmpA;
 					std::vector<glm::vec3> tmpB;
 					tmpA.push_back(tA[i].x - tA[i].y);
@@ -121,7 +113,6 @@ public:
 					tmpB.push_back(tB[j].z - tB[j].x);
 					for (int k = 0; k < 3; k++)
 					{
-						std::cout << "B2 A k :" << k << std::endl;
 						if (glm::dot(tmpA[k], normB) != 0)
 						{
 							float t = (glm::dot(tB[j].x - tA[i].get(k), normB)) / glm::dot(tmpA[k], normB);
@@ -136,16 +127,13 @@ public:
 				}
 				for (int k = 0, maxSize = listPa.size(); k < maxSize && !isInContact; k++)
 				{
-					std::cout << "C k :"  << k << std::endl;
 					isInContact = isInTriangle(listPa[k], tB[j], normB);
 				}
 
 				for (int k = 0, maxSize = listPb.size(); k < maxSize && !isInContact; k++)
 				{
-					std::cout << "D k :" << k << std::endl;
 					isInContact = isInTriangle(listPb[k], tA[i], normA);
 				}
-				std::cout << "E"<< std::endl;
 
 				if (isInContact)
 				{
@@ -156,16 +144,14 @@ public:
 					contacts.push_back(tB[j].y);
 					contacts.push_back(tB[j].z);
 				}
-				std::cout << "F" << std::endl;
 			}
-			std::cout << "G" << std::endl;
 		}
-		std::cout << "Z" << std::endl;
 
 		if (contacts.size() > 0)
 		{
 			data->collide = true;
 		}
+		
 		data->profondeur = 0.0f;
 		data->contacts = contacts;
 	}
@@ -175,21 +161,40 @@ public:
 		std::vector<glm::vec3> contacts;
 		std::vector<glm::vec3> cB = b->getCoords();
 
+		std::vector<glm::vec3> normals;
 		float dist = 0.0f;
-		for (size_t i = 0, max = cB.size(); i < max; i++)
+		for (size_t i = 0, max = cB.size(); i < max-2; i+=3)
 		{
-			dist = glm::max(a->inCollision(cB[i]), dist);
-			if (dist >= 0.0f)
-			{
-				contacts.push_back(cB[i]);
+
+			bool hit = false;
+			for (int k = 0; k < 3; k++) {
+
+				float tmpDist = a->inCollision(cB[i + k]);
+				if (tmpDist >= 0.0f)
+				{
+					std::cout << "C" << std::endl;
+
+					hit = true;
+					dist = glm::max(dist, tmpDist);
+					contacts.push_back(cB[i+k]);
+				}
+			}
+			if (hit) {
+				normals.push_back(glm::triangleNormal(cB[i], cB[i+1], cB[i+2]));
 			}
 		}
+		glm::vec3 normal = glm::vec3(0);
+		for (size_t i = 0, max = normals.size(); i < max; i++) {
+			normal += normals[i];
+		}
+
+		data->normal = -normal / (float)normals.size();
 
 		if (contacts.size() > 0)
 		{
 			data->collide = true;
 		}
-		data->profondeur = dist;
+		data->profondeur = 0.0f;
 		data->contacts = contacts;
 	}
 
@@ -209,31 +214,23 @@ public:
 		}
 		else if (c1->getType() == Collision::MODELE && c2->getType() == Collision::MODELE)
 		{
-			std::cout << "MODELE VS MODELE\n";
 			ModeleCollision* a = (ModeleCollision*)c1;
 			ModeleCollision* b = (ModeleCollision*)c2;
 			intersectionModeleToModele(a, b, &result);
-			std::cout << "END VS\n";
 		}
 		else if (c1->getType() == Collision::BOUNDING_BOX && c2->getType() == Collision::MODELE)
 		{
+
 			BoundingBox* a = (BoundingBox*)c1;
 			ModeleCollision* b = (ModeleCollision*)c2;
 			result.collide = isIntersectionAABBtoModele(a, b);
-			if (result.collide && !minimal)
-			{
-				intersectionAABBtoModele(a, b, &result);
-			}
+			intersectionAABBtoModele(a, b, &result);
 		}
 		else if (c1->getType() == Collision::MODELE && c2->getType() == Collision::BOUNDING_BOX)
 		{
 			BoundingBox* a = (BoundingBox*)c1;
 			ModeleCollision* b = (ModeleCollision*)c2;
-			result.collide = isIntersectionAABBtoModele(a, b);
-			if (result.collide && !minimal)
-			{
-				intersectionAABBtoModele(a, b, &result);
-			}
+			intersectionAABBtoModele(a, b, &result);
 		}
 		return result;
 	}

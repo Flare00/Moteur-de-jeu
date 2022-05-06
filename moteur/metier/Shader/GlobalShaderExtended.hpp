@@ -23,7 +23,7 @@ public:
         this->u_heightmap = glGetUniformLocation(this->id, "u_heightmap");
     }
 
-    void drawHeightMap(Texture *texture, int id)
+    void drawHeightMap(Texture *texture, int id, float zHeight)
     {
         if (texture != NULL)
         {
