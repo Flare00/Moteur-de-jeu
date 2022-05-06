@@ -1,7 +1,7 @@
 #ifndef __MODELE_HEIGHT_COMPONENT_HPP__
 #define __MODELE_HEIGHT_COMPONENT_HPP__
 
-#include <common/objloader.hpp>
+#include <objloader.hpp>
 
 #include <vector>
 #include <glm/glm.hpp>

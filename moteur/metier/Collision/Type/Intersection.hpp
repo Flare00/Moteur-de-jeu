@@ -18,7 +18,7 @@ public:
 		std::vector<glm::vec3> contacts;
 	};
 	// --- Is Intersection ---
-	static bool isIntersectionAABBtoAABB(BoundingBox *a, BoundingBox *b)
+	static bool isIntersectionAABBtoAABB(BoundingBox* a, BoundingBox* b)
 	{
 		glm::vec3 aMin = a->getMin();
 		glm::vec3 aMax = a->getMax();
@@ -26,17 +26,17 @@ public:
 		glm::vec3 bMax = b->getMax();
 
 		return aMin.x <= bMax.x && aMax.x >= bMin.x &&
-			   aMin.y <= bMax.y && aMax.y >= bMin.y &&
-			   aMin.z <= bMax.z && aMax.z >= bMin.z;
+			aMin.y <= bMax.y && aMax.y >= bMin.y &&
+			aMin.z <= bMax.z && aMax.z >= bMin.z;
 	}
 
-	static bool isIntersectionAABBtoModele(BoundingBox *a, ModeleCollision *b)
+	static bool isIntersectionAABBtoModele(BoundingBox* a, ModeleCollision* b)
 	{
 		return false;
 	}
 
 	// --- Intersection Points ---
-	static void intersectionAABBtoAABB(BoundingBox *a, BoundingBox *b, CollisionData *data)
+	static void intersectionAABBtoAABB(BoundingBox* a, BoundingBox* b, CollisionData* data)
 	{
 		std::vector<glm::vec3> contacts;
 		std::vector<glm::vec3> tmp = a->getCoords();
@@ -73,24 +73,33 @@ public:
 		return ((u0 > 0) && (u1 > 0) && (u2 > 0));
 	}
 
-	static void intersectionModeleToModele(ModeleCollision *a, ModeleCollision *b, CollisionData *data)
+	static void intersectionModeleToModele(ModeleCollision* a, ModeleCollision* b, CollisionData* data)
 	{
 		std::vector<glm::vec3> contacts;
 		std::vector<ModeleCollision::Triangle> tA = a->getTriangle();
 		std::vector<ModeleCollision::Triangle> tB = b->getTriangle();
 
+		std::cout << "A\n";
 		for (size_t i = 0, maxA = tA.size(); i < maxA; i++)
 		{
+			std::cout << "I : " << i << std::endl;
+
 			for (size_t j = 0, maxB = tB.size(); j < maxB; j++)
 			{
+
+				std::cout << "I : " << i << " | J : " << j << std::endl;
+
 				glm::vec3 normA = glm::triangleNormal(tA[i].x, tA[i].y, tA[i].z);
 				glm::vec3 normB = glm::triangleNormal(tB[j].x, tB[j].y, tB[j].z);
 
 				bool isInContact = false;
 				std::vector<glm::vec3> listPa;
 				std::vector<glm::vec3> listPb;
+
+
 				if (normA == glm::abs(normB))
 				{
+					std::cout << "B1" << std::endl;
 					listPa.push_back(tA[i].x);
 					listPa.push_back(tA[i].y);
 					listPa.push_back(tA[i].z);
@@ -100,6 +109,8 @@ public:
 				}
 				else
 				{
+					std::cout << "B2" << std::endl;
+
 					std::vector<glm::vec3> tmpA;
 					std::vector<glm::vec3> tmpB;
 					tmpA.push_back(tA[i].x - tA[i].y);
@@ -110,6 +121,7 @@ public:
 					tmpB.push_back(tB[j].z - tB[j].x);
 					for (int k = 0; k < 3; k++)
 					{
+						std::cout << "B2 A k :" << k << std::endl;
 						if (glm::dot(tmpA[k], normB) != 0)
 						{
 							float t = (glm::dot(tB[j].x - tA[i].get(k), normB)) / glm::dot(tmpA[k], normB);
@@ -118,18 +130,23 @@ public:
 						if (glm::dot(tmpB[k], normA) != 0)
 						{
 							float t = (glm::dot(tA[i].x - tB[j].get(k), normA)) / glm::dot(tmpB[k], normA);
-							listPa.push_back(tB[j].get(k) + t * tmpB[k]);
+							listPb.push_back(tB[j].get(k) + t * tmpB[k]);
 						}
 					}
 				}
 				for (int k = 0, maxSize = listPa.size(); k < maxSize && !isInContact; k++)
 				{
+					std::cout << "C k :"  << k << std::endl;
 					isInContact = isInTriangle(listPa[k], tB[j], normB);
-					if (!isInContact)
-					{
-						isInContact = isInTriangle(listPb[k], tA[i], normA);
-					}
 				}
+
+				for (int k = 0, maxSize = listPb.size(); k < maxSize && !isInContact; k++)
+				{
+					std::cout << "D k :" << k << std::endl;
+					isInContact = isInTriangle(listPb[k], tA[i], normA);
+				}
+				std::cout << "E"<< std::endl;
+
 				if (isInContact)
 				{
 					contacts.push_back(tA[i].x);
@@ -139,8 +156,11 @@ public:
 					contacts.push_back(tB[j].y);
 					contacts.push_back(tB[j].z);
 				}
+				std::cout << "F" << std::endl;
 			}
+			std::cout << "G" << std::endl;
 		}
+		std::cout << "Z" << std::endl;
 
 		if (contacts.size() > 0)
 		{
@@ -150,7 +170,7 @@ public:
 		data->contacts = contacts;
 	}
 
-	static void intersectionAABBtoModele(BoundingBox *a, ModeleCollision *b, CollisionData *data)
+	static void intersectionAABBtoModele(BoundingBox* a, ModeleCollision* b, CollisionData* data)
 	{
 		std::vector<glm::vec3> contacts;
 		std::vector<glm::vec3> cB = b->getCoords();
@@ -173,13 +193,13 @@ public:
 		data->contacts = contacts;
 	}
 
-	static CollisionData intersection(Collision *c1, Collision *c2, bool minimal = false)
+	static CollisionData intersection(Collision* c1, Collision* c2, bool minimal = false)
 	{
 		CollisionData result;
 		if (c1->getType() == Collision::BOUNDING_BOX && c2->getType() == Collision::BOUNDING_BOX)
 		{
-			BoundingBox *a = (BoundingBox *)c1;
-			BoundingBox *b = (BoundingBox *)c2;
+			BoundingBox* a = (BoundingBox*)c1;
+			BoundingBox* b = (BoundingBox*)c2;
 			result.collide = isIntersectionAABBtoAABB(a, b);
 			if (result.collide && !minimal)
 			{
@@ -189,14 +209,16 @@ public:
 		}
 		else if (c1->getType() == Collision::MODELE && c2->getType() == Collision::MODELE)
 		{
-			ModeleCollision *a = (ModeleCollision *)c1;
-			ModeleCollision *b = (ModeleCollision *)c2;
+			std::cout << "MODELE VS MODELE\n";
+			ModeleCollision* a = (ModeleCollision*)c1;
+			ModeleCollision* b = (ModeleCollision*)c2;
 			intersectionModeleToModele(a, b, &result);
+			std::cout << "END VS\n";
 		}
 		else if (c1->getType() == Collision::BOUNDING_BOX && c2->getType() == Collision::MODELE)
 		{
-			BoundingBox *a = (BoundingBox *)c1;
-			ModeleCollision *b = (ModeleCollision *)c2;
+			BoundingBox* a = (BoundingBox*)c1;
+			ModeleCollision* b = (ModeleCollision*)c2;
 			result.collide = isIntersectionAABBtoModele(a, b);
 			if (result.collide && !minimal)
 			{
@@ -205,8 +227,8 @@ public:
 		}
 		else if (c1->getType() == Collision::MODELE && c2->getType() == Collision::BOUNDING_BOX)
 		{
-			BoundingBox *a = (BoundingBox *)c1;
-			ModeleCollision *b = (ModeleCollision *)c2;
+			BoundingBox* a = (BoundingBox*)c1;
+			ModeleCollision* b = (ModeleCollision*)c2;
 			result.collide = isIntersectionAABBtoModele(a, b);
 			if (result.collide && !minimal)
 			{

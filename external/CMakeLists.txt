@@ -2,7 +2,6 @@ if(MSVC AND NOT "${MSVC_VERSION}" LESS 1400)
 	add_definitions( "/MP" )
 endif()
 
-
 add_definitions(
 	-DTW_STATIC
 	-DTW_NO_LIB_PRAGMA
@@ -10,9 +9,9 @@ add_definitions(
 	-DGLEW_STATIC
 	-D_CRT_SECURE_NO_WARNINGS
 )
+
 ### GLFW ###
 add_subdirectory (glfw-3.3.7)
-
 
 include_directories(
 	glfw-3.3.7/include/GLFW/
@@ -43,7 +42,6 @@ set(GLEW_SOURCE
 set(GLEW_HEADERS
 )
 
-
 add_library( GLEW_210 STATIC
 	${GLEW_SOURCE}
 	${GLEW_INCLUDE}
@@ -54,3 +52,25 @@ target_link_libraries(GLEW_210
 	${EXTRA_LIBS}
 )
 
+### BULLET ###
+
+add_subdirectory(bullet3-3.24/src/LinearMath)
+add_subdirectory(bullet3-3.24/src/Bullet3Common)
+add_subdirectory(bullet3-3.24/src/BulletCollision)
+add_subdirectory(bullet3-3.24/src/BulletDynamics)
+add_subdirectory(bullet3-3.24/src/BulletSoftBody)
+add_subdirectory(bullet3-3.24/src/BulletInverseDynamics)
+
+set(BULLET_SRC
+	bullet3-3.24/src/btBulletCollisionAll.cpp
+	bullet3-3.24/src/btBulletCollisionCommon.h
+	bullet3-3.24/src/btBulletDynamicsAll.cpp
+	bullet3-3.24/src/btBulletDynamicsCommon.h
+	bullet3-3.24/src/btLinearMathAll.cpp
+)
+
+
+add_library( BULLET3_324 STATIC 
+	${BULLET_SRC}
+)
+target_link_libraries(BULLET3_324 LinearMath Bullet3Common BulletCollision BulletDynamics BulletSoftBody BulletInverseDynamics)

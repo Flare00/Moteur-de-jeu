@@ -7,7 +7,6 @@
 #include <Tools/PrimitiveMesh.hpp>
 #include <Shader/GlobalShader.hpp>
 #include <GameObject/ModeleLOD.hpp>
-#include <Collision/Physique.hpp>
 #include <World/InputCollision.hpp>
 #include <World/InputCollisionV2.hpp>
 #include <Collision/RigidBody.hpp>
@@ -17,14 +16,16 @@
 
 #include <Global.hpp>
 
+#include <Physique/PhysiqueBullet.hpp>
+
 class SceneCollision : public Scene
 {
 private:
 	GlobalShader *globalShader = NULL;
 	GlobalShaderExtended *shaderTerrain = NULL;
 
-	int precision = 32;
-	int low_precision = 8;
+	int precision = 4;
+	int low_precision = 4;
 
 	InputCollision *inputCol;
 	Text2D *text2D;
@@ -32,9 +33,15 @@ private:
 	float cooldownFPS = 0.1f;
 
 	bool wait1Frame = true;
+
+	PhysiqueBullet* bullet;
 public:
 	SceneCollision()
 	{
+	}
+
+	~SceneCollision() {
+		delete bullet;
 	}
 
 	virtual void Init()
@@ -90,10 +97,14 @@ public:
 
 		//Set inputCollision
 		this->inputCol = new InputCollision(c, TerreLOD);
+
+		bullet = new PhysiqueBullet();
+		bullet->init();
 	}
 
 	virtual void Draw(float deltaTime)
 	{
+
 		this->cooldownFPS -= deltaTime;
 		// Process input
 		inputCol->processInput(deltaTime);
@@ -109,13 +120,14 @@ public:
 					shaderTerrain->drawView(this->cameras[this->activeCamera]);
 			}
 
+			bullet->loop(deltaTime);
 			// Clear the screen
-			if (wait1Frame) {
+			/*if (wait1Frame) {
 				Physique::computePhysique(this->scene, deltaTime);
 			}
 			else {
 				wait1Frame = false;
-			}
+			}*/
 		}
 		if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size()) {
 			this->scene->compute(this->cameras[this->activeCamera], true);

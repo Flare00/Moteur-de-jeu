@@ -9,7 +9,7 @@
 #include <iostream>
 #include <math.h>
 
-#include <common/objloader.hpp>
+#include <objloader.hpp>
 
 #include <Light/Material.hpp>
 #include <Texture.hpp>

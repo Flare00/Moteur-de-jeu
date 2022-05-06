@@ -1,11 +1,10 @@
 # CMake entry point
 cmake_minimum_required (VERSION 3.0)
 project (Moteur)
-
 find_package(OpenGL REQUIRED)
 
 # Compile external dependencies 
-add_subdirectory (external)
+add_subdirectory(external)
 
 # On Visual 2005 and above, this module can set the debug working directory
 cmake_policy(SET CMP0026 OLD)
@@ -20,17 +19,22 @@ endif(INCLUDE_DISTRIB)
 
 
 include_directories(
+	moteur/metier/
+	
 	external/glfw-3.3.7/include/
 	external/glm-0.9.8.5/
 	external/glew-2.1.0/include/
-	external/stb
-	moteur/metier
-	.
+	external/stb/
+	external/bullet3-3.24/src/
+	
+	common/
 )
+
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
 	glfw
 	GLEW_210
+	BULLET3_324
 )
 
 add_definitions(
@@ -45,8 +49,7 @@ add_definitions(
 add_executable(moteur
 		 common/objloader.hpp
 		common/objloader.cpp
-        moteur/Moteur.cpp
-  "moteur/metier/World/Frustum.hpp")
+        moteur/Moteur.cpp)
 
 
 target_link_libraries(moteur
