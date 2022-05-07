@@ -11,6 +11,7 @@
 #include <Text2D.hpp>
 #include "Scene.hpp"
 #include <GameObject/Terrain.hpp>
+#include <Tools/LoaderOBJ.hpp>
 
 #include <Global.hpp>
 
@@ -66,6 +67,10 @@ public:
 		// Set Texture
 		Texture *texTerre = new Texture("Textures/SystemeSolaire/earth_daymap.jpg");
 		Texture *texSoleil = new Texture("Textures/SystemeSolaire/sun.jpg");
+
+		// Load OBJ
+		LoaderOBJ::ObjModelInfo test = LoaderOBJ::load("Model/cube.obj");
+		LoaderOBJ::printMyData(test);
 
 		// Terrain
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");
