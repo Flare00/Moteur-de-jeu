@@ -124,7 +124,7 @@ public:
 		}
 	}
 
-	virtual void draw(Camera *camera, glm::mat4 transform, RigidBody *rigidbody = NULL)
+	virtual void draw(Camera *camera, glm::mat4 transform, glm::vec3 position, BulletRigidbody* rigidbody = NULL)
 	{
 		if (!hasData)
 		{
@@ -133,13 +133,12 @@ public:
 
 		bool isInFOV = false;
 
-		if (rigidbody != NULL)
-		{
-			isInFOV = camera->isInFrustum(rigidbody->getCollision()->getCollision());
-		}
-		else
-		{
-			isInFOV = true; // TODO trouver une solution
+		
+		isInFOV = camera->isInFrustum(position);
+		if (!isInFOV && rigidbody != NULL) {
+
+			//std::cout << "ACTIVE : " << rigidbody->getRigidbody()->get << std::endl;
+			isInFOV = camera->isInFrustum(rigidbody);
 		}
 
 		if (!isInFOV)

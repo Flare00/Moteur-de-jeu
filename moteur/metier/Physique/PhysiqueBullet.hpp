@@ -4,10 +4,11 @@
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 
-
 #include <BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
-
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
+#include <Physique/DebugDrawer.hpp>
+#include "GestionContraintes.hpp"
 #define ARRAY_SIZE_Y 5
 #define ARRAY_SIZE_X 5
 #define ARRAY_SIZE_Z 5
@@ -16,15 +17,86 @@
 class PhysiqueBullet {
 	
 public:
+	GestionContraintes* gestionContraintes = NULL;
+	btGhostObject* ghost = NULL;
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	btSequentialImpulseConstraintSolver* solver;
-	btBroadphaseInterface* overlappingPairCache;
+	btDbvtBroadphase* overlappingPairCache;
 	btCollisionDispatcher* dispatcher;
 	btDefaultCollisionConfiguration* collisionConfig;
 
-	btBoxShape* box;
-	PhysiqueBullet() {
+	btOverlappingPairCallback* ghostCallback = NULL;
 
+	btBoxShape* box;
+	btTransform groundTransform;
+	btRigidBody* boxBody;
+
+	std::vector<BulletRigidbody*> rigidbodies;
+	PhysiqueBullet() {
+	}
+
+
+	void init(DebugDrawer* debug = NULL) {
+		//Mise en place de la configuration pour collision
+		collisionConfig = new btDefaultCollisionConfiguration();
+		//Mono Thread dispatcher (Regarder les BulletMultiThreaded pour le multi Thread)
+		dispatcher = new btCollisionDispatcher(collisionConfig);
+		//Overlapping broadphase , on peut essayer btAxis3Sweep
+		overlappingPairCache = new btDbvtBroadphase();
+		//Constraint solver (peut être multi thread, même chose que le dispatcher)
+		solver = new btSequentialImpulseConstraintSolver();
+
+		//Genere le monde dynamique
+		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfig);
+		//Ajoute la gravité
+		dynamicsWorld->setGravity(btVector3(0, -9.8f, 0));
+		if (debug != NULL) {
+			dynamicsWorld->setDebugDrawer(debug);
+		}
+
+		ghostCallback = new btGhostPairCallback();
+		dynamicsWorld->getBroadphase()->getOverlappingPairCache()->setInternalGhostPairCallback(ghostCallback);
+
+	}
+
+	void loop(float deltaTime) {
+		if (dynamicsWorld) {
+			dynamicsWorld->stepSimulation(deltaTime);
+			dynamicsWorld->debugDrawWorld();
+		}
+	}
+
+
+	GestionContraintes* getGestionContraintes() {
+		return this->gestionContraintes;
+	}
+
+	void addGhostObjectToPhysique(btGhostObject* ghost) {
+		this->dynamicsWorld->addCollisionObject(ghost);
+		this->ghost = ghost;
+	}
+
+	void removeGhostObjectToPhysique(btGhostObject* ghost) {
+		this->dynamicsWorld->removeCollisionObject(ghost);
+	}
+
+	void addRigidbodyToPhysique(BulletRigidbody * rigidbody) {
+		this->dynamicsWorld->addRigidBody(rigidbody->getRigidbody());
+		this->rigidbodies.push_back(rigidbody);
+	}
+
+	void removeRigidbodyFromPhysique(BulletRigidbody* rigidbody) {
+		this->dynamicsWorld->removeRigidBody(rigidbody->getRigidbody());
+		bool found = false;
+		size_t i = 0;
+		for (size_t max = this->rigidbodies.size(); i < max && !found; i++) {
+			if(this->rigidbodies[i]->getRigidbody() == rigidbody->getRigidbody()){
+				found = true;
+			}
+		}
+		if (found) {
+			this->rigidbodies.erase(this->rigidbodies.begin() + i);
+		}
 	}
 
 	~PhysiqueBullet() {
@@ -62,102 +134,15 @@ public:
 		delete collisionConfig;
 	}
 
-	void init() {
-		//Mise en place de la configuration pour collision
-		collisionConfig = new btDefaultCollisionConfiguration();
-		//Mono Thread dispatcher (Regarder les BulletMultiThreaded pour le multi Thread)
-		dispatcher = new btCollisionDispatcher(collisionConfig);
-		//Overlapping broadphase , on peut essayer btAxis3Sweep
-		overlappingPairCache = new btDbvtBroadphase();
-		//Constraint solver (peut être multi thread, même chose que le dispatcher)
-		solver = new btSequentialImpulseConstraintSolver();
-
-		//Genere le monde dynamique
-		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfig);
-		//Ajoute la gravité
-		dynamicsWorld->setGravity(btVector3(0, -10, 0));
-
-		if (dynamicsWorld->getDebugDrawer())
-			dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints);
-
-		box = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
-		//collisionShapes.push_back(box);
-
-
-		btTransform groundTransform;
-		groundTransform.setIdentity();
-		groundTransform.setOrigin(btVector3(0, -50, 0));
-		btScalar mass(0.);
-		createRigidBody(mass, groundTransform, box, btVector4(0, 0, 1, 1));
-
-		btBoxShape* colShape = new btBoxShape(btVector3(.1, .1, .1));
-		//collisionShapes.push_back(colShape);
-
-		btTransform startTransform;
-		startTransform.setIdentity();
-		btScalar mass2(1.f);
-
-		bool isDynamic = (mass2 != 0.f);
-
-		btVector3 localInertia(0, 0, 0);
-		if (isDynamic)
-			colShape->calculateLocalInertia(mass2, localInertia);
-
-		for (int k = 0; k < ARRAY_SIZE_Y; k++)
-		{
-			for (int i = 0; i < ARRAY_SIZE_X; i++)
-			{
-				for (int j = 0; j < ARRAY_SIZE_Z; j++)
-				{
-					startTransform.setOrigin(btVector3(
-						btScalar(0.2 * i),
-						btScalar(2 + .2 * k),
-						btScalar(0.2 * j)));
-
-					createRigidBody(mass2, startTransform, colShape);
-				}
-			}
+	/*~PhysiqueBullet() {
+		size_t last;
+		while ((last = rigidbodies.size()) > 0) {
+			BulletRigidbody* b = rigidbodies[last - 1];
+			rigidbodies.pop_back();
+			this->dynamicsWorld->removeRigidBody(b->getRigidbody());
+			delete b;
 		}
-	}
-
-	void loop(float deltaTime) {
-		if (dynamicsWorld) {
-			dynamicsWorld->stepSimulation(deltaTime);
-		}
-	}
-
-	btRigidBody* createRigidBody(float mass, const btTransform& startTransform, btCollisionShape* shape, const btVector4& color = btVector4(1, 0, 0, 1))
-	{
-		btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
-
-		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
-
-		btVector3 localInertia(0, 0, 0);
-		if (isDynamic)
-			shape->calculateLocalInertia(mass, localInertia);
-
-		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-
-#define USE_MOTIONSTATE 1
-#ifdef USE_MOTIONSTATE
-		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-
-		btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape, localInertia);
-
-		btRigidBody* body = new btRigidBody(cInfo);
-		//body->setContactProcessingThreshold(m_defaultContactProcessingThreshold);
-
-#else
-		btRigidBody* body = new btRigidBody(mass, 0, shape, localInertia);
-		body->setWorldTransform(startTransform);
-#endif  //
-
-		body->setUserIndex(-1);
-		dynamicsWorld->addRigidBody(body);
-		return body;
-	}
-
+	}*/
 
 
 };

@@ -5,9 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "Shader.hpp"
-#include "Transformation.hpp"
-#include "Texture.hpp"
+#include <Shader/Shader.hpp>
+#include <Texture.hpp>
 #include <Global.hpp>
 #include <Light/Light.hpp>
 #include <Light/Material.hpp>

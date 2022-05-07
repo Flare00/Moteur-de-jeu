@@ -8,7 +8,8 @@
 #include <World/Input.hpp>
 
 #include <GameObject/GameObject.hpp>
-#include <Transformation.hpp>
+#include <Transformation/Transformation.hpp>
+#include <Transformation/BulletTransformation.hpp>
 #include <Texture.hpp>
 #include <World/Camera.hpp>
 #include <World/Input.hpp>

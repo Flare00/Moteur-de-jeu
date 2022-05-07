@@ -11,6 +11,8 @@
 #include <glm/gtx/rotate_vector.hpp>
 
 #include <World/Frustum.hpp>
+#include <Physique/BulletRigidbody.hpp>
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
@@ -59,7 +61,7 @@ public:
 	float distanceMin = 0.1f;
 
 public:
-	Camera(vec3 pos = vec3(0.0f, 0.0f, 3.0f), float yaw = YAW, float pitch = PITCH, vec3 up = vec3(0.0f, 1.0f, 0.0f)) {
+	Camera(vec3 pos = vec3(0.0f, 0.0f, 3.0f), float yaw = YAW, float pitch = PITCH, vec3 up = vec3(0.0f, 1.0f, 0.0f), btGhostObject *bulletFrustum = NULL) {
 		this->transformation = glm::mat4(1.0f);
 		this->front = vec3(0.0f, 0.0f, -1.0f);
 		this->moveSpeed = MOVE_SPEED;
@@ -71,9 +73,10 @@ public:
 		this->yaw = yaw;
 		this->up = up;
 		updateVectors();
+		frustum.init(this->getProjection(), this->getViewMatrix());
 	}
 
-	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch)
+	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch, btGhostObject* bulletFrustum = NULL)
 	{
 		this->transformation = glm::mat4(1.0f);
 		this->front = vec3(0.0f, 0.0f, -1.0f);
@@ -88,6 +91,7 @@ public:
 		this->yaw = yaw;
 		this->pitch = pitch;
 		updateVectors();
+		frustum.init(this->getProjection(), this->getViewMatrix());
 
 	}
 
@@ -120,7 +124,6 @@ public:
 		else {
 			rotate(axe, sensPositif, deltaTime);
 		}
-
 	}
 
 
@@ -177,20 +180,20 @@ public:
 	}
 
 	void frustumUpdate() {
-		this->frustum.update(this->getProjection(), this->getViewMatrix());
+		this->frustum.update(this->getProjection(), this->getViewMatrix(), this->getPosition());
 	}
 
-	bool isInFrustum(Collision* collision) {
-		bool result = true;
-		switch (collision->getType()) {
-		case Collision::BOUNDING_BOX:
-			result = this->frustum.isVisible((BoundingBox*)collision);
-			break;
-		case Collision::SPHERE:
-			result = this->frustum.isVisible((SphereCollision*)collision);
-			break;
-		}
-		return result;
+	bool isInFrustum(glm::vec3 pos) {
+		return this->frustum.isVisible(pos);
+	}
+
+	bool isInFrustum(BulletRigidbody* rigidbody) {
+		return this->frustum.isVisible(rigidbody);
+
+	}
+
+	btGhostObject* getBulletFrustum() {
+		return this->frustum.getBulletFrustum();
 	}
 
 private:

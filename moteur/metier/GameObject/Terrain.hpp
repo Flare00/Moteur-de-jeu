@@ -37,7 +37,7 @@ protected:
 
 
 public:
-	Terrain(std::string id, GlobalShaderExtended *shader, Texture *texture, Texture *heightMap, float width =32, float height = 32, int resX = 8, int resY = 8, GameObject *parent = NULL) : GameObject(id, parent)
+	Terrain(std::string id, GlobalShaderExtended *shader, Texture *texture, Texture *heightMap, float width =32, float height = 32, int resX = 8, int resY = 8, BulletRigidbody* rigidbody = NULL, GameObject *parent = NULL) : GameObject(id, parent,rigidbody)
 	{
 		this->width = width;
 		this->height = height;
@@ -66,7 +66,7 @@ public:
 	virtual void compute(Camera *camera, bool dfs = true)
 	{
 		// Collision ...
-		this->modele->draw(camera, this->getTransformMatrix());
+		this->modele->draw(camera, this->getTransformMatrix(), this->getPosition(), (this->isBulletDependent ? (BulletRigidbody*) this->transform : NULL));
 
 		if (dfs)
 		{

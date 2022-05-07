@@ -5,10 +5,11 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-class Transformation
+#include <Transformation/ITransformation.hpp>
+class Transformation : public ITransformation
 {
-private:
+protected:
+
 	// Transformation that can be applied to descendance.
 	float scale;
 	glm::vec3 rotation;
@@ -24,7 +25,9 @@ private:
 	bool globalHasBeenChanged;
 	bool localHasBeenChanged;
 
+
 public:
+
 	Transformation(float scale = 1.0f, glm::vec3 translate = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), float selfScale = 1.0f, glm::vec3 selfRotation = glm::vec3(0.0f), glm::vec3 selfTranslation = glm::vec3(0.0f))
 	{
 		this->scale = scale;
@@ -39,7 +42,7 @@ public:
 		this->localHasBeenChanged = true;
 	}
 
-	Transformation *translate(glm::vec3 t)
+	virtual ITransformation* translate(glm::vec3 t)
 	{
 		this->translation += t;
 		this->globalHasBeenChanged = true;
@@ -53,7 +56,7 @@ public:
 		return this;
 	}
 
-	Transformation *setTranslate(glm::vec3 pos)
+	virtual ITransformation*setTranslate(glm::vec3 pos)
 	{
 		this->translation = pos;
 		this->globalHasBeenChanged = true;
@@ -79,7 +82,7 @@ public:
 		return this;
 	}
 
-	Transformation *rotate(glm::vec3 v, float rad)
+	virtual ITransformation*rotate(glm::vec3 v, float rad)
 	{
 		this->rotation = this->rotation + (v * rad);
 		this->globalHasBeenChanged = true;
@@ -93,7 +96,7 @@ public:
 		return this;
 	}
 
-	Transformation *setRotation(glm::vec3 r)
+	virtual ITransformation*setRotation(glm::vec3 r)
 	{
 		this->rotation = r;
 		this->globalHasBeenChanged = true;
@@ -114,7 +117,7 @@ public:
 	{
 		return this->selfScale;
 	}
-	glm::vec3 getRotation()
+	virtual glm::vec3 getRotation()
 	{
 		return this->rotation;
 	}
@@ -122,7 +125,7 @@ public:
 	{
 		return this->selfRotation;
 	}
-	glm::vec3 getTranslation()
+	virtual glm::vec3 getTranslation()
 	{
 		return this->translation;
 	}
@@ -170,13 +173,13 @@ public:
 		}
 	}
 
-	glm::mat4 getGlobalMatrix(glm::mat4 globalParent = glm::mat4(1.0f))
+	virtual glm::mat4 getGlobalMatrix(glm::mat4 globalParent = glm::mat4(1.0f))
 	{
 		computeGlobalMatrix();
 		return globalParent * this->globalMatrix;
 	}
 
-	glm::mat4 getMatrix(glm::mat4 globalParent = glm::mat4(1.0f))
+	virtual glm::mat4 getMatrix(glm::mat4 globalParent = glm::mat4(1.0f))
 	{
 		computeGlobalMatrix();
 		computeLocalMatrix();

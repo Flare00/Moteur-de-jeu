@@ -6,59 +6,96 @@
 #include <string>
 #include <vector>
 
-#include "../Component.hpp"
-#include "../Transformation.hpp"
-#include "../World/Camera.hpp"
+
+#include <Component.hpp>
+#include <World/Camera.hpp>
+#include <Transformation/Transformation.hpp>
+#include <Transformation/BulletTransformation.hpp>
 
 class GameObject {
 protected:
 	std::string identifier;
-	Transformation* transform;
 	GameObject* parent;
 	std::vector<GameObject*> childs;
 	std::vector<Component*> composants;
 
+	ITransformation* transform = NULL;
+	bool isBulletDependent = false;
+
 public:
-	GameObject(std::string id, GameObject* parent = NULL) {
+	GameObject(std::string id, GameObject* parent = NULL, BulletRigidbody* rigidbody = NULL) {
 		this->identifier = id;
 		this->parent = parent;
-		this->transform = new Transformation();
+		if (rigidbody == NULL) {
+			this->transform = new Transformation();
+		}
+		else {
+			this->transform = new BulletTransformation(rigidbody);
+			isBulletDependent = true;
+		}
 	}
 
-	GameObject(std::string id, GameObject* parent, std::vector<GameObject*> childs) {
+	GameObject(std::string id, GameObject* parent, std::vector<GameObject*> childs, BulletRigidbody* rigidbody = NULL) {
 		this->identifier = id;
 		this->parent = parent;
 		this->childs = childs;
-		this->transform = new Transformation();
+		if (rigidbody == NULL) {
+			this->transform = new Transformation();
+		}
+		else {
+			this->transform = new BulletTransformation(rigidbody);
+			isBulletDependent = true;
+		}
 	}
 
 	~GameObject() {
-		free(this->parent);
 		for (size_t i = 0, max = this->childs.size(); i < max; i++) {
-			free(this->childs[i]);
+			delete this->childs[i];
 		}
-		free(this->transform);
+		delete this->transform;
+	}
+
+	void generateRigidbodyTransform(BulletRigidbody* rigidbody) {
+		if (this->transform != NULL) {
+			delete this->transform;
+		}
+		this->transform = new BulletTransformation(rigidbody);
+		isBulletDependent = true;
+	}
+
+	glm::vec3 getPosition() {
+		return this->transform->getTranslation();
 	}
 
 	glm::mat4 getGlobalMatrixRecursive() {
-		if (this->parent != NULL) {
-			return this->transform->getGlobalMatrix(this->parent->getGlobalMatrixRecursive());
+		if (!isBulletDependent) {
+			if (this->parent != NULL) {
+				return this->transform->getGlobalMatrix(this->parent->getGlobalMatrixRecursive());
 
+			}
+			return this->transform->getGlobalMatrix();
 		}
-		return this->transform->getGlobalMatrix();
+		else {
+			return this->transform->getMatrix();
+		}
 	}
 
 	glm::mat4 getTransformMatrix() {
-		if (this->parent != NULL) {
-			return this->transform->getMatrix(this->parent->getGlobalMatrixRecursive());
+		if (!isBulletDependent) {
+			if (this->parent != NULL) {
+				return this->transform->getMatrix(this->parent->getGlobalMatrixRecursive());
+			}
+			return this->transform->getMatrix();
 		}
-		return this->transform->getMatrix();
+		else {
+			return this->transform->getMatrix();
+		}
 	}
 
 	virtual void updateTransformation() {
 	}
 
-	void computeDFS(Camera * camera) {
+	void computeDFS(Camera* camera) {
 		for (size_t i = 0, max = this->childs.size(); i < max; i++) {
 			this->childs[i]->compute(camera, true);
 		}
@@ -91,6 +128,10 @@ public:
 		}
 	}
 
+	std::string getIdentifier() {
+		return this->identifier;
+	}
+
 	//Retourne un enfant selon sont identifiant, seulement si enfant directe de l'objet courant.
 	GameObject* findDirectChild(std::string identifier) {
 		GameObject* res = NULL;
@@ -116,9 +157,7 @@ public:
 		return res;
 	}
 
-	std::string getIdentifier() {
-		return this->identifier;
-	}
+
 
 	GameObject* getChild(int i) {
 		return this->childs[i];
@@ -138,7 +177,7 @@ public:
 		this->childs.erase(this->childs.begin() + index);
 	}
 
-	Transformation* getTransform() {
+	ITransformation* getTransform() {
 		return this->transform;
 	}
 
@@ -216,9 +255,6 @@ public:
 		}
 		return res;
 	}
-
-	
-
 };
 
 #endif

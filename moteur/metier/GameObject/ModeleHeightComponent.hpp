@@ -37,19 +37,20 @@ public:
         this->shader = shader;
     }
 
-    virtual void draw(Camera *camera, glm::mat4 transform, RigidBody *rigidbody = NULL)
+    virtual void draw(Camera *camera, glm::mat4 transform, glm::vec3 position, BulletRigidbody *rigidbody = NULL)
     {
         bool isInFOV = true;
-        if (rigidbody != NULL) {
-            isInFOV = camera->isInFrustum(rigidbody->getCollision()->getCollision());
-        }
+        
+		isInFOV = camera->isInFrustum(position);
+		if (!isInFOV && rigidbody != NULL) {
+			isInFOV = camera->isInFrustum(rigidbody);
+		}
         if (isInFOV) {
-
             this->shader->use();
 
             glEnable(GL_TEXTURE_2D);
             this->shader->drawHeightMap(heightMap.texture, (int)textures.size());
-            ModeleComponent::draw(camera, transform, rigidbody);
+            ModeleComponent::draw(camera, transform, position, rigidbody);
         }
     }
 
