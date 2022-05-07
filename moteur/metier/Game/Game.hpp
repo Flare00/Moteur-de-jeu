@@ -6,6 +6,7 @@
 #include "SceneSpace.hpp"
 
 #include "SceneCollision.hpp"
+#include "SceneProjectile.hpp"
 
 class Game {
 private :
@@ -16,7 +17,7 @@ private :
 public :
 	Game() {
 		//Add a Scene
-		Scene* scene = new SceneCollision();
+		Scene* scene = new SceneProjecile();
 		scene->Init();
 		this->scenes.push_back(scene);
 		

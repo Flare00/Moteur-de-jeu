@@ -1,6 +1,6 @@
 #ifndef __BULLET_RIGIDBODY_HPP__
 #define __BULLET_RIGIDBODY_HPP__
-#include <cstdlib>;
+#include <cstdlib>
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
