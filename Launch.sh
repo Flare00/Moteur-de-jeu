@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 DIR="build"
 if [ ! -z "$1" ]
 then
@@ -12,4 +12,10 @@ then
 	fi
 fi
 clear
-./"$DIR"/launch-moteur.sh --debugger
+
+
+if [ "$OSTYPE" == "msys" ]; then
+	./"$DIR"/launch-moteur.sh --debugger 2> log/cmake.log
+else 
+	./"$DIR"/launch-moteur.sh --debugger 2> log/cmake.log
+fi

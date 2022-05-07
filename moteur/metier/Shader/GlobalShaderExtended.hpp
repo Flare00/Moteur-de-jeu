@@ -15,11 +15,17 @@ class GlobalShaderExtended : public GlobalShader
 {
 protected:
     GLuint u_heightmap;
-
+    GLuint u_max_height;
+    float maxHeight = 1.0f;
 public:
     GlobalShaderExtended(std::string vertex, std::string fragment, std::string tessControl, std::string tessEval, std::string geometry = "") : GlobalShader(vertex, fragment, geometry, tessControl, tessEval)
     {
         this->u_heightmap = glGetUniformLocation(this->id, "u_heightmap");
+        this->u_max_height = glGetUniformLocation(this->id, "u_max_height");
+    }
+
+    void setMaxHeight(float maxHeight) {
+        this->maxHeight = maxHeight;
     }
 
     void drawHeightMap(Texture *texture, int id)
@@ -34,6 +40,7 @@ public:
     {
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glUniform1i(this->u_nb_texture, (GLint)this->u_textures.size());
+        glUniform1f(this->u_max_height, maxHeight);
         glUniformMatrix4fv(this->u_model, 1, GL_FALSE, &transformMatrix[0][0]);
 
         glBindVertexArray(VAO);

@@ -9,8 +9,7 @@
 #include <Shader/GlobalShader.hpp>
 #include <Component.hpp>
 #include <Texture.hpp>
-#include <Collision/RigidBody.hpp>
-
+#include <GameObject/BoundingBox.hpp>
 class ModeleComponent : public Component
 {
 private:
@@ -18,6 +17,7 @@ private:
 
 protected:
 	// Modele
+	BoundingBox* boundingBox = NULL;
 	std::vector<glm::vec3> vertexArray;
 	std::vector<glm::vec2> texCoords;
 	std::vector<glm::vec3> normals;
@@ -59,6 +59,7 @@ public:
 			this->indices.push_back((int)indices[i]);
 		}
 		loadBuffer();
+		boundingBox = new BoundingBox(this->vertexArray);
 	}
 
 	ModeleComponent(GlobalShader *shader) : Component(Component::Type::MODELE)
@@ -74,6 +75,7 @@ public:
 		this->indices = indices;
 		this->texCoords = texCoords;
 		loadBuffer();
+		boundingBox = new BoundingBox(this->vertexArray);
 	}
 
 	//--- BUFFERS ---
@@ -124,7 +126,7 @@ public:
 		}
 	}
 
-	virtual void draw(Camera *camera, glm::mat4 transform, glm::vec3 position, BulletRigidbody* rigidbody = NULL)
+	virtual void draw(Camera *camera, glm::mat4 transform, glm::vec3 position)
 	{
 		if (!hasData)
 		{
@@ -133,12 +135,12 @@ public:
 
 		bool isInFOV = false;
 
-		
-		isInFOV = camera->isInFrustum(position);
-		if (!isInFOV && rigidbody != NULL) {
-
-			//std::cout << "ACTIVE : " << rigidbody->getRigidbody()->get << std::endl;
-			isInFOV = camera->isInFrustum(rigidbody);
+		if (this->boundingBox != NULL) {
+			boundingBox->applyTransformation(transform);
+			isInFOV = camera->isInFrustum(boundingBox);
+		}
+		else {
+			isInFOV = camera->isInFrustum(position);
 		}
 
 		if (!isInFOV)
@@ -197,6 +199,7 @@ public:
 		this->normals = normals;
 
 		loadBuffer();
+		this->boundingBox = new BoundingBox(this->vertexArray);
 	}
 
 	void setData(std::vector<glm::vec3> indexed_vertices, std::vector<glm::vec2> texCoords)
@@ -205,6 +208,10 @@ public:
 		this->texCoords = texCoords;
 
 		loadBuffer();
+		if (this->boundingBox != NULL) {
+			delete this->boundingBox;
+		}
+		this->boundingBox = new BoundingBox(this->vertexArray);
 	}
 	std::vector<glm::vec3> getIndexedVertices()
 	{

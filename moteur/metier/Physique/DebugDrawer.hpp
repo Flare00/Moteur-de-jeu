@@ -49,7 +49,7 @@ public:
 
 	virtual void reportErrorWarning(const char* warningString)
 	{
-		printf(warningString);
+		printf("%s\n", warningString);
 	}
 
 	virtual void drawContactPoint(const btVector3& pointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color)

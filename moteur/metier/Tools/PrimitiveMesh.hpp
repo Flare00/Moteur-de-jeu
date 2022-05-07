@@ -1,5 +1,5 @@
-#ifndef __PRIMITIVE_MESH_H__
-#define __PRIMITIVE_MESH_H__
+#ifndef __PRIMITIVE_MESH_HPP__
+#define __PRIMITIVE_MESH_HPP__
 #define _USE_MATH_DEFINES
 
 #include <math.h>
@@ -10,6 +10,7 @@
 
 class PrimitiveMesh {
 public:
+
 	static void generate_plane(ModeleComponent* modele, int res_x, int res_y, float size_x, float size_y) {
 		std::vector<glm::vec3> indexed_vertices;
 		std::vector<glm::vec3> normals;

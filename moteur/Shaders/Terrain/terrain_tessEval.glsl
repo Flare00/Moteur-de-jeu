@@ -8,6 +8,8 @@ uniform mat4 u_view;
 uniform mat4 u_projection;
 uniform mat4 u_camera_transformation;
 
+uniform float u_max_height;
+
 in vec2 TextureCoord[];
 out vec2 TexCoord;
 
@@ -28,7 +30,7 @@ void main()
     vec2 t1 = (t11 - t10) * u + t10;
     TexCoord = (t1 - t0) * v + t0;
 
-    float Height = texture(u_heightmap, vec2(-TexCoord.x, TexCoord.y)).y * 2 -1;
+    float Height = texture(u_heightmap, vec2(-TexCoord.x, TexCoord.y)).x * u_max_height - (u_max_height/2);
 
     vec4 p00 = gl_in[0].gl_Position;
     vec4 p01 = gl_in[1].gl_Position;

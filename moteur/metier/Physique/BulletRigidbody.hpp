@@ -1,11 +1,12 @@
 #ifndef __BULLET_RIGIDBODY_HPP__
 #define __BULLET_RIGIDBODY_HPP__
-
+#include <cstdlib>;
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
-#include <Physique/SwapGLM_BT.hpp>
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
+
+#include <Texture.hpp>
 
 class BulletRigidbody {
 public:
@@ -30,39 +31,55 @@ public:
 		delete shape;
 	}
 
-	void setToAABB(glm::vec3 halfSize, glm::vec3 origine, float masse) {
+	void setToAABB(glm::vec3 halfSize, float masse) {
 		this->type = Type::AABB;
-		shape = new btBoxShape(swapGlmBt(halfSize));
-		setToShape(this->shape, origine, masse);
+		shape = new btBoxShape(btVector3(halfSize.x, halfSize.y, halfSize.z));
+		setToShape(this->shape, masse);
 	}
 
-	void setToSphere(float radius, glm::vec3 origine, float masse) {
+	void setToSphere(float radius, float masse) {
 		this->type = Type::SPHERE;
 		this->shape = new btSphereShape(radius);
-		setToShape(this->shape, origine, masse);
+		setToShape(this->shape, masse);
 	}
 
-	void setToCapsule(float radius, float height, glm::vec3 origine, float masse) {
+	void setToCapsule(float radius, float height, float masse) {
 		this->type = Type::CAPSULE;
 		this->shape = new btCapsuleShape(radius, height);
-		setToShape(this->shape, origine, masse);
+		setToShape(this->shape, masse);
 	}
 
-	void setToCylinder(glm::vec3 halfSize, glm::vec3 origine, float masse) {
+	void setToCylinder(glm::vec3 halfSize, float masse) {
 		this->type = Type::CYLINDER;
-		this->shape = new btCylinderShape(swapGlmBt(halfSize));
-		setToShape(this->shape, origine, masse);
+		this->shape = new btCylinderShape(btVector3(halfSize.x, halfSize.y, halfSize.z));
+		setToShape(this->shape, masse);
 	}
 
-	/*void setToHeightTerrain(glm::vec3 halfSize, glm::vec3 origine) {
-		this->type = Type::HEIGHT_TERRAIN;
-		this->shape = new btHeightfieldTerrainShape();
-		setToShape(this->shape, origine, 0.0f);
-	}*/
+	void setToHeightTerrain(Texture* texture, float maxHeight, float widthObject) {
 
-	void setToShape(btCollisionShape* shape, glm::vec3 origine, float masse) {
+
+		int width = texture->getWidth();
+		int height = texture->getHeight();
+		float scale = widthObject / width;
+		unsigned char* textData = texture->getData();
+
+		float* data = new float[width * height];
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				data[(i * width) + j] = ((float)textData[((i * width) + (width - 1 - j))*4]) / 255.0f;
+			}
+		}
+
+		this->type = Type::HEIGHT_TERRAIN;
+
+		this->shape = new btHeightfieldTerrainShape(width, height, (const float*)data, btScalar(0), btScalar(1), 1, false);
+		this->shape->setLocalScaling(btVector3(scale, maxHeight, scale));
+		setToShape(this->shape, 0.0f);
+	}
+
+	void setToShape(btCollisionShape* shape, float masse) {
 		btTransform transform = btTransform::getIdentity();
-		transform.setOrigin(swapGlmBt(origine));
+		transform.setOrigin(btVector3(0, 0, 0));
 		this->rigidbody = createRigidBody(masse, transform, shape);
 	}
 

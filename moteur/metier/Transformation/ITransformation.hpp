@@ -8,7 +8,7 @@ public:
 	virtual ITransformation* translate(glm::vec3 t) = 0;
 	virtual ITransformation* setTranslate(glm::vec3 pos) = 0;
 
-	virtual ITransformation* rotate(glm::vec3 v, float rad) = 0;
+	virtual ITransformation* rotate(glm::vec3 r) = 0;
 	virtual ITransformation* setRotation(glm::vec3 r) = 0;
 
 	virtual glm::vec3 getRotation() = 0;

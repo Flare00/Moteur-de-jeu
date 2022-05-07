@@ -180,22 +180,16 @@ public:
 	}
 
 	void frustumUpdate() {
-		this->frustum.update(this->getProjection(), this->getViewMatrix(), this->getPosition());
+		this->frustum.update(this->getProjection(), this->getViewMatrix(), this->front, this->up, this->right);
 	}
 
 	bool isInFrustum(glm::vec3 pos) {
 		return this->frustum.isVisible(pos);
 	}
 
-	bool isInFrustum(BulletRigidbody* rigidbody) {
-		return this->frustum.isVisible(rigidbody);
-
+	bool isInFrustum(BoundingBox* box) {
+		return this->frustum.isVisible(box);
 	}
-
-	btGhostObject* getBulletFrustum() {
-		return this->frustum.getBulletFrustum();
-	}
-
 private:
 	void updateVectors() {
 		if (!modeOrbital) {

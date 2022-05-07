@@ -82,9 +82,9 @@ public:
 		return this;
 	}
 
-	virtual ITransformation*rotate(glm::vec3 v, float rad)
+	virtual ITransformation*rotate(glm::vec3 v)
 	{
-		this->rotation = this->rotation + (v * rad);
+		this->rotation = this->rotation + v;
 		this->globalHasBeenChanged = true;
 		return this;
 	}

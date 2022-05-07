@@ -13,6 +13,7 @@ add_subdirectory (glfw-3.3.7)
 include_directories(
 	glfw-3.3.7/include/GLFW/
 	glew-2.1.0/include/
+	bullet3-3.24/include/
 )
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -50,6 +51,9 @@ target_link_libraries(GLEW_210
 )
 
 ### BULLET ###
+
+
+set(BULLET_PHYSICS_SOURCE_DIR "${CMAKE_SOURCE_DIR}/external/bullet3-3.24")
 
 add_subdirectory(bullet3-3.24/src/LinearMath)
 add_subdirectory(bullet3-3.24/src/Bullet3Common)

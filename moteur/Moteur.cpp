@@ -50,7 +50,7 @@ void mainLoop() {
 		// FPS : float fps = 1.0f/deltaTime;
 		// input
 		// -----
-		if (sumDelta >= 1.0f / limiteur) {
+		if (sumDelta >= 1.0f / (limiteur + 1)) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			game->Loop((float)sumDelta);

@@ -1,9 +1,9 @@
 # CMake entry point
 cmake_minimum_required (VERSION 3.0)
+
 project (Moteur)
 find_package(OpenGL REQUIRED)
 
-set(BULLET_PHYSICS_SOURCE_DIR "${CMAKE_SOURCE_DIR}/external/bullet3-3.24")
 # Compile external dependencies 
 add_subdirectory(external)
 
@@ -20,15 +20,13 @@ endif(INCLUDE_DISTRIB)
 
 
 include_directories(
-	moteur/metier/
-	
-	external/glfw-3.3.7/include/
-	external/glm-0.9.8.5/
+	external/glfw-3.3.7/include/GLFW/
 	external/glew-2.1.0/include/
+	external/glm-0.9.8.5/
+	external/bullet3-3.24/include/
 	external/stb/
-	external/bullet3-3.24/src/
-	
 	common/
+	moteur/metier/
 )
 
 set(ALL_LIBS
@@ -50,7 +48,7 @@ add_definitions(
 add_executable(moteur
 		 common/objloader.hpp
 		common/objloader.cpp
-        moteur/Moteur.cpp "moteur/metier/Physique/DebugDrawer.hpp"  "moteur/metier/Physique/GestionContraintes.hpp" "moteur/metier/Physique/BulletRigidbody.hpp" "moteur/metier/Physique/SwapGLM_BT.hpp"  "moteur/metier/Transformation/ITransformation.hpp")
+        moteur/Moteur.cpp "moteur/metier/Physique/DebugDrawer.hpp"  "moteur/metier/Physique/GestionContraintes.hpp" "moteur/metier/Physique/BulletRigidbody.hpp"   "moteur/metier/Transformation/ITransformation.hpp")
 
 
 target_link_libraries(moteur

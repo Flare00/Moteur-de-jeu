@@ -13,7 +13,6 @@
 
 #include <Light/Material.hpp>
 #include <Texture.hpp>
-#include <Collision/CollisionComponent.hpp>
 #include <Shader/GlobalShader.hpp>
 #include <Tools/SimplifyMesh.hpp>
 
@@ -75,7 +74,6 @@ public:
 	{
 		float distance = -1.0f;
 		distance = camera->distanceFromCamera(this->getPosition());
-		std::cout << this->identifier << std::endl;
 		if (distance >= 0.0f)
 		{
 			int level = 2;
@@ -103,7 +101,7 @@ public:
 			level--;
 		}
 		if (level >= 0) {
-			modeles[level]->draw(camera, this->getTransformMatrix(), this->getPosition(), (this->isBulletDependent ? (BulletRigidbody*) this->transform : NULL));
+			modeles[level]->draw(camera, this->getTransformMatrix(), this->getPosition());
 		}
 	}
 

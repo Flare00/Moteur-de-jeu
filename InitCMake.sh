@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 DIR="build"
 
 if [ ! -d "./$DIR" ]
@@ -12,11 +12,10 @@ else
 	mkdir "$DIR"
 fi
 
-echo "CMake"
-cmake . -B"$DIR"
 
+if [ ! -d "./log" ]
+then
+	mkdir "log"
+fi
 
-#echo "Build"
-#cmake --build "$DIR/" --config Debug
-
-$SHELL 
+cmake . -B"$DIR" 2> log/cmake.log

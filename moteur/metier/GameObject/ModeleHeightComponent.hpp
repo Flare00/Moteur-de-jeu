@@ -9,7 +9,6 @@
 #include <Shader/GlobalShaderExtended.hpp>
 #include "ModeleComponent.hpp"
 #include <Texture.hpp>
-#include <Collision/RigidBody.hpp>
 
 class ModeleHeightComponent : public ModeleComponent
 {
@@ -37,21 +36,16 @@ public:
         this->shader = shader;
     }
 
-    virtual void draw(Camera *camera, glm::mat4 transform, glm::vec3 position, BulletRigidbody *rigidbody = NULL)
+    virtual void draw(Camera *camera, glm::mat4 transform, glm::vec3 position)
     {
         bool isInFOV = true;
         
-		isInFOV = camera->isInFrustum(position);
-		if (!isInFOV && rigidbody != NULL) {
-			isInFOV = camera->isInFrustum(rigidbody);
-		}
-        if (isInFOV) {
-            this->shader->use();
+        this->shader->use();
 
-            glEnable(GL_TEXTURE_2D);
-            this->shader->drawHeightMap(heightMap.texture, (int)textures.size());
-            ModeleComponent::draw(camera, transform, position, rigidbody);
-        }
+        glEnable(GL_TEXTURE_2D);
+        this->shader->drawHeightMap(heightMap.texture, (int)textures.size());
+        ModeleComponent::draw(camera, transform, position);
+        
     }
 
     void setHeightMap(Texture *t, bool destroyEnd)

@@ -18,7 +18,7 @@ private:
 	int width, height;
 
 	unsigned int texture_index;
-	unsigned char *texture_data;
+	unsigned char* texture_data;
 
 	bool loaded;
 
@@ -37,6 +37,7 @@ public:
 
 		int w, h, nbC;
 		this->texture_data = stbi_load(path.c_str(), &w, &h, &nbC, 4);
+
 		this->width = w;
 		this->height = h;
 
@@ -62,7 +63,8 @@ public:
 		{
 			this->loaded = false;
 		}
-		stbi_image_free(this->texture_data);
+
+		//stbi_image_free(this->texture_data);
 	}
 
 	void draw(GLuint u_texture, int index)

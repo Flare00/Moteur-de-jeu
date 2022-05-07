@@ -18,18 +18,11 @@ class PhysiqueBullet {
 	
 public:
 	GestionContraintes* gestionContraintes = NULL;
-	btGhostObject* ghost = NULL;
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	btSequentialImpulseConstraintSolver* solver;
 	btDbvtBroadphase* overlappingPairCache;
 	btCollisionDispatcher* dispatcher;
 	btDefaultCollisionConfiguration* collisionConfig;
-
-	btOverlappingPairCallback* ghostCallback = NULL;
-
-	btBoxShape* box;
-	btTransform groundTransform;
-	btRigidBody* boxBody;
 
 	std::vector<BulletRigidbody*> rigidbodies;
 	PhysiqueBullet() {
@@ -54,9 +47,6 @@ public:
 			dynamicsWorld->setDebugDrawer(debug);
 		}
 
-		ghostCallback = new btGhostPairCallback();
-		dynamicsWorld->getBroadphase()->getOverlappingPairCache()->setInternalGhostPairCallback(ghostCallback);
-
 	}
 
 	void loop(float deltaTime) {
@@ -73,7 +63,6 @@ public:
 
 	void addGhostObjectToPhysique(btGhostObject* ghost) {
 		this->dynamicsWorld->addCollisionObject(ghost);
-		this->ghost = ghost;
 	}
 
 	void removeGhostObjectToPhysique(btGhostObject* ghost) {

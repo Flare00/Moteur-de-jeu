@@ -9,7 +9,6 @@
 #include <GameObject/ModeleLOD.hpp>
 #include <World/InputCollision.hpp>
 #include <World/InputCollisionV2.hpp>
-#include <Collision/RigidBody.hpp>
 #include <Text2D.hpp>
 #include "Scene.hpp"
 #include <GameObject/Terrain.hpp>
@@ -37,6 +36,8 @@ private:
 	bool wait1Frame = true;
 
 	PhysiqueBullet* bullet;
+
+	ModeleLOD* TerreLOD;
 public:
 	SceneCollision()
 	{
@@ -65,15 +66,17 @@ public:
 		this->activeCamera = 0;
 
 		//Set Texture
-		Texture *texTerre = new Texture("Textures/SystemeSolaire/earth_daymap.jpg");
+		Texture* texTerre = new Texture("Textures/SystemeSolaire/earth_daymap.jpg");
 		Texture *texSoleil = new Texture("Textures/SystemeSolaire/sun.jpg");
 
 		// Terrain
+
+
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");
-		Texture *textureTerrain = new Texture("Textures/HeightMap/test.png");
-		Texture *heightMapTerrain = new Texture("Textures/HeightMap/test.png");
-		Terrain *terrain = new Terrain("Terrain", shaderTerrain, textureTerrain, heightMapTerrain);
-		terrain->getTransform()->translate(glm::vec3(0, -10, 0));
+		Texture *textureTerrain = new Texture("Textures/HeightMap/test2.png");
+		Texture *heightMapTerrain = new Texture("Textures/HeightMap/test2.png");
+		Terrain* terrain = new Terrain("Terrain", shaderTerrain, textureTerrain, heightMapTerrain, 25, 1.0f, 1);
+
 
 		//soleil
 		ModeleComponent* soleilHigh = new ModeleComponent(globalShader);
@@ -81,7 +84,7 @@ public:
 		soleilHigh->addTexture(texSoleil, true);
 
 		BulletRigidbody* sunRigid = new BulletRigidbody();
-		sunRigid->setToAABB(glm::vec3(1.0f), glm::vec3(0,1,0), 0.0f);
+		sunRigid->setToAABB(glm::vec3(1.0f), 0.0f);
 
 		ModeleLOD *SoleilLOD = new ModeleLOD("Soleil", soleilHigh, NULL, NULL, sunRigid);
 		
@@ -96,14 +99,12 @@ public:
 		TerreLow->addTexture(texTerre, true);
 
 		BulletRigidbody* terreRigid = new BulletRigidbody();
-		terreRigid->setToSphere(1.2f, glm::vec3(1,5,0), 1.0f);
-
-		ModeleLOD *TerreLOD = new ModeleLOD("Terre", TerreHigh, TerreLow, NULL, terreRigid);
-		//TerreLOD->getTransform()->translate(glm::vec3(5, 0, 0));
+		terreRigid->setToSphere(1.0f, 1.0f);
+		TerreLOD = new ModeleLOD("Terre", TerreHigh, TerreLow, NULL, terreRigid);
 
 		//Add to scene
-		this->scene->addChild(SoleilLOD);
-		this->scene->addChild(TerreLOD);
+		//this->scene->addChild(SoleilLOD);
+		//this->scene->addChild(TerreLOD);
 		this->scene->addChild(terrain);
 
 		//Set inputCollision
@@ -115,14 +116,18 @@ public:
 		debugShader = new DebugShader("Shaders/Debug/debug_vertex.glsl", "Shaders/Debug/debug_fragment.glsl");
 		DebugDrawer* debug = new DebugDrawer(debugShader);
 		debug->setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints);
-		bullet->init(debug);
-		bullet->addRigidbodyToPhysique(sunRigid);
-		bullet->addRigidbodyToPhysique(terreRigid);
+		//bullet->init(debug);
+		bullet->init();
+		//bullet->addRigidbodyToPhysique(sunRigid);
+		//bullet->addRigidbodyToPhysique(terreRigid);
+		bullet->addRigidbodyToPhysique(terrain->getRigidbody());
 
-		cameras[0]->getBulletFrustum()->activate();
-		bullet->addGhostObjectToPhysique(cameras[0]->getBulletFrustum());
+		//Place et tourne les objets
+		TerreLOD->getTransform()->setTranslate(glm::vec3(1, 5, 0));
+		TerreLOD->getTransform()->setRotation(glm::vec3(0, 0, -1));
 
-
+		SoleilLOD->getTransform()->setTranslate(glm::vec3(0, 1, 0));
+		terrain->getTransform()->translate(glm::vec3(0, -10, 0));
 	}
 
 	virtual void Draw(float deltaTime)
@@ -144,16 +149,14 @@ public:
 				if (debugShader != NULL)
 					debugShader->drawView(this->cameras[this->activeCamera]);
 			}
-
-			bullet->loop(1.0f / 60.0f);
-			// Clear the screen
-			/*if (wait1Frame) {
-				Physique::computePhysique(this->scene, deltaTime);
+			if (!wait1Frame) {
+				bullet->loop(deltaTime);
 			}
 			else {
 				wait1Frame = false;
-			}*/
+			}
 		}
+
 		if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size()) {
 			this->scene->compute(this->cameras[this->activeCamera], true);
 		}
@@ -165,6 +168,7 @@ public:
 		}
 
 		this->text2D->DrawText(std::to_string(fps), -1, 1, 0.9f);
+
 	}
 };
 
