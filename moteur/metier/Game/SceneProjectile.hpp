@@ -65,13 +65,14 @@ public:
 		this->activeCamera = 0;
 
 		// Set Texture
-		Texture *texTerre = new Texture("Textures/SystemeSolaire/earth_daymap.jpg");
-		Texture *texSoleil = new Texture("Textures/SystemeSolaire/sun.jpg");
+		Texture *texTest = new Texture("Textures/texture_test.jpg");
 
 		// Load OBJ
 		BulletRigidbody *testRigid = new BulletRigidbody();
 		testRigid->setToAABB(glm::vec3(1.0f), 0.0f);
+
 		ModeleLOD *test = new ModeleLOD("test", globalShader, ModeleComponent::OBJ, "Model/cube.obj", testRigid);
+		test->getModele(0)->addTexture(texTest, true);
 
 		// Terrain
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");

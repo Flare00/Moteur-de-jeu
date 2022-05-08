@@ -10,10 +10,10 @@
 
 using namespace std;
 
-void splitString(const std::string &str, std::vector<std::string> &output)
+void splitString(const std::string &str, std::vector<std::string> &output, char separator)
 {
     std::string::size_type start = 0;
-    std::string::size_type last = str.find_first_of(" ");
+    std::string::size_type last = str.find_first_of(separator);
 
     while (last != std::string::npos)
     {
@@ -22,7 +22,7 @@ void splitString(const std::string &str, std::vector<std::string> &output)
             output.push_back(str.substr(start, last - start));
         }
         start = ++last;
-        last = str.find_first_of(" ", last);
+        last = str.find_first_of(separator, last);
     }
     output.push_back(str.substr(start));
 }
@@ -52,13 +52,16 @@ public:
         // Init Reader
         std::string readLine;
 
+        std::vector<glm::vec2> tmpOrderTextures;
+        std::vector<glm::vec3> tmpOrderNormals;
+
         // Read file
         while (getline(fileOBJ, readLine))
         {
             // Get First Word
             std::string input = readLine.c_str();
             std::vector<std::string> allWordsLine;
-            splitString(input, allWordsLine);
+            splitString(input, allWordsLine, (char)0x20);
 
             // What am i reading?
             if (allWordsLine[0].compare("v") == 0)
@@ -67,30 +70,59 @@ public:
             }
             if (allWordsLine[0].compare("vn") == 0)
             {
-                res.normals.push_back(glm::vec3(stof(allWordsLine[1]), stof(allWordsLine[2]), stof(allWordsLine[3])));
+                tmpOrderNormals.push_back(glm::vec3(stof(allWordsLine[1]), stof(allWordsLine[2]), stof(allWordsLine[3])));
             }
             if (allWordsLine[0].compare("vt") == 0)
             {
-                res.textures.push_back(glm::vec2(stof(allWordsLine[1]), stof(allWordsLine[2])));
+                tmpOrderTextures.push_back(glm::vec2(stof(allWordsLine[1]), stof(allWordsLine[2])));
             }
             if (allWordsLine[0].compare("f") == 0)
             {
                 // Triangle Faces
                 if (allWordsLine.size() == 4)
                 { // 4 car je compte le "f" en plus
-                    res.faces.push_back((unsigned int)(allWordsLine[1][0] - '0'));
-                    res.faces.push_back((unsigned int)(allWordsLine[2][0] - '0'));
-                    res.faces.push_back((unsigned int)(allWordsLine[3][0] - '0'));
+                    for (int i = 1; i < 4; i++)
+                    {
+                        std::vector<std::string> tmpString;
+                        splitString(allWordsLine[i], tmpString, (char)0x2f);
+
+                        res.faces.push_back(std::stoi(tmpString[0]) - 1);
+                        res.normals.push_back(tmpOrderNormals[std::stoi(tmpString[2]) - 1]);
+                        res.textures.push_back(tmpOrderTextures[std::stoi(tmpString[1]) - 1]);
+                    }
                 }
                 // Quad Faces
                 if (allWordsLine.size() == 5)
                 { // 5 car je compte le "f" en plus
-                    res.faces.push_back((unsigned int)(allWordsLine[1][0] - '0'));
-                    res.faces.push_back((unsigned int)(allWordsLine[2][0] - '0'));
-                    res.faces.push_back((unsigned int)(allWordsLine[3][0] - '0'));
-                    res.faces.push_back((unsigned int)(allWordsLine[4][0] - '0'));
-                    res.faces.push_back((unsigned int)(allWordsLine[2][0] - '0'));
-                    res.faces.push_back((unsigned int)(allWordsLine[3][0] - '0'));
+                    unsigned int faceTmp[4];
+                    std::vector<glm::vec3> *normalTmp = new std::vector<glm::vec3>[res.vertices.size()];
+                    std::vector<glm::vec2> *textureTmp = new std::vector<glm::vec2>[res.vertices.size()];
+                    for (size_t i = 1; i < 5; i++)
+                    {
+                        std::vector<std::string> tmpString;
+                        splitString(allWordsLine[i], tmpString, (char)0x2f);
+
+                        faceTmp[i - 1] = std::stoi(tmpString[0]) - 1;
+                        normalTmp[faceTmp[i - 1]].push_back(tmpOrderNormals[std::stoi(tmpString[2]) - 1]);
+                        textureTmp[faceTmp[i - 1]].push_back(tmpOrderTextures[std::stoi(tmpString[1]) - 1]);
+                    }
+                    for (size_t i = 0, maxSizeI = res.vertices.size(); i < maxSizeI; i++)
+                    {
+                        for (size_t j = 0, maxSizeJ = normalTmp[i].size(); j < maxSizeJ; j++)
+                        {
+                            res.normals.push_back(normalTmp[i][j]);
+                        }
+                        for (size_t j = 0, maxSizeJ = textureTmp[i].size(); j < maxSizeJ; j++)
+                        {
+                            res.textures.push_back(textureTmp[i][j]);
+                        }
+                    }
+                    res.faces.push_back(faceTmp[0]);
+                    res.faces.push_back(faceTmp[1]);
+                    res.faces.push_back(faceTmp[2]);
+                    res.faces.push_back(faceTmp[0]);
+                    res.faces.push_back(faceTmp[2]);
+                    res.faces.push_back(faceTmp[3]);
                 }
             }
         }

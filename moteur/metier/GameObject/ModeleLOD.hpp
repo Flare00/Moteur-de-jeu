@@ -27,7 +27,6 @@ protected:
 	float distanceLOD[2];
 
 public:
-
 	// --- CONSTRUCTEURS ET DESTRUCTEURS ---
 	ModeleLOD(std::string id, ModeleComponent *high, ModeleComponent *low = NULL, ModeleComponent *imposteur = NULL, BulletRigidbody *rigidBody = NULL, GameObject *parent = NULL) : GameObject(id, parent, rigidBody)
 	{
@@ -47,6 +46,8 @@ public:
 	ModeleLOD(std::string id, GlobalShader *shader, ModeleComponent::FileType type, std::string file, BulletRigidbody *rigidBody = NULL, GameObject *parent = NULL) : GameObject(id, parent, rigidBody)
 	{
 		modeles[0] = new ModeleComponent(shader, type, file);
+		modeles[1] = NULL;
+		modeles[2] = NULL;
 		distanceLOD[0] = 10.0f;
 		distanceLOD[1] = 100.0f;
 		this->addComponent(modeles[0]);
@@ -55,6 +56,8 @@ public:
 	ModeleLOD(std::string id, std::vector<glm::vec3> indexed_vertices, std::vector<glm::vec3> normals, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, GlobalShader *shader, BulletRigidbody *rigidBody = NULL, GameObject *parent = NULL) : GameObject(id, parent, rigidBody)
 	{
 		modeles[0] = new ModeleComponent(shader, indexed_vertices, normals, indices, texCoords);
+		modeles[1] = NULL;
+		modeles[2] = NULL;
 		this->addComponent(modeles[0]);
 
 		distanceLOD[0] = 10.0f;

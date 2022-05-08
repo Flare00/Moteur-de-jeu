@@ -58,11 +58,12 @@ public:
 	{
 
 		this->shader = shader;
-		std::vector<unsigned short> indices; // Triangles concat�n�s dans une liste
-		std::vector<std::vector<unsigned short>> triangles;
 
 		if (type == FileType::OFF)
 		{
+			std::vector<unsigned short> indices; // Triangles concat dans une liste
+			std::vector<std::vector<unsigned short>> triangles;
+
 			// Chargement du fichier de maillage
 			loadOFF(file, this->vertexArray, indices, triangles);
 			for (size_t i = 0, max = indices.size(); i < max; i++)
