@@ -26,16 +26,19 @@ protected:
 	btRigidBody *rigidbody = NULL;
 	btCollisionShape *shape;
 	float masse = 0.0f;
+	glm::mat4 modelTransformation;
 
 public:
-	BulletRigidbody()
+	BulletRigidbody(glm::mat4 modelMatrix = glm::mat4(1.0f))
 	{
+		this->modelTransformation = modelMatrix;
 	}
 
-	BulletRigidbody(btCollisionShape *b, float m)
+	BulletRigidbody(btCollisionShape *b, float m, glm::mat4 modelMatrix = glm::mat4(1.0f))
 	{
 		this->shape = b;
 		this->masse = m;
+		this->modelTransformation = modelMatrix;
 		setToShape(this->shape, this->masse);
 	}
 
@@ -105,6 +108,16 @@ public:
 		this->rigidbody = createRigidBody(masse, transform, shape);
 	}
 
+	glm::mat4 getModelTransformation()
+	{
+		return this->modelTransformation;
+	}
+
+	void setModelTransformation(glm::mat4 m)
+	{
+		this->modelTransformation = m;
+	}
+
 	btRigidBody *getRigidbody()
 	{
 		return this->rigidbody;
@@ -125,34 +138,39 @@ public:
 		return this->masse;
 	}
 
-	static BulletRigidbody *generateAABB(glm::vec3 halfSize, float masse)
+	static BulletRigidbody *generateAABB(glm::vec3 halfSize, float masse, glm::mat4 modelMatrix = glm::mat4(1.0f))
 	{
 		BulletRigidbody *b = new BulletRigidbody();
 		b->setToAABB(halfSize, masse);
+		b->setModelTransformation(modelMatrix);
 		return b;
 	}
-	static BulletRigidbody *generateSphere(float radius, float masse)
+	static BulletRigidbody *generateSphere(float radius, float masse, glm::mat4 modelMatrix = glm::mat4(1.0f))
 	{
 		BulletRigidbody *b = new BulletRigidbody();
 		b->setToSphere(radius, masse);
+		b->setModelTransformation(modelMatrix);
 		return b;
 	}
-	static BulletRigidbody *generateCapsule(float radius, float height, float masse)
+	static BulletRigidbody *generateCapsule(float radius, float height, float masse, glm::mat4 modelMatrix = glm::mat4(1.0f))
 	{
 		BulletRigidbody *b = new BulletRigidbody();
 		b->setToCapsule(radius, height, masse);
+		b->setModelTransformation(modelMatrix);
 		return b;
 	}
-	static BulletRigidbody *generateCylinder(glm::vec3 halfSize, float masse)
+	static BulletRigidbody *generateCylinder(glm::vec3 halfSize, float masse, glm::mat4 modelMatrix = glm::mat4(1.0f))
 	{
 		BulletRigidbody *b = new BulletRigidbody();
 		b->setToCylinder(halfSize, masse);
+		b->setModelTransformation(modelMatrix);
 		return b;
 	}
-	static BulletRigidbody *generateTerrain(Texture *texture, float maxHeight, float widthObject)
+	static BulletRigidbody *generateTerrain(Texture *texture, float maxHeight, float widthObject, glm::mat4 modelMatrix = glm::mat4(1.0f))
 	{
 		BulletRigidbody *b = new BulletRigidbody();
 		b->setToHeightTerrain(texture, maxHeight, widthObject);
+		b->setModelTransformation(modelMatrix);
 		return b;
 	}
 

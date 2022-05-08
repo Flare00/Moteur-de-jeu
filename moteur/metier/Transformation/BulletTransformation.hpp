@@ -6,57 +6,68 @@
 #include <Physique/BulletRigidbody.hpp>
 #include <Transformation/ITransformation.hpp>
 
-class BulletTransformation : public ITransformation {
+class BulletTransformation : public ITransformation
+{
 protected:
-	//Transformation et mouvement Bullet Physics
-	BulletRigidbody* bulletRigidbody = NULL;
-public:
+	// Transformation et mouvement Bullet Physics
+	BulletRigidbody *bulletRigidbody = NULL;
 
-	BulletTransformation(BulletRigidbody* bulletRigidbody) {
+public:
+	BulletTransformation(BulletRigidbody *bulletRigidbody)
+	{
 		this->bulletRigidbody = bulletRigidbody;
 	}
 
-	void applyImpule(glm::vec3 impulse) {
+	void applyImpule(glm::vec3 impulse)
+	{
 		this->bulletRigidbody->getRigidbody()->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
 	}
 
-	void applyForce(glm::vec3 force) {
+	void applyForce(glm::vec3 force)
+	{
 		this->bulletRigidbody->getRigidbody()->applyCentralForce(btVector3(force.x, force.y, force.z));
 	}
 
-	BulletRigidbody* getBulletRigidbody() {
+	BulletRigidbody *getBulletRigidbody()
+	{
 		return this->bulletRigidbody;
 	}
 
-	virtual ITransformation* translate(glm::vec3 t) {
+	virtual ITransformation *translate(glm::vec3 t)
+	{
 		this->bulletRigidbody->getRigidbody()->getWorldTransform().setOrigin(this->bulletRigidbody->getRigidbody()->getWorldTransform().getOrigin() + btVector3(t.x, t.y, t.z));
 		return this;
 	}
-	virtual ITransformation* setTranslate(glm::vec3 pos) {
+	virtual ITransformation *setTranslate(glm::vec3 pos)
+	{
 		this->bulletRigidbody->getRigidbody()->getWorldTransform().setOrigin(btVector3(pos.x, pos.y, pos.z));
 		return this;
 	}
 
-	virtual ITransformation* rotate(glm::vec3 r) {
+	virtual ITransformation *rotate(glm::vec3 r)
+	{
 		r += getRotation();
 		btQuaternion quatBt;
-		quatBt.setEulerZYX(r.z, r.y, r.x);		
+		quatBt.setEulerZYX(r.z, r.y, r.x);
 		this->bulletRigidbody->getRigidbody()->getWorldTransform().setRotation(quatBt);
 		return this;
 	}
-	virtual ITransformation* setRotation(glm::vec3 r) {
+	virtual ITransformation *setRotation(glm::vec3 r)
+	{
 		btQuaternion quatBt;
 		quatBt.setEulerZYX(r.z, r.y, r.x);
 		this->bulletRigidbody->getRigidbody()->getWorldTransform().setRotation(quatBt);
 		return this;
 	}
 
-	virtual glm::vec3 getRotation() {
+	virtual glm::vec3 getRotation()
+	{
 		btScalar z, y, x;
 		this->bulletRigidbody->getRigidbody()->getWorldTransform().getRotation().getEulerZYX(z, y, x);
 		return glm::vec3(x, y, z);
 	}
-	virtual glm::vec3 getTranslation() {
+	virtual glm::vec3 getTranslation()
+	{
 		btVector3 trans = this->bulletRigidbody->getRigidbody()->getWorldTransform().getOrigin();
 		return glm::vec3(trans.getX(), trans.getY(), trans.getZ());
 	}
@@ -69,14 +80,13 @@ public:
 		transform = this->bulletRigidbody->getRigidbody()->getWorldTransform();
 		transform.getOpenGLMatrix(glm::value_ptr(matrice));
 
-		return matrice;
+		return matrice * this->bulletRigidbody->getModelTransformation();
 	}
 
-	virtual glm::mat4 getGlobalMatrix(glm::mat4 globalParent = glm::mat4(1.0f)) {
+	virtual glm::mat4 getGlobalMatrix(glm::mat4 globalParent = glm::mat4(1.0f))
+	{
 		return getMatrix();
 	}
-
-
 };
 
 #endif

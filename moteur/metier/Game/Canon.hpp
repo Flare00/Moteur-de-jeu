@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <GameObject/ModeleLOD.hpp>
 #include <Physique/BulletRigidbody.hpp>
+#include <Physique/PhysiqueBullet.hpp>
+#include <Transformation/ITransformation.hpp>
 
 class Canon
 {
@@ -32,7 +34,7 @@ public:
         go = new GameObject("Canon");
 
         // PHYSIC
-        cylinder_Rigid = BulletRigidbody::generateCylinder(glm::vec3(0.37f, 1.86f, 0.37f), 0.0f);
+        cylinder_Rigid = BulletRigidbody::generateCylinder(glm::vec3(0.37f, 1.86f, 0.37f), 0.0f, ITransformation::generateMatrix(glm::vec3(-0.4f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, M_PI / 2.0f)));
         base_Rigid = BulletRigidbody::generateAABB(glm::vec3(2.21f, 0.46f, 0.2f), 0.0f);
         bind_Rigid_left = BulletRigidbody::generateCylinder(glm::vec3(0.1f, 0.2f, 0.1f), 0.0f);
         wheel_Rigid_left = BulletRigidbody::generateCylinder(glm::vec3(1.0f, 0.1f, 1.0f), 0.0f);
@@ -67,6 +69,26 @@ public:
     GameObject *getGameObject()
     {
         return this->go;
+    }
+
+    void addToPhysique(PhysiqueBullet *physique)
+    {
+        physique->addRigidbodyToPhysique(this->cylinder_Rigid);
+        physique->addRigidbodyToPhysique(this->base_Rigid);
+        physique->addRigidbodyToPhysique(this->bind_Rigid_left);
+        physique->addRigidbodyToPhysique(this->bind_Rigid_right);
+        physique->addRigidbodyToPhysique(this->wheel_Rigid_left);
+        physique->addRigidbodyToPhysique(this->wheel_Rigid_right);
+    }
+
+    void removeFromPhysique(PhysiqueBullet *physique)
+    {
+        physique->removeRigidbodyFromPhysique(this->cylinder_Rigid);
+        physique->removeRigidbodyFromPhysique(this->base_Rigid);
+        physique->removeRigidbodyFromPhysique(this->bind_Rigid_left);
+        physique->removeRigidbodyFromPhysique(this->bind_Rigid_right);
+        physique->removeRigidbodyFromPhysique(this->wheel_Rigid_left);
+        physique->removeRigidbodyFromPhysique(this->wheel_Rigid_right);
     }
 };
 

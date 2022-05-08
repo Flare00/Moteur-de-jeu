@@ -87,8 +87,14 @@ public:
 
 		// INIT Physique
 		bullet = new PhysiqueBullet();
-		bullet->init();
-		bullet->addRigidbodyToPhysique(terrain->getRigidbody());
+
+		debugShader = new DebugShader("Shaders/Debug/debug_vertex.glsl", "Shaders/Debug/debug_fragment.glsl");
+		DebugDrawer *debug = new DebugDrawer(debugShader);
+		debug->setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints);
+
+		bullet->init(debug);
+		// bullet->addRigidbodyToPhysique(terrain->getRigidbody());
+		canon->addToPhysique(bullet);
 
 		// Place et tourne les objets
 		terrain->getTransform()->translate(glm::vec3(0, -10, 0));
@@ -148,6 +154,8 @@ public:
 				globalShader->drawView(this->cameras[this->activeCamera]);
 				if (shaderTerrain != NULL)
 					shaderTerrain->drawView(this->cameras[this->activeCamera]);
+				if (debugShader != NULL)
+					debugShader->drawView(this->cameras[this->activeCamera]);
 			}
 			if (!wait1Frame)
 			{
