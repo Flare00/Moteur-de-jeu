@@ -113,13 +113,24 @@ public:
 	}
 
 	// Fixed
-	btFixedConstraint *addFixedContrainte(BulletTransformation *rbA, BulletTransformation *rbB, btTransform frameInA = btTransform::getIdentity(), btTransform frameInB = btTransform::getIdentity())
+	btFixedConstraint *addFixedContrainte(BulletTransformation *rbA, BulletTransformation *rbB, glm::vec3 originA = glm::vec3(0.0f), glm::vec3 originB = glm::vec3(0.0f), glm::vec3 rotationA = glm::vec3(0.0f), glm::vec3 rotationB = glm::vec3(0.0f))
 	{
-		return addFixedContrainte(rbA->getBulletRigidbody()->getRigidbody(), rbB->getBulletRigidbody()->getRigidbody(), frameInA, frameInB);
+		return addFixedContrainte(rbA->getBulletRigidbody()->getRigidbody(), rbB->getBulletRigidbody()->getRigidbody(), originA, originB, rotationA, rotationB);
 	}
 
-	btFixedConstraint *addFixedContrainte(btRigidBody *rbA, btRigidBody *rbB, btTransform frameInA = btTransform::getIdentity(), btTransform frameInB = btTransform::getIdentity())
+	btFixedConstraint *addFixedContrainte(btRigidBody *rbA, btRigidBody *rbB, glm::vec3 originA = glm::vec3(0.0f), glm::vec3 originB = glm::vec3(0.0f), glm::vec3 rotationA = glm::vec3(0.0f), glm::vec3 rotationB = glm::vec3(0.0f))
 	{
+
+		btTransform frameInA = btTransform::getIdentity(), frameInB = btTransform::getIdentity();
+		frameInA.setOrigin(btVector3(originA.x, originA.y, originA.z));
+		frameInB.setOrigin(btVector3(originB.x, originB.y, originB.z));
+
+		btQuaternion quatA, quatB;
+		quatA.setEulerZYX(rotationA.z, rotationA.y, rotationA.x);
+		quatB.setEulerZYX(rotationB.z, rotationB.y, rotationB.x);
+		frameInA.setRotation(quatA);
+		frameInB.setRotation(quatB);
+
 		btFixedConstraint *c = new btFixedConstraint(*rbA, *rbB, frameInA, frameInB);
 		this->world->addConstraint(c);
 		this->contraintes = contraintes;

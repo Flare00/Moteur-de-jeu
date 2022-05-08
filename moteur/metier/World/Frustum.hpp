@@ -77,7 +77,9 @@ public:
 
 	bool isVisible(BoundingBox *a)
 	{
+		return true;
 
+		// ça marche pas :(
 		bool resultat = true;
 		vec3 min = a->getMin();
 		vec3 max = a->getMax();

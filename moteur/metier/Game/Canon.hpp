@@ -39,7 +39,7 @@ public:
         // PHYSIC
         cylinder_Rigid = BulletRigidbody::generateCylinder(glm::vec3(0.37f, 1.86f, 0.37f), 50.0f, ITransformation::generateMatrix(glm::vec3(-0.4f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, M_PI / 2.0f)));
         base_Rigid = BulletRigidbody::generateAABB(glm::vec3(2.21f, 0.46f, 0.2f), 0.0f, ITransformation::generateMatrix(glm::vec3(-0.35f, 0.0f, 0.0f)));
-        bind_Rigid_left = BulletRigidbody::generateCylinder(glm::vec3(0.1f, 0.2f, 0.1f), 50.0f, ITransformation::generateMatrix(glm::vec3(0.0f, 0.0f, 0.20f), glm::vec3(M_PI / 2.0f, 0.0f, 0.0f)));
+        bind_Rigid_left = BulletRigidbody::generateCylinder(glm::vec3(0.1f, 0.2f, 0.1f), 10.0f, ITransformation::generateMatrix(glm::vec3(0.0f, 0.0f, 0.20f), glm::vec3(M_PI / 2.0f, 0.0f, 0.0f)));
         wheel_Rigid_left = BulletRigidbody::generateCylinder(glm::vec3(1.0f, 0.1f, 1.0f), 50.0f, ITransformation::generateMatrix(glm::vec3(0.0f), glm::vec3(M_PI / 2.0f, 0.0f, 0.0f)));
 
         // MODELES
@@ -93,13 +93,18 @@ public:
         physique->addRigidbodyToPhysique(this->wheel_Rigid_left, group, mask);
         physique->addRigidbodyToPhysique(this->wheel_Rigid_right, group, mask);
 
-        physique->getGestionContraintes()->addFixedContrainte(this->base_Rigid->getRigidbody(), this->cylinder_Rigid->getRigidbody());
+        /*
+        physique->getGestionContraintes()->addPointToPointContrainte(this->base_Rigid->getRigidbody(), this->cylinder_Rigid->getRigidbody(), glm::vec3(0.8f, 0.7f, 0.0f), glm::vec3(0.0f));
+        physique->getGestionContraintes()->addPointToPointContrainte(this->base_Rigid->getRigidbody(), this->bind_Rigid_left->getRigidbody(), glm::vec3(0.0f, 0.1f, 0.4f), glm::vec3(0.0f));
+        physique->getGestionContraintes()->addPointToPointContrainte(this->base_Rigid->getRigidbody(), this->bind_Rigid_right->getRigidbody(), glm::vec3(0.0f, 0.1f, -0.4f), glm::vec3(0.0f));
 
-        physique->getGestionContraintes()->addGearContrainte(this->bind_Rigid_left->getRigidbody(), this->wheel_Rigid_left->getRigidbody(), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f));
-        physique->getGestionContraintes()->addGearContrainte(this->bind_Rigid_right->getRigidbody(), this->wheel_Rigid_right->getRigidbody(), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f));
+        physique->getGestionContraintes()->addPointToPointContrainte(this->bind_Rigid_left->getRigidbody(), this->wheel_Rigid_left->getRigidbody(), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -0.1f, 0.0f));
+        physique->getGestionContraintes()->addPointToPointContrainte(this->bind_Rigid_right->getRigidbody(), this->wheel_Rigid_right->getRigidbody(), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.1f, 0.0f));
+        physique->getGestionContraintes()->addGearContrainte(this->wheel_Rigid_left->getRigidbody(), this->bind_Rigid_left->getRigidbody(), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        physique->getGestionContraintes()->addGearContrainte(this->wheel_Rigid_right->getRigidbody(), this->bind_Rigid_right->getRigidbody(), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        */
 
-        physique->getGestionContraintes()->addFixedContrainte(this->base_Rigid->getRigidbody(), this->cylinder_Rigid->getRigidbody());
-        physique->getGestionContraintes()->addFixedContrainte(this->base_Rigid->getRigidbody(), this->cylinder_Rigid->getRigidbody());
+        physique->getGestionContraintes()->addFixedContrainte(this->base_Rigid->getRigidbody(), this->cylinder_Rigid->getRigidbody(), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.0f, M_PI / 2.0f, 0.0f));
     }
 
     void removeFromPhysique(PhysiqueBullet *physique)

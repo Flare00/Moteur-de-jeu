@@ -77,8 +77,8 @@ public:
 
 		// Terrain
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");
-		Texture *textureTerrain = new Texture("Textures/HeightMap/test.png");
-		Texture *heightMapTerrain = new Texture("Textures/HeightMap/test.png");
+		Texture *textureTerrain = new Texture("Textures/HeightMap/test2.png");
+		Texture *heightMapTerrain = new Texture("Textures/HeightMap/test2.png");
 		Terrain *terrain = new Terrain("Terrain", shaderTerrain, textureTerrain, heightMapTerrain, 25, 1.0f, 1);
 
 		// Add to scene
