@@ -55,6 +55,7 @@ public:
         std::vector<glm::vec2> tmpOrderTextures;
         std::vector<glm::vec3> tmpOrderNormals;
         std::vector<glm::vec3> tmpVertex;
+        unsigned int counterFaces = 0;
 
         // Read file
         while (getline(fileOBJ, readLine))
@@ -87,7 +88,9 @@ public:
                         std::vector<std::string> tmpString;
                         splitString(allWordsLine[i], tmpString, (char)0x2f);
 
-                        res.faces.push_back(std::stoi(tmpString[0]) - 1);
+                        res.faces.push_back(counterFaces);
+                        counterFaces++;
+                        res.vertices.push_back(tmpVertex[std::stoi(tmpString[0]) - 1]);
                         res.textures.push_back(tmpOrderTextures[std::stoi(tmpString[1]) - 1]);
                         res.normals.push_back(tmpOrderNormals[std::stoi(tmpString[2]) - 1]);
                     }
@@ -96,33 +99,19 @@ public:
                 if (allWordsLine.size() == 5)
                 { // 5 car je compte le "f" en plus
                     unsigned int faceTmp[4];
-                    /*
-                    std::vector<glm::vec3> *normalTmp = new std::vector<glm::vec3>[res.vertices.size()];
-                    std::vector<glm::vec2> *textureTmp = new std::vector<glm::vec2>[res.vertices.size()];
-                    */
+  
                     for (size_t i = 1; i < 5; i++)
                     {
                         std::vector<std::string> tmpString;
                         splitString(allWordsLine[i], tmpString, (char)0x2f);
 
-                        faceTmp[i - 1] = std::stoi(tmpString[0]) - 1;
-                        res.vertices.push_back(tmpVertex[faceTmp[i - 1]]);
+                        faceTmp[i - 1] = counterFaces;
+                        counterFaces++;
+                        res.vertices.push_back(tmpVertex[std::stoi(tmpString[0]) - 1]);
                         res.textures.push_back(tmpOrderTextures[std::stoi(tmpString[1]) - 1]);
                         res.normals.push_back(tmpOrderNormals[std::stoi(tmpString[2]) - 1]);
                     }
-                    /*
-                    for (size_t i = 0, maxSizeI = tmpVertex.size(); i < maxSizeI; i++)
-                    {
-                        for (size_t j = 0, maxSizeJ = normalTmp[i].size(); j < maxSizeJ; j++)
-                        {
-                            res.normals.push_back(normalTmp[i][j]);
-                        }
-                        for (size_t j = 0, maxSizeJ = textureTmp[i].size(); j < maxSizeJ; j++)
-                        {
-                            res.textures.push_back(textureTmp[i][j]);
-                        }
-                    }
-                    */
+
                     res.faces.push_back(faceTmp[0]);
                     res.faces.push_back(faceTmp[1]);
                     res.faces.push_back(faceTmp[2]);
@@ -137,7 +126,7 @@ public:
         fileOBJ.close();
 
         // DEBUG
-
+        /*
         // Print Vertex ("v X Y Z")
         for (size_t i = 0, max = res.vertices.size(); i < max; i++)
         {
@@ -158,6 +147,7 @@ public:
         {
             std::cout << "f " << res.faces[i] << " " << res.faces[i + 1] << " " << res.faces[i + 2] << std::endl;
         }
+        */
 
         return res;
     }
