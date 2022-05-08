@@ -8,8 +8,8 @@
 #include "Shader.hpp"
 #include "Texture.hpp"
 #include <Global.hpp>
-#include <Light/Light.hpp>
 #include <Light/Material.hpp>
+#include <Light/ILight.hpp>
 
 class GlobalShader : public Shader
 {
@@ -22,9 +22,16 @@ protected:
 		GLuint shininess;
 	};
 
-	struct U_Light
+	struct U_PointLight
 	{
 		GLuint position;
+		GLuint color;
+		GLuint intensity;
+	};
+
+	struct U_SunLight
+	{
+		GLuint direction;
 		GLuint color;
 		GLuint intensity;
 	};
@@ -43,8 +50,8 @@ protected:
 	GLuint u_gamma_correction;
 
 	U_Material u_material;
-	U_Light u_lights[MAX_LIGHT];
-	std::vector<Light> lights;
+	//U_Light u_lights[MAX_LIGHT];
+	//std::vector<Light> lights;
 
 	float nbTexture = 0;
 
@@ -67,19 +74,19 @@ public:
 		this->u_gamma_correction = glGetUniformLocation(this->id, "u_gamma_correction");
 
 		this->u_light_number = glGetUniformLocation(this->id, "u_light_number");
-		for (int i = 0; i < MAX_LIGHT; i++)
+		/*for (int i = 0; i < MAX_LIGHT; i++)
 		{
 			this->u_lights[i].position = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].position")).c_str());
 			this->u_lights[i].color = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].color")).c_str());
 			this->u_lights[i].intensity = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].intensity")).c_str());
-		}
+		}*/
 
-		lights.push_back(Light(vec3(0, 1, -2), vec3(1, 1, 1), 3.0f));
+		//lights.push_back(Light(vec3(0, 1, -2), vec3(1, 1, 1), 3.0f));
 	}
 
 	void setLight()
 	{
-		GLint nbLight = (lights.size() < MAX_LIGHT ? (GLint)lights.size() : MAX_LIGHT);
+		/*GLint nbLight = (lights.size() < MAX_LIGHT ? (GLint)lights.size() : MAX_LIGHT);
 		glUniform1f(this->u_gamma_correction, 2.2f);
 		glUniform1i(this->u_light_number, nbLight);
 		// Load Lights
@@ -88,7 +95,7 @@ public:
 			glUniform3fv(u_lights[i].position, 1, &(lights[i].getPosition())[0]);
 			glUniform3fv(u_lights[i].color, 1, &(lights[i].getColor())[0]);
 			glUniform1f(u_lights[i].intensity, lights[i].getIntensity());
-		}
+		}*/
 	}
 
 	void drawMaterial(Material material)

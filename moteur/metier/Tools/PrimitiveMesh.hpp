@@ -109,7 +109,7 @@ public:
 		modele->setData(indexed_vertices, texCoords);
 	}
 
-	static void generate_uv_sphere(ModeleComponent* modele, int nbMeridien, int nbParalleles) {
+	static void generate_uv_sphere(ModeleComponent* modele, int nbMeridien, int nbParalleles, float scale = 1.0f) {
 		std::vector<glm::vec3> indexed_vertices;
 		std::vector<glm::vec3> normals;
 		std::vector<unsigned int> indices;
@@ -122,7 +122,7 @@ public:
 				float x = sin(parallele) * cos(meridien);
 				float y = cos(parallele);
 				float z = sin(parallele) * sin(meridien);
-				indexed_vertices.push_back(glm::vec3(x, y, z));
+				indexed_vertices.push_back(glm::vec3(x, y, z)* scale);
 				normals.push_back(glm::normalize(glm::vec3(x, y, z)));
 
 				//Texture Coordinate

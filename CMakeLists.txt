@@ -48,7 +48,7 @@ add_definitions(
 add_executable(moteur
 		 common/objloader.hpp
 		common/objloader.cpp
-        moteur/Moteur.cpp "moteur/metier/Physique/DebugDrawer.hpp"  "moteur/metier/Physique/GestionContraintes.hpp" "moteur/metier/Physique/BulletRigidbody.hpp"   "moteur/metier/Transformation/ITransformation.hpp")
+        moteur/Moteur.cpp "moteur/metier/Physique/DebugDrawer.hpp"  "moteur/metier/Physique/GestionContraintes.hpp" "moteur/metier/Physique/BulletRigidbody.hpp"   "moteur/metier/Transformation/ITransformation.hpp" "moteur/metier/Light/Lightning.hpp" "moteur/metier/Light/ILight.hpp" "moteur/metier/Light/DirectionnalLight.hpp" "moteur/metier/Light/ShadowMap.hpp" )
 
 
 target_link_libraries(moteur

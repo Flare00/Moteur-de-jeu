@@ -6,7 +6,6 @@ uniform sampler2D u_heightmap;
 uniform mat4 u_model;
 uniform mat4 u_view;
 uniform mat4 u_projection;
-uniform mat4 u_camera_transformation;
 
 uniform float u_max_height;
 
@@ -48,5 +47,5 @@ void main()
     FragPos = vec3(u_model * p);
     Normal = normal.xyz;
     mat4 mvp = u_projection * u_view * u_model;
-    gl_Position = u_camera_transformation * mvp * p;
+    gl_Position = mvp * p;
 }

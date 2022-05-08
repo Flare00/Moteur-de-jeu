@@ -63,6 +63,8 @@ void main(){
     }
     lightVec = pow(lightVec, vec3(1.0/u_gamma_correction));
 
+    lightVec = vec3(1.0f); //Temporary
+
 	if(u_nb_texture == 0){
 		color = (vec4(lightVec,1) * vec4(TexCoord , 0, 1 ));
 	} else {

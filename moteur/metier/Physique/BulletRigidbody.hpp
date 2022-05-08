@@ -5,6 +5,7 @@
 #include <btBulletDynamicsCommon.h>
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
+#include <BulletCollision/CollisionShapes/btEmptyShape.h>
 
 #include <Texture.hpp>
 
@@ -192,7 +193,7 @@ protected:
 		// rigidbody is dynamic if and only if mass is non zero, otherwise static
 		bool isDynamic = (mass != 0.f);
 
-		btVector3 localInertia(0, 0, 0);
+		btVector3 localInertia(1, 1, 1);
 		if (isDynamic)
 			shape->calculateLocalInertia(mass, localInertia);
 

@@ -107,7 +107,7 @@ public:
 	{
 		ModeleComponent *ballComponent = new ModeleComponent(globalShader);
 		ballComponent->addTexture(texBall, false);
-		PrimitiveMesh::generate_uv_sphere(ballComponent, 16, 16);
+		PrimitiveMesh::generate_uv_sphere(ballComponent, 16, 16,0.2f);
 		BulletRigidbody *ballRigidBody = new BulletRigidbody();
 		ballRigidBody->setToSphere(1.0f, 1.0f);
 		ModeleLOD *ball = new ModeleLOD("Ball", ballComponent, NULL, NULL, ballRigidBody);
@@ -132,9 +132,12 @@ public:
 				ModeleLOD *b = this->createBall();
 				this->listBall.push_back(b);
 				this->scene->addChild(b);
-				this->bullet->addRigidbodyToPhysique(b->getRigidBody());
-				b->getTransform()->setTranslate(this->cameras[0]->getPosition());
-				b->getBulletTransform()->applyImpule(this->cameras[0]->getFront() * 50.0f);
+				this->bullet->addRigidbodyToPhysique(b->getRigidBody(), this->canon->getGroup(), this->canon->getMask());
+
+				b->getTransform()->setTranslate(this->canon->getCanonPos());
+				b->getBulletTransform()->applyImpule(this->canon->getFront() * 50.0f);
+				/*b->getTransform()->setTranslate(this->cameras[0]->getPosition());
+				b->getBulletTransform()->applyImpule(this->cameras[0]->getFront() * 50.0f);*/
 			}
 		}
 	}
@@ -142,7 +145,7 @@ public:
 	virtual void actionGoUp()
 	{
 		canon->getTransform()->applyForce(glm::vec3(1.0f, 0.0f, 0.0f));
-		canon->move(glm::vec3(0.0f));
+		canon->move(glm::vec3(0,0,1));
 	}
 
 	virtual void Draw(float deltaTime)

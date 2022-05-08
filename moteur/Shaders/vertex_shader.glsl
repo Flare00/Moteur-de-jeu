@@ -10,7 +10,6 @@ layout(location = 2) in vec3 aNormal;
 uniform mat4 u_model;
 uniform mat4 u_view;
 uniform mat4 u_projection;
-uniform mat4 u_camera_transformation;
 
 out vec3 FragPos;
 out vec3 Normal;
@@ -23,6 +22,6 @@ void main(){
         TexCoord = aTexCoord;
 
         mat4 mvp = u_projection * u_view * u_model;
-        gl_Position = u_camera_transformation * mvp * vec4(aPos, 1.0f);
+        gl_Position = mvp * vec4(aPos, 1.0f);
 }
 
