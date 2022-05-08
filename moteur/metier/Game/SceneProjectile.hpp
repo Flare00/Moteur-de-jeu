@@ -15,6 +15,7 @@
 #include <Physique/GestionContraintes.hpp>
 
 #include <Game/Canon.hpp>
+#include <Game/Wall.hpp>
 
 #include <Global.hpp>
 
@@ -32,6 +33,7 @@ private:
 	Text2D *text2D;
 	PhysiqueBullet *bullet;
 	Canon *canon;
+	Wall *wall;
 	Texture *texBall;
 
 	std::vector<ModeleLOD *> listBall;
@@ -75,6 +77,9 @@ public:
 		// Construct canon
 		canon = new Canon(globalShader);
 
+		// Constrcut wall
+		wall = new Wall(globalShader, texTest, 10, 10, 1);
+
 		// Terrain
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");
 		Texture *textureTerrain = new Texture("Textures/HeightMap/test2.png");
@@ -84,6 +89,7 @@ public:
 		// Add to scene
 		this->scene->addChild(terrain);
 		this->scene->addChild(canon->getGameObject());
+		this->scene->addChild(wall->getGameObject());
 
 		// Set inputCollision
 		this->inputCol = new InputProjectile(c, this);
@@ -98,6 +104,7 @@ public:
 		bullet->init();
 		bullet->addRigidbodyToPhysique(terrain->getRigidbody());
 		canon->addToPhysique(bullet);
+		wall->addToPhysique(bullet);
 
 		// Place et tourne les objets
 		terrain->getTransform()->translate(glm::vec3(0, -10, 0));
@@ -107,7 +114,7 @@ public:
 	{
 		ModeleComponent *ballComponent = new ModeleComponent(globalShader);
 		ballComponent->addTexture(texBall, false);
-		PrimitiveMesh::generate_uv_sphere(ballComponent, 16, 16,0.2f);
+		PrimitiveMesh::generate_uv_sphere(ballComponent, 16, 16, 0.2f);
 		BulletRigidbody *ballRigidBody = new BulletRigidbody();
 		ballRigidBody->setToSphere(1.0f, 1.0f);
 		ModeleLOD *ball = new ModeleLOD("Ball", ballComponent, NULL, NULL, ballRigidBody);
@@ -145,7 +152,7 @@ public:
 	virtual void actionGoUp()
 	{
 		canon->getTransform()->applyForce(glm::vec3(1.0f, 0.0f, 0.0f));
-		canon->move(glm::vec3(0,0,1));
+		canon->move(glm::vec3(0, 0, 1));
 	}
 
 	virtual void Draw(float deltaTime)

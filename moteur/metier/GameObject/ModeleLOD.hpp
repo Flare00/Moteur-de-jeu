@@ -114,7 +114,7 @@ public:
 
 	ModeleLOD *duplicate()
 	{
-		return new ModeleLOD(this->identifier, this->modeles[0], this->modeles[1], this->modeles[2], this->rigidBody->duplicate(), this->parent);
+		return new ModeleLOD(this->identifier, this->modeles[0], this->modeles[1], this->modeles[2], (this->rigidBody != NULL ? this->rigidBody->duplicate() : NULL), this->parent);
 	}
 
 	// ---- GETTER ET SETTER ---

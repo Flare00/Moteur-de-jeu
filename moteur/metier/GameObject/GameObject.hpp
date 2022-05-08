@@ -29,6 +29,10 @@ public:
 		this->identifier = id;
 		this->parent = parent;
 		this->rigidBody = rigidbody;
+		if (this->parent != NULL) {
+			this->parent->addChild(this);
+		}
+
 		if (rigidbody == NULL)
 		{
 			this->transform = new Transformation();
@@ -46,6 +50,9 @@ public:
 		this->parent = parent;
 		this->childs = childs;
 		this->rigidBody = rigidbody;
+		if (this->parent != NULL) {
+			this->parent->addChild(this);
+		}
 		if (rigidbody == NULL)
 		{
 			this->transform = new Transformation();

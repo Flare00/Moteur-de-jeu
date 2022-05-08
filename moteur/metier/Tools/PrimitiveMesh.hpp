@@ -8,19 +8,22 @@
 
 #include <GameObject/ModeleComponent.hpp>
 
-class PrimitiveMesh {
+class PrimitiveMesh
+{
 public:
-
-	static void generate_plane(ModeleComponent* modele, int res_x, int res_y, float size_x, float size_y) {
+	static void generate_plane(ModeleComponent *modele, int res_x, int res_y, float size_x, float size_y)
+	{
 		std::vector<glm::vec3> indexed_vertices;
 		std::vector<glm::vec3> normals;
 		std::vector<unsigned int> indices;
 
 		std::vector<glm::vec2> texCoords;
 
-		for (int i = 0; i < res_x; i++) {
+		for (int i = 0; i < res_x; i++)
+		{
 			float pointX = (float)i * (size_x / (float)res_x);
-			for (int j = 0; j < res_y; j++) {
+			for (int j = 0; j < res_y; j++)
+			{
 				float pointY = (float)j * (size_y / (float)res_y);
 				indexed_vertices.push_back(glm::vec3(pointX - (size_x / 2.0), 0.0f, pointY - (size_y / 2.0)));
 				normals.push_back(glm::normalize(glm::vec3(0, 1, 0)));
@@ -28,9 +31,10 @@ public:
 			}
 		}
 
-
-		for (int i = 0; i < res_x - 1; i++) {
-			for (int j = 0; j < res_y - 1; j++) {
+		for (int i = 0; i < res_x - 1; i++)
+		{
+			for (int j = 0; j < res_y - 1; j++)
+			{
 				indices.push_back((i * res_y) + j);
 				indices.push_back((i * res_y) + j + 1);
 				indices.push_back(((i + 1) * res_y) + j);
@@ -44,7 +48,8 @@ public:
 		modele->setData(indexed_vertices, indices, texCoords, normals);
 	}
 
-	static void generate_plane_terrain(ModeleComponent* modele, int res_x, int res_y, float size_x, float size_y) {
+	static void generate_plane_terrain(ModeleComponent *modele, int res_x, int res_y, float size_x, float size_y)
+	{
 		std::vector<glm::vec3> indexed_vertices;
 		std::vector<glm::vec3> normals;
 		std::vector<unsigned int> indices;
@@ -56,10 +61,12 @@ public:
 		float centerX = size_x / 2.0f;
 		float centerY = size_y / 2.0f;
 
-		for (int i = 0; i < res_x; i++) {
+		for (int i = 0; i < res_x; i++)
+		{
 			float pointX = subSizeX * i;
 			float pointX_1 = subSizeX * (i + 1);
-			for (int j = 0; j < res_y; j++) {
+			for (int j = 0; j < res_y; j++)
+			{
 				float pointY = subSizeY * j;
 				float pointY_1 = subSizeY * (j + 1);
 
@@ -80,13 +87,15 @@ public:
 			}
 		}
 
-		for (size_t i = 0, max = indexed_vertices.size(); i < max; i++) {
+		for (size_t i = 0, max = indexed_vertices.size(); i < max; i++)
+		{
 			indices.push_back((unsigned int)i);
 		}
 		modele->setData(indexed_vertices, indices, texCoords, normals);
 	}
 
-	static void generate_plane_terrain_collision(ModeleComponent* modele, int res_x, int res_y, float size_x, float size_y) {
+	static void generate_plane_terrain_collision(ModeleComponent *modele, int res_x, int res_y, float size_x, float size_y)
+	{
 		std::vector<glm::vec3> indexed_vertices;
 		std::vector<glm::vec3> normals;
 		std::vector<unsigned int> indices;
@@ -98,9 +107,11 @@ public:
 		float centerX = size_x / 2.0f;
 		float centerY = size_y / 2.0f;
 
-		for (int i = 0; i <= res_x; i++) {
+		for (int i = 0; i <= res_x; i++)
+		{
 			float pointX = subSizeX * i;
-			for (int j = 0; j <= res_y; j++) {
+			for (int j = 0; j <= res_y; j++)
+			{
 				float pointY = subSizeY * j;
 				indexed_vertices.push_back(glm::vec3(pointX - centerX, 0.0f, pointY - centerY));
 				texCoords.push_back(glm::vec2(i / (float)res_x, j / (float)res_y));
@@ -109,27 +120,31 @@ public:
 		modele->setData(indexed_vertices, texCoords);
 	}
 
-	static void generate_uv_sphere(ModeleComponent* modele, int nbMeridien, int nbParalleles, float scale = 1.0f) {
+	static void generate_uv_sphere(ModeleComponent *modele, int nbMeridien, int nbParalleles, float scale = 1.0f)
+	{
 		std::vector<glm::vec3> indexed_vertices;
 		std::vector<glm::vec3> normals;
 		std::vector<unsigned int> indices;
 		std::vector<glm::vec2> texCoords;
-		for (int j = 0; j <= nbParalleles; j++) {
+		for (int j = 0; j <= nbParalleles; j++)
+		{
 			float parallele = (float)(M_PI * (float)j) / ((float)nbParalleles);
-			for (int i = 0; i <= nbMeridien; i++) {
-				//Coordinate
+			for (int i = 0; i <= nbMeridien; i++)
+			{
+				// Coordinate
 				float meridien = (float)(2.0f * M_PI * (float)i) / ((float)nbMeridien);
 				float x = sin(parallele) * cos(meridien);
 				float y = cos(parallele);
 				float z = sin(parallele) * sin(meridien);
-				indexed_vertices.push_back(glm::vec3(x, y, z)* scale);
+				indexed_vertices.push_back(glm::vec3(x, y, z) * scale);
 				normals.push_back(glm::normalize(glm::vec3(x, y, z)));
 
-				//Texture Coordinate
+				// Texture Coordinate
 				texCoords.push_back(glm::vec2(meridien / (2.0f * M_PI), parallele / (M_PI)));
 
-				if (j < nbParalleles && i < nbMeridien) {
-					//Triangles
+				if (j < nbParalleles && i < nbMeridien)
+				{
+					// Triangles
 					int p1 = (j * (nbMeridien + 1)) + i;
 					int p2 = p1 + (nbMeridien + 1);
 
@@ -146,7 +161,131 @@ public:
 		modele->setData(indexed_vertices, indices, texCoords, normals);
 	}
 
-	static void generate_cube(ModeleComponent* modele){}
+	static void generate_cube(ModeleComponent *modele)
+	{
+		std::vector<glm::vec3> indexed_vertices;
+		std::vector<glm::vec2> texCoords;
+		std::vector<glm::vec3> normals;
+		std::vector<unsigned int> indices;
+
+		// Vertices
+		indexed_vertices.push_back(glm::vec3(1.0f, 1.0f, -1.0f));
+		indexed_vertices.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));
+		indexed_vertices.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));
+		indexed_vertices.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
+		indexed_vertices.push_back(glm::vec3(1.0f, -1.0f, 1.0f));
+		indexed_vertices.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
+		indexed_vertices.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));
+		indexed_vertices.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));
+		indexed_vertices.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));
+		indexed_vertices.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));
+		indexed_vertices.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));
+		indexed_vertices.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));
+		indexed_vertices.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));
+		indexed_vertices.push_back(glm::vec3(1.0f, -1.0f, -1.0f));
+		indexed_vertices.push_back(glm::vec3(1.0f, -1.0f, 1.0f));
+		indexed_vertices.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));
+		indexed_vertices.push_back(glm::vec3(1.0f, -1.0f, -1.0f));
+		indexed_vertices.push_back(glm::vec3(1.0f, 1.0f, -1.0f));
+		indexed_vertices.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
+		indexed_vertices.push_back(glm::vec3(1.0f, -1.0f, 1.0f));
+		indexed_vertices.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));
+		indexed_vertices.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));
+		indexed_vertices.push_back(glm::vec3(1.0f, 1.0f, -1.0f));
+		indexed_vertices.push_back(glm::vec3(1.0f, -1.0f, -1.0f));
+
+		// Textures
+		texCoords.push_back(glm::vec2(1.0f, 1.0f));
+		texCoords.push_back(glm::vec2(0.0f, 1.0f));
+		texCoords.push_back(glm::vec2(0.0f, 0.0f));
+		texCoords.push_back(glm::vec2(1.0f, 0.0f));
+		texCoords.push_back(glm::vec2(1.0f, 0.0f));
+		texCoords.push_back(glm::vec2(1.0f, 1.0f));
+		texCoords.push_back(glm::vec2(0.0f, 1.0f));
+		texCoords.push_back(glm::vec2(0.0f, 0.0f));
+		texCoords.push_back(glm::vec2(0.0f, 0.0f));
+		texCoords.push_back(glm::vec2(0.0f, 1.0f));
+		texCoords.push_back(glm::vec2(1.0f, 1.0f));
+		texCoords.push_back(glm::vec2(1.0f, 0.0f));
+		texCoords.push_back(glm::vec2(0.0f, 1.0f));
+		texCoords.push_back(glm::vec2(1.0f, 1.0f));
+		texCoords.push_back(glm::vec2(1.0f, 0.0f));
+		texCoords.push_back(glm::vec2(0.0f, 0.0f));
+		texCoords.push_back(glm::vec2(1.0f, 0.0f));
+		texCoords.push_back(glm::vec2(1.0f, 1.0f));
+		texCoords.push_back(glm::vec2(0.0f, 1.0f));
+		texCoords.push_back(glm::vec2(0.0f, 0.0f));
+		texCoords.push_back(glm::vec2(0.0f, 0.0f));
+		texCoords.push_back(glm::vec2(0.0f, 1.0f));
+		texCoords.push_back(glm::vec2(1.0f, 1.0f));
+		texCoords.push_back(glm::vec2(1.0f, 0.0f));
+
+		// Normals
+		normals.push_back(glm::vec3(0, 1, 0));
+		normals.push_back(glm::vec3(0, 1, 0));
+		normals.push_back(glm::vec3(0, 1, 0));
+		normals.push_back(glm::vec3(0, 1, 0));
+		normals.push_back(glm::vec3(0, 0, 1));
+		normals.push_back(glm::vec3(0, 0, 1));
+		normals.push_back(glm::vec3(0, 0, 1));
+		normals.push_back(glm::vec3(0, 0, 1));
+		normals.push_back(glm::vec3(-1, 0, 0));
+		normals.push_back(glm::vec3(-1, 0, 0));
+		normals.push_back(glm::vec3(-1, 0, 0));
+		normals.push_back(glm::vec3(-1, 0, 0));
+		normals.push_back(glm::vec3(0, -1, 0));
+		normals.push_back(glm::vec3(0, -1, 0));
+		normals.push_back(glm::vec3(0, -1, 0));
+		normals.push_back(glm::vec3(0, -1, 0));
+		normals.push_back(glm::vec3(1, 0, 0));
+		normals.push_back(glm::vec3(1, 0, 0));
+		normals.push_back(glm::vec3(1, 0, 0));
+		normals.push_back(glm::vec3(1, 0, 0));
+		normals.push_back(glm::vec3(0, 0, -1));
+		normals.push_back(glm::vec3(0, 0, -1));
+		normals.push_back(glm::vec3(0, 0, -1));
+		normals.push_back(glm::vec3(0, 0, -1));
+
+		// Indices
+		indices.push_back((unsigned int)0);
+		indices.push_back((unsigned int)1);
+		indices.push_back((unsigned int)2);
+		indices.push_back((unsigned int)0);
+		indices.push_back((unsigned int)2);
+		indices.push_back((unsigned int)3);
+		indices.push_back((unsigned int)4);
+		indices.push_back((unsigned int)5);
+		indices.push_back((unsigned int)6);
+		indices.push_back((unsigned int)4);
+		indices.push_back((unsigned int)6);
+		indices.push_back((unsigned int)7);
+		indices.push_back((unsigned int)8);
+		indices.push_back((unsigned int)9);
+		indices.push_back((unsigned int)10);
+		indices.push_back((unsigned int)8);
+		indices.push_back((unsigned int)10);
+		indices.push_back((unsigned int)11);
+		indices.push_back((unsigned int)12);
+		indices.push_back((unsigned int)13);
+		indices.push_back((unsigned int)14);
+		indices.push_back((unsigned int)12);
+		indices.push_back((unsigned int)14);
+		indices.push_back((unsigned int)15);
+		indices.push_back((unsigned int)16);
+		indices.push_back((unsigned int)17);
+		indices.push_back((unsigned int)18);
+		indices.push_back((unsigned int)16);
+		indices.push_back((unsigned int)18);
+		indices.push_back((unsigned int)19);
+		indices.push_back((unsigned int)20);
+		indices.push_back((unsigned int)21);
+		indices.push_back((unsigned int)22);
+		indices.push_back((unsigned int)20);
+		indices.push_back((unsigned int)22);
+		indices.push_back((unsigned int)23);
+
+		modele->setData(indexed_vertices, indices, texCoords, normals);
+	}
 };
 
 #endif // !_PRIMITIVE_MESH_H__
