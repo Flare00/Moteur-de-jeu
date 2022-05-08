@@ -71,7 +71,7 @@ public:
 		BulletRigidbody *testRigid = new BulletRigidbody();
 		testRigid->setToAABB(glm::vec3(1.0f), 0.0f);
 
-		ModeleLOD *test = new ModeleLOD("test", globalShader, ModeleComponent::OBJ, "Model/cube.obj", testRigid);
+		ModeleLOD *test = new ModeleLOD("test", globalShader, ModeleComponent::OBJ, "Model/cubeTriangulate.obj", testRigid);
 		test->getModele(0)->addTexture(texTest, true);
 
 		// Terrain

@@ -87,8 +87,8 @@ public:
                         splitString(allWordsLine[i], tmpString, (char)0x2f);
 
                         res.faces.push_back(std::stoi(tmpString[0]) - 1);
-                        res.normals.push_back(tmpOrderNormals[std::stoi(tmpString[2]) - 1]);
                         res.textures.push_back(tmpOrderTextures[std::stoi(tmpString[1]) - 1]);
+                        res.normals.push_back(tmpOrderNormals[std::stoi(tmpString[2]) - 1]);
                     }
                 }
                 // Quad Faces
@@ -103,8 +103,8 @@ public:
                         splitString(allWordsLine[i], tmpString, (char)0x2f);
 
                         faceTmp[i - 1] = std::stoi(tmpString[0]) - 1;
-                        normalTmp[faceTmp[i - 1]].push_back(tmpOrderNormals[std::stoi(tmpString[2]) - 1]);
                         textureTmp[faceTmp[i - 1]].push_back(tmpOrderTextures[std::stoi(tmpString[1]) - 1]);
+                        normalTmp[faceTmp[i - 1]].push_back(tmpOrderNormals[std::stoi(tmpString[2]) - 1]);
                     }
                     for (size_t i = 0, maxSizeI = res.vertices.size(); i < maxSizeI; i++)
                     {
@@ -129,6 +129,29 @@ public:
 
         // Close file
         fileOBJ.close();
+
+        // DEBUG
+
+        // Print Vertex ("v X Y Z")
+        for (size_t i = 0, max = res.vertices.size(); i < max; i++)
+        {
+            std::cout << "v " << res.vertices[i].x << " " << res.vertices[i].y << " " << res.vertices[i].z << std::endl;
+        }
+        // Print Texture ("vt X Y")
+        for (size_t i = 0, max = res.textures.size(); i < max; i++)
+        {
+            std::cout << "vt " << res.textures[i].x << " " << res.textures[i].y << std::endl;
+        }
+        // Print Normal ("vn X Y Z")
+        for (size_t i = 0, max = res.normals.size(); i < max; i++)
+        {
+            std::cout << "vn " << res.normals[i].x << " " << res.normals[i].y << " " << res.normals[i].z << std::endl;
+        }
+        // Print Triangle ("f v1 v2 v3")
+        for (size_t i = 0, max = res.faces.size(); i < max; i += 3)
+        {
+            std::cout << "f " << res.faces[i] << " " << res.faces[i + 1] << " " << res.faces[i + 2] << std::endl;
+        }
 
         return res;
     }
