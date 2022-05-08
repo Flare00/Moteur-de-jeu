@@ -111,6 +111,11 @@ public:
 		}
 	}
 
+	ModeleLOD *duplicate()
+	{
+		return new ModeleLOD(this->identifier, this->modeles[0], this->modeles[1], this->modeles[2], this->rigidBody->duplicate(), this->parent);
+	}
+
 	// ---- GETTER ET SETTER ---
 
 	ModeleComponent *getModele(int level)

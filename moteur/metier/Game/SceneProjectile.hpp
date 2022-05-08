@@ -13,6 +13,8 @@
 #include <GameObject/Terrain.hpp>
 #include <Tools/LoaderOBJ.hpp>
 
+#include <Game/Canon.hpp>
+
 #include <Global.hpp>
 
 #include <Physique/PhysiqueBullet.hpp>
@@ -28,7 +30,7 @@ private:
 	InputProjectile *inputCol;
 	Text2D *text2D;
 	PhysiqueBullet *bullet;
-	ModeleLOD *TerreLOD;
+	Canon *canon;
 
 	std::vector<ModeleLOD *> listBall;
 
@@ -67,12 +69,8 @@ public:
 		// Set Texture
 		Texture *texTest = new Texture("Textures/texture_test.jpg");
 
-		// Load OBJ
-		BulletRigidbody *testRigid = new BulletRigidbody();
-		testRigid->setToAABB(glm::vec3(1.0f), 0.0f);
-
-		ModeleLOD *test = new ModeleLOD("test", globalShader, ModeleComponent::OBJ, "Model/cube.obj", testRigid);
-		test->getModele(0)->addTexture(texTest, true);
+		// Construct canon
+		canon = new Canon();
 
 		// Terrain
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");
@@ -82,7 +80,7 @@ public:
 
 		// Add to scene
 		this->scene->addChild(terrain);
-		this->scene->addChild(test);
+		this->scene->addChild(canon->getGameObject());
 
 		// Set inputCollision
 		this->inputCol = new InputProjectile(c, this);
