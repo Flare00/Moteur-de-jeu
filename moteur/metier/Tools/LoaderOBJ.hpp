@@ -34,7 +34,8 @@ public:
     {
         std::vector<glm::vec3> vertices;
         std::vector<glm::vec3> normals;
-        std::vector<glm::vec3> faces;
+        std::vector<glm::vec2> textures;
+        std::vector<unsigned int> faces;
     };
 
     static ObjModelInfo load(std::string path_file)
@@ -68,19 +69,28 @@ public:
             {
                 res.normals.push_back(glm::vec3(stof(allWordsLine[1]), stof(allWordsLine[2]), stof(allWordsLine[3])));
             }
+            if (allWordsLine[0].compare("vt") == 0)
+            {
+                res.textures.push_back(glm::vec2(stof(allWordsLine[1]), stof(allWordsLine[2])));
+            }
             if (allWordsLine[0].compare("f") == 0)
             {
-
                 // Triangle Faces
                 if (allWordsLine.size() == 4)
                 { // 4 car je compte le "f" en plus
-                    res.faces.push_back(glm::vec3((float)(allWordsLine[1][0] - '0'), (float)(allWordsLine[2][0] - '0'), (float)(allWordsLine[3][0] - '0')));
+                    res.faces.push_back((unsigned int)(allWordsLine[1][0] - '0'));
+                    res.faces.push_back((unsigned int)(allWordsLine[2][0] - '0'));
+                    res.faces.push_back((unsigned int)(allWordsLine[3][0] - '0'));
                 }
                 // Quad Faces
                 if (allWordsLine.size() == 5)
                 { // 5 car je compte le "f" en plus
-                    res.faces.push_back(glm::vec3((float)(allWordsLine[1][0] - '0'), (float)(allWordsLine[2][0] - '0'), (float)(allWordsLine[3][0] - '0')));
-                    res.faces.push_back(glm::vec3((float)(allWordsLine[4][0] - '0'), (float)(allWordsLine[2][0] - '0'), (float)(allWordsLine[3][0] - '0')));
+                    res.faces.push_back((unsigned int)(allWordsLine[1][0] - '0'));
+                    res.faces.push_back((unsigned int)(allWordsLine[2][0] - '0'));
+                    res.faces.push_back((unsigned int)(allWordsLine[3][0] - '0'));
+                    res.faces.push_back((unsigned int)(allWordsLine[4][0] - '0'));
+                    res.faces.push_back((unsigned int)(allWordsLine[2][0] - '0'));
+                    res.faces.push_back((unsigned int)(allWordsLine[3][0] - '0'));
                 }
             }
         }
@@ -90,27 +100,6 @@ public:
 
         return res;
     }
-
-    static void printMyData(ObjModelInfo info)
-    {
-        // Print Vertex ("v X Y Z")
-        for (size_t i = 0, max = info.vertices.size(); i < max; i++)
-        {
-            printf("v %f %f %f\n", info.vertices[i].x, info.vertices[i].y, info.vertices[i].z);
-        }
-        // Print Normal ("vn X Y Z")
-        for (size_t i = 0, max = info.normals.size(); i < max; i++)
-        {
-            printf("vn %f %f %f\n", info.normals[i].x, info.normals[i].y, info.normals[i].z);
-        }
-        // Print Triangle ("f v1 v2 v3")
-        for (size_t i = 0, max = info.faces.size(); i < max; i++)
-        {
-            printf("f %f %f %f\n", info.faces[i].x, info.faces[i].y, info.faces[i].z);
-        }
-    }
 };
-
-
 
 #endif;

@@ -23,11 +23,13 @@ class ModeleLOD : public GameObject
 {
 protected:
 	// 0 : High Poly, 1 : Low Poly, 2 : Impostor
-	ModeleComponent* modeles[3];
+	ModeleComponent *modeles[3];
 	float distanceLOD[2];
+
 public:
+
 	// --- CONSTRUCTEURS ET DESTRUCTEURS ---
-	ModeleLOD(std::string id, ModeleComponent* high, ModeleComponent* low = NULL, ModeleComponent* imposteur = NULL, BulletRigidbody* rigidBody = NULL, GameObject* parent = NULL) : GameObject(id, parent, rigidBody)
+	ModeleLOD(std::string id, ModeleComponent *high, ModeleComponent *low = NULL, ModeleComponent *imposteur = NULL, BulletRigidbody *rigidBody = NULL, GameObject *parent = NULL) : GameObject(id, parent, rigidBody)
 	{
 		modeles[0] = high;
 		modeles[1] = low;
@@ -42,17 +44,15 @@ public:
 			this->addComponent(modeles[2]);
 	}
 
-	ModeleLOD(std::string id, GlobalShader* shader, std::string fileOff, BulletRigidbody* rigidBody = NULL, GameObject* parent = NULL) : GameObject(id, parent, rigidBody)
+	ModeleLOD(std::string id, GlobalShader *shader, ModeleComponent::FileType type, std::string file, BulletRigidbody *rigidBody = NULL, GameObject *parent = NULL) : GameObject(id, parent, rigidBody)
 	{
-		modeles[0] = new ModeleComponent(shader, fileOff);
+		modeles[0] = new ModeleComponent(shader, type, file);
 		distanceLOD[0] = 10.0f;
 		distanceLOD[1] = 100.0f;
 		this->addComponent(modeles[0]);
-
-
 	}
 
-	ModeleLOD(std::string id, std::vector<glm::vec3> indexed_vertices, std::vector<glm::vec3> normals, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, GlobalShader* shader, BulletRigidbody* rigidBody = NULL, GameObject* parent = NULL) : GameObject(id, parent, rigidBody)
+	ModeleLOD(std::string id, std::vector<glm::vec3> indexed_vertices, std::vector<glm::vec3> normals, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords, GlobalShader *shader, BulletRigidbody *rigidBody = NULL, GameObject *parent = NULL) : GameObject(id, parent, rigidBody)
 	{
 		modeles[0] = new ModeleComponent(shader, indexed_vertices, normals, indices, texCoords);
 		this->addComponent(modeles[0]);
@@ -70,7 +70,7 @@ public:
 	}
 
 	// --- METHODES ---
-	virtual void compute(Camera* camera, bool dfs = true)
+	virtual void compute(Camera *camera, bool dfs = true)
 	{
 		float distance = -1.0f;
 		distance = camera->distanceFromCamera(this->getPosition());
@@ -87,7 +87,8 @@ public:
 			}
 			draw(camera, level);
 		}
-		else {
+		else
+		{
 			draw(camera, 0);
 		}
 
@@ -95,19 +96,21 @@ public:
 			GameObject::compute(camera, dfs);
 	}
 
-	void draw(Camera* camera, int level)
+	void draw(Camera *camera, int level)
 	{
-		while (level >= 0 && modeles[level] == NULL) {
+		while (level >= 0 && modeles[level] == NULL)
+		{
 			level--;
 		}
-		if (level >= 0) {
+		if (level >= 0)
+		{
 			modeles[level]->draw(camera, this->getTransformMatrix(), this->getPosition());
 		}
 	}
 
 	// ---- GETTER ET SETTER ---
 
-	ModeleComponent* getModele(int level)
+	ModeleComponent *getModele(int level)
 	{
 		return this->modeles[level];
 	}

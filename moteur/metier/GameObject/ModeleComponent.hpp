@@ -10,6 +10,8 @@
 #include <Component.hpp>
 #include <Texture.hpp>
 #include <GameObject/BoundingBox.hpp>
+#include <Tools/LoaderOBJ.hpp>
+
 class ModeleComponent : public Component
 {
 private:
@@ -17,7 +19,7 @@ private:
 
 protected:
 	// Modele
-	BoundingBox* boundingBox = NULL;
+	BoundingBox *boundingBox = NULL;
 	std::vector<glm::vec3> vertexArray;
 	std::vector<glm::vec2> texCoords;
 	std::vector<glm::vec3> normals;
@@ -46,17 +48,35 @@ protected:
 public:
 	// --- CONSTRUCTEURS ET DESTRUCTEURS ---
 
-	ModeleComponent(GlobalShader *shader, std::string fileOff) : Component(Component::Type::MODELE)
+	enum FileType
 	{
+		OFF,
+		OBJ
+	};
+
+	ModeleComponent(GlobalShader *shader, FileType type, std::string file) : Component(Component::Type::MODELE)
+	{
+
 		this->shader = shader;
 		std::vector<unsigned short> indices; // Triangles concat�n�s dans une liste
 		std::vector<std::vector<unsigned short>> triangles;
 
-		// Chargement du fichier de maillage
-		loadOFF(fileOff, this->vertexArray, indices, triangles);
-		for (size_t i = 0, max = indices.size(); i < max; i++)
+		if (type == FileType::OFF)
 		{
-			this->indices.push_back((int)indices[i]);
+			// Chargement du fichier de maillage
+			loadOFF(file, this->vertexArray, indices, triangles);
+			for (size_t i = 0, max = indices.size(); i < max; i++)
+			{
+				this->indices.push_back((int)indices[i]);
+			}
+		}
+		else if (type == FileType::OBJ)
+		{
+			LoaderOBJ::ObjModelInfo infoObj = LoaderOBJ::load(file);
+			this->vertexArray = infoObj.vertices;
+			this->texCoords = infoObj.textures;
+			this->normals = infoObj.normals;
+			this->indices = infoObj.faces;
 		}
 		loadBuffer();
 		boundingBox = new BoundingBox(this->vertexArray);
@@ -109,7 +129,8 @@ public:
 			glBufferData(GL_ARRAY_BUFFER, this->normals.size() * sizeof(vec3), &this->normals[0], GL_STATIC_DRAW);
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 		}
-		if (this->indices.size() > 0) {
+		if (this->indices.size() > 0)
+		{
 			glGenBuffers(1, &this->EBO);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(unsigned int), &this->indices[0], GL_STATIC_DRAW);
@@ -118,10 +139,12 @@ public:
 		this->hasData = true;
 	}
 
-	~ModeleComponent() {
+	~ModeleComponent()
+	{
 		glDeleteVertexArrays(1, &this->VAO);
 		glDeleteBuffers(3, this->VBO);
-		if (this->indices.size() > 0) {
+		if (this->indices.size() > 0)
+		{
 			glDeleteBuffers(1, &this->EBO);
 		}
 	}
@@ -135,11 +158,13 @@ public:
 
 		bool isInFOV = false;
 
-		if (this->boundingBox != NULL) {
+		if (this->boundingBox != NULL)
+		{
 			boundingBox->applyTransformation(transform);
 			isInFOV = camera->isInFrustum(boundingBox);
 		}
-		else {
+		else
+		{
 			isInFOV = camera->isInFrustum(position);
 		}
 
@@ -208,7 +233,8 @@ public:
 		this->texCoords = texCoords;
 
 		loadBuffer();
-		if (this->boundingBox != NULL) {
+		if (this->boundingBox != NULL)
+		{
 			delete this->boundingBox;
 		}
 		this->boundingBox = new BoundingBox(this->vertexArray);

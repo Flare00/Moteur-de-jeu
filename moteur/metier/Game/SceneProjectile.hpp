@@ -69,8 +69,9 @@ public:
 		Texture *texSoleil = new Texture("Textures/SystemeSolaire/sun.jpg");
 
 		// Load OBJ
-		LoaderOBJ::ObjModelInfo test = LoaderOBJ::load("Model/cube.obj");
-		LoaderOBJ::printMyData(test);
+		BulletRigidbody *testRigid = new BulletRigidbody();
+		testRigid->setToAABB(glm::vec3(1.0f), 0.0f);
+		ModeleLOD *test = new ModeleLOD("test", globalShader, ModeleComponent::OBJ, "Model/cube.obj", testRigid);
 
 		// Terrain
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");
@@ -80,6 +81,7 @@ public:
 
 		// Add to scene
 		this->scene->addChild(terrain);
+		this->scene->addChild(test);
 
 		// Set inputCollision
 		this->inputCol = new InputProjectile(c, this);
@@ -122,7 +124,7 @@ public:
 				this->listBall.push_back(b);
 				this->scene->addChild(b);
 				this->bullet->addRigidbodyToPhysique(b->getRigidBody());
-				b->getTransform()->setTranslate(this->cameras[0]->getPosition()); 
+				b->getTransform()->setTranslate(this->cameras[0]->getPosition());
 				b->getBulletTransform()->applyImpule(this->cameras[0]->getFront() * 50.0f);
 			}
 		}

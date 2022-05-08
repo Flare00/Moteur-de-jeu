@@ -21,7 +21,7 @@ protected:
 public:
     // --- CONSTRUCTEURS ET DESTRUCTEURS ---
 
-    ModeleHeightComponent(GlobalShaderExtended *shader, std::string fileOff) : ModeleComponent(shader, fileOff)
+    ModeleHeightComponent(GlobalShaderExtended *shader, FileType type, std::string file) : ModeleComponent(shader, type, file)
     {
         this->shader = shader;
     }
