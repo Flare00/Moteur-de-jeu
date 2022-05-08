@@ -17,7 +17,7 @@ public:
 	virtual glm::mat4 getMatrix(glm::mat4 globalParent = glm::mat4(1.0f)) = 0;
 	virtual glm::mat4 getGlobalMatrix(glm::mat4 globalParent = glm::mat4(1.0f)) = 0;
 
-	static glm::mat4 generateMatrix(glm::vec3 pos, glm::vec3 rotation, float scale = 1.0f)
+	static glm::mat4 generateMatrix(glm::vec3 pos, glm::vec3 rotation = glm::vec3(0.0f), float scale = 1.0f)
 	{
 		glm::mat4 matrix = glm::mat4(1.0f);
 

@@ -43,9 +43,10 @@ public:
 			this->addComponent(modeles[2]);
 	}
 
-	ModeleLOD(std::string id, GlobalShader *shader, ModeleComponent::FileType type, std::string file, BulletRigidbody *rigidBody = NULL, GameObject *parent = NULL) : GameObject(id, parent, rigidBody)
+	ModeleLOD(std::string id, GlobalShader *shader, ModeleComponent::FileType type, std::string file, BulletRigidbody *rigidBody = NULL, GameObject *parent = NULL, Texture *texture = NULL) : GameObject(id, parent, rigidBody)
 	{
 		modeles[0] = new ModeleComponent(shader, type, file);
+		modeles[0]->addTexture(texture, false);
 		modeles[1] = NULL;
 		modeles[2] = NULL;
 		distanceLOD[0] = 10.0f;

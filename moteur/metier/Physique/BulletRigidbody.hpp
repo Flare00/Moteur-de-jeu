@@ -181,7 +181,7 @@ public:
 
 	static BulletRigidbody *duplicate(BulletRigidbody *b)
 	{
-		return new BulletRigidbody(b->getShape(), b->getMasse());
+		return new BulletRigidbody(b->getShape(), b->getMasse(), b->getModelTransformation());
 	}
 
 protected:

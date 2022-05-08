@@ -9,86 +9,106 @@
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 #include <Physique/DebugDrawer.hpp>
 #include "GestionContraintes.hpp"
+#include <Physique/CollisionFilter.hpp>
 #define ARRAY_SIZE_Y 5
 #define ARRAY_SIZE_X 5
 #define ARRAY_SIZE_Z 5
 
+class PhysiqueBullet
+{
 
-class PhysiqueBullet {
-	
 public:
-	GestionContraintes* gestionContraintes = NULL;
-	btDiscreteDynamicsWorld* dynamicsWorld;
-	btSequentialImpulseConstraintSolver* solver;
-	btDbvtBroadphase* overlappingPairCache;
-	btCollisionDispatcher* dispatcher;
-	btDefaultCollisionConfiguration* collisionConfig;
+	GestionContraintes *gestionContraintes = NULL;
+	CollisionFilter *collisionFilter = NULL;
+	btDiscreteDynamicsWorld *dynamicsWorld;
+	btSequentialImpulseConstraintSolver *solver;
+	btDbvtBroadphase *overlappingPairCache;
+	btCollisionDispatcher *dispatcher;
+	btDefaultCollisionConfiguration *collisionConfig;
 
-	std::vector<BulletRigidbody*> rigidbodies;
-	PhysiqueBullet() {
+	std::vector<BulletRigidbody *> rigidbodies;
+	PhysiqueBullet()
+	{
 	}
 
-
-	void init(DebugDrawer* debug = NULL) {
-		//Mise en place de la configuration pour collision
+	void init(DebugDrawer *debug = NULL)
+	{
+		// Mise en place de la configuration pour collision
 		collisionConfig = new btDefaultCollisionConfiguration();
-		//Mono Thread dispatcher (Regarder les BulletMultiThreaded pour le multi Thread)
+		// Mono Thread dispatcher (Regarder les BulletMultiThreaded pour le multi Thread)
 		dispatcher = new btCollisionDispatcher(collisionConfig);
-		//Overlapping broadphase , on peut essayer btAxis3Sweep
+
+		collisionFilter = new CollisionFilter();
+
+		// Overlapping broadphase , on peut essayer btAxis3Sweep
 		overlappingPairCache = new btDbvtBroadphase();
-		//Constraint solver (peut être multi thread, même chose que le dispatcher)
+		// Constraint solver (peut ï¿½tre multi thread, mï¿½me chose que le dispatcher)
 		solver = new btSequentialImpulseConstraintSolver();
 
-		//Genere le monde dynamique
+		// Genere le monde dynamique
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfig);
-		//Ajoute la gravité
+		// Ajoute la gravitï¿½
 		dynamicsWorld->setGravity(btVector3(0, -9.8f, 0));
-		if (debug != NULL) {
+		if (debug != NULL)
+		{
 			dynamicsWorld->setDebugDrawer(debug);
 		}
 
+		dynamicsWorld->getPairCache()->setOverlapFilterCallback(collisionFilter);
+
+		gestionContraintes = new GestionContraintes(this->dynamicsWorld);
 	}
 
-	void loop(float deltaTime) {
-		if (dynamicsWorld) {
+	void loop(float deltaTime)
+	{
+		if (dynamicsWorld)
+		{
 			dynamicsWorld->stepSimulation(deltaTime);
 			dynamicsWorld->debugDrawWorld();
 		}
 	}
 
-
-	GestionContraintes* getGestionContraintes() {
+	GestionContraintes *getGestionContraintes()
+	{
 		return this->gestionContraintes;
 	}
 
-	void addGhostObjectToPhysique(btGhostObject* ghost) {
+	void addGhostObjectToPhysique(btGhostObject *ghost)
+	{
 		this->dynamicsWorld->addCollisionObject(ghost);
 	}
 
-	void removeGhostObjectToPhysique(btGhostObject* ghost) {
+	void removeGhostObjectToPhysique(btGhostObject *ghost)
+	{
 		this->dynamicsWorld->removeCollisionObject(ghost);
 	}
 
-	void addRigidbodyToPhysique(BulletRigidbody * rigidbody) {
-		this->dynamicsWorld->addRigidBody(rigidbody->getRigidbody());
+	void addRigidbodyToPhysique(BulletRigidbody *rigidbody, int group = 1, int mask = 1)
+	{
+		this->dynamicsWorld->addRigidBody(rigidbody->getRigidbody(), group, mask);
 		this->rigidbodies.push_back(rigidbody);
 	}
 
-	void removeRigidbodyFromPhysique(BulletRigidbody* rigidbody) {
+	void removeRigidbodyFromPhysique(BulletRigidbody *rigidbody)
+	{
 		this->dynamicsWorld->removeRigidBody(rigidbody->getRigidbody());
 		bool found = false;
 		size_t i = 0;
-		for (size_t max = this->rigidbodies.size(); i < max && !found; i++) {
-			if(this->rigidbodies[i]->getRigidbody() == rigidbody->getRigidbody()){
+		for (size_t max = this->rigidbodies.size(); i < max && !found; i++)
+		{
+			if (this->rigidbodies[i]->getRigidbody() == rigidbody->getRigidbody())
+			{
 				found = true;
 			}
 		}
-		if (found) {
+		if (found)
+		{
 			this->rigidbodies.erase(this->rigidbodies.begin() + i);
 		}
 	}
 
-	~PhysiqueBullet() {
+	~PhysiqueBullet()
+	{
 		if (dynamicsWorld)
 		{
 			int i;
@@ -98,8 +118,8 @@ public:
 			}
 			for (i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
 			{
-				btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
-				btRigidBody* body = btRigidBody::upcast(obj);
+				btCollisionObject *obj = dynamicsWorld->getCollisionObjectArray()[i];
+				btRigidBody *body = btRigidBody::upcast(obj);
 				if (body && body->getMotionState())
 				{
 					delete body->getMotionState();
@@ -108,7 +128,7 @@ public:
 				delete obj;
 			}
 		}
-		//delete collision shapes
+		// delete collision shapes
 		/*for (int j = 0; j < collisionShapes.size(); j++)
 		{
 			btCollisionShape* shape = collisionShapes[j];
@@ -132,7 +152,5 @@ public:
 			delete b;
 		}
 	}*/
-
-
 };
 #endif

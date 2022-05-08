@@ -12,6 +12,7 @@
 #include "Scene.hpp"
 #include <GameObject/Terrain.hpp>
 #include <Tools/LoaderOBJ.hpp>
+#include <Physique/GestionContraintes.hpp>
 
 #include <Game/Canon.hpp>
 
@@ -31,6 +32,7 @@ private:
 	Text2D *text2D;
 	PhysiqueBullet *bullet;
 	Canon *canon;
+	Texture* texBall;
 
 	std::vector<ModeleLOD *> listBall;
 
@@ -68,6 +70,7 @@ public:
 
 		// Set Texture
 		Texture *texTest = new Texture("Textures/texture_test.jpg");
+		texBall = new Texture("Textures/SystemeSolaire/earth_daymap.jpg");
 
 		// Construct canon
 		canon = new Canon(globalShader);
@@ -92,8 +95,8 @@ public:
 		DebugDrawer *debug = new DebugDrawer(debugShader);
 		debug->setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints);
 
-		bullet->init(debug);
-		// bullet->addRigidbodyToPhysique(terrain->getRigidbody());
+		bullet->init();
+		bullet->addRigidbodyToPhysique(terrain->getRigidbody());
 		canon->addToPhysique(bullet);
 
 		// Place et tourne les objets
@@ -103,6 +106,7 @@ public:
 	ModeleLOD *createBall()
 	{
 		ModeleComponent *ballComponent = new ModeleComponent(globalShader);
+		ballComponent->addTexture(texBall, false);
 		PrimitiveMesh::generate_uv_sphere(ballComponent, 16, 16);
 		BulletRigidbody *ballRigidBody = new BulletRigidbody();
 		ballRigidBody->setToSphere(1.0f, 1.0f);
