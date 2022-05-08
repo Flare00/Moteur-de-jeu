@@ -145,6 +145,8 @@ public:
 		}
 		modele->setData(indexed_vertices, indices, texCoords, normals);
 	}
+
+	static void generate_cube(ModeleComponent* modele){}
 };
 
 #endif // !_PRIMITIVE_MESH_H__

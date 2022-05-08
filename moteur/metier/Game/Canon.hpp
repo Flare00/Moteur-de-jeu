@@ -33,7 +33,7 @@ protected:
 public:
     Canon(GlobalShader *globalShader)
     {
-        rigid = new BulletRigidbody();
+        rigid = BulletRigidbody::generateAABB(glm::vec3(0.1f), 1.0f);
         go = new GameObject("Canon", NULL, rigid);
 
         Texture *texture = new Texture("Textures/texture_test.jpg");
@@ -128,6 +128,16 @@ public:
             glm::vec3(0.0f),
             glm::vec3(0.0f),
             glm::vec3(0.0f));
+        physique->getGestionContraintes()->addGearContrainte(
+            this->bind_Rigid_left->getRigidbody(),
+            this->wheel_Rigid_left->getRigidbody(),
+            glm::vec3(0.0f, 1.0f, 0.0f),
+            glm::vec3(0.0f, 1.0f, 0.0f));
+        physique->getGestionContraintes()->addGearContrainte(
+            this->bind_Rigid_right->getRigidbody(),
+            this->wheel_Rigid_right->getRigidbody(),
+            glm::vec3(0.0f, 1.0f, 0.0f),
+            glm::vec3(0.0f, 1.0f, 0.0f));
     }
 
     void removeFromPhysique(PhysiqueBullet *physique)
@@ -138,6 +148,12 @@ public:
         physique->removeRigidbodyFromPhysique(this->bind_Rigid_right);
         physique->removeRigidbodyFromPhysique(this->wheel_Rigid_left);
         physique->removeRigidbodyFromPhysique(this->wheel_Rigid_right);
+    }
+
+    void move(glm::vec3 dir)
+    {
+        this->wheel_Rigid_left->getRigidbody()->applyTorque((const btVector3)btVector3(0.0f, 0.0f, 50.0f));
+        this->wheel_Rigid_right->getRigidbody()->applyTorque((const btVector3)btVector3(0.0f, 0.0f, 50.0f));
     }
 };
 

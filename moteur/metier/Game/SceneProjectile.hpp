@@ -142,6 +142,7 @@ public:
 	virtual void actionGoUp()
 	{
 		canon->getTransform()->applyForce(glm::vec3(1.0f, 0.0f, 0.0f));
+		canon->move(glm::vec3(0.0f));
 	}
 
 	virtual void Draw(float deltaTime)
