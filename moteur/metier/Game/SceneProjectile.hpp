@@ -32,7 +32,7 @@ private:
 	Text2D *text2D;
 	PhysiqueBullet *bullet;
 	Canon *canon;
-	Texture* texBall;
+	Texture *texBall;
 
 	std::vector<ModeleLOD *> listBall;
 
@@ -137,6 +137,11 @@ public:
 				b->getBulletTransform()->applyImpule(this->cameras[0]->getFront() * 50.0f);
 			}
 		}
+	}
+
+	virtual void actionGoUp()
+	{
+		canon->getTransform()->applyForce(glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 
 	virtual void Draw(float deltaTime)

@@ -170,7 +170,10 @@ private:
             {
                 wireframeModePress = false;
             }
-
+            if (glfwGetKey(global_window, GLFW_KEY_T) == GLFW_PRESS)
+            {
+                this->callback->actionGoUp();
+            }
             if (glfwGetKey(global_window, GLFW_KEY_K) == GLFW_PRESS)
             {
                 this->callback->actionFireBall();

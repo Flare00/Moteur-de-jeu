@@ -8,7 +8,6 @@
 #include <Shader/GlobalShader.hpp>
 #include <GameObject/ModeleLOD.hpp>
 #include <World/InputCollision.hpp>
-#include <World/InputCollisionV2.hpp>
 #include <Text2D.hpp>
 #include "Scene.hpp"
 #include <GameObject/Terrain.hpp>

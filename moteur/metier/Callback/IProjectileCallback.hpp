@@ -5,6 +5,7 @@ class IProjectileCallback
 {
 public:
     virtual void actionFireBall() = 0;
+    virtual void actionGoUp() = 0;
 };
 
 #endif

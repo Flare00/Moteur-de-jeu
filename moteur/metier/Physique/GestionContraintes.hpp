@@ -52,7 +52,7 @@ public:
 		btVector3 axisBBt = btVector3(axisB.x, axisB.y, axisB.z);
 
 		btHinge2Constraint *c = new btHinge2Constraint(*rbA, *rbB, anchorBt, axisABt, axisBBt);
-		this->world->addConstraint(c);
+		this->world->addConstraint(c, true);
 		this->contraintes = contraintes;
 		return c;
 	}
@@ -65,7 +65,7 @@ public:
 	btSliderConstraint *addSlideContrainte(btRigidBody *rbA, btRigidBody *rbB, btTransform frameInA = btTransform::getIdentity(), btTransform frameInB = btTransform::getIdentity(), bool useLinearReferenceFrameA = true)
 	{
 		btSliderConstraint *c = new btSliderConstraint(*rbA, *rbB, frameInA, frameInB, useLinearReferenceFrameA);
-		this->world->addConstraint(c);
+		this->world->addConstraint(c, true);
 		this->contraintes = contraintes;
 		return c;
 	}
@@ -79,7 +79,7 @@ public:
 	btPoint2PointConstraint *addPointToPointContrainte(btRigidBody *rbA, btRigidBody *rbB, glm::vec3 pointInA, glm::vec3 pointInB)
 	{
 		btPoint2PointConstraint *c = new btPoint2PointConstraint(*rbA, *rbB, (const btVector3)btVector3(pointInA.x, pointInA.y, pointInA.z), btVector3(pointInB.x, pointInB.y, pointInB.z));
-		this->world->addConstraint(c);
+		this->world->addConstraint(c, true);
 		this->contraintes = contraintes;
 		return c;
 	}
@@ -93,7 +93,7 @@ public:
 	btGeneric6DofConstraint *addGeneric6DOFContrainte(btRigidBody *rbA, btRigidBody *rbB, btTransform frameInA = btTransform::getIdentity(), btTransform frameInB = btTransform::getIdentity(), bool useLinearReferenceFrameA = true)
 	{
 		btGeneric6DofConstraint *c = new btGeneric6DofConstraint(*rbA, *rbB, frameInA, frameInB, useLinearReferenceFrameA);
-		this->world->addConstraint(c);
+		this->world->addConstraint(c, true);
 		this->contraintes = contraintes;
 		return c;
 	}
@@ -107,7 +107,7 @@ public:
 	btGearConstraint *addGearContrainte(btRigidBody *rbA, btRigidBody *rbB, glm::vec3 axisInA, glm::vec3 axisInB, btScalar ratio = btScalar(1.0f))
 	{
 		btGearConstraint *c = new btGearConstraint(*rbA, *rbB, (const btVector3)btVector3(axisInA.x, axisInA.y, axisInA.z), (const btVector3)btVector3(axisInB.x, axisInB.y, axisInB.z), ratio);
-		this->world->addConstraint(c);
+		this->world->addConstraint(c, true);
 		this->contraintes = contraintes;
 		return c;
 	}
@@ -132,7 +132,7 @@ public:
 		frameInB.setRotation(quatB);
 
 		btFixedConstraint *c = new btFixedConstraint(*rbA, *rbB, frameInA, frameInB);
-		this->world->addConstraint(c);
+		this->world->addConstraint(c, true);
 		this->contraintes = contraintes;
 		return c;
 	}
@@ -146,7 +146,7 @@ public:
 	btUniversalConstraint *addUniversalContrainte(btRigidBody *rbA, btRigidBody *rbB, glm::vec3 anchor, glm::vec3 axis1, glm::vec3 axis2)
 	{
 		btUniversalConstraint *c = new btUniversalConstraint(*rbA, *rbB, (const btVector3)btVector3(anchor.x, anchor.y, anchor.z), (const btVector3)btVector3(axis1.x, axis1.y, axis1.z), (const btVector3)btVector3(axis2.x, axis2.y, axis2.z));
-		this->world->addConstraint(c);
+		this->world->addConstraint(c, true);
 		this->contraintes = contraintes;
 		return c;
 	}
