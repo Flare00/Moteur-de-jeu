@@ -184,6 +184,9 @@ private:
 					transformedMax.z = coords[i].z;
 				}
 			}
+
+			this->transformedMin -= glm::vec3(0.05f);
+			this->transformedMax += glm::vec3(0.05f);
 		}
 	}
 };

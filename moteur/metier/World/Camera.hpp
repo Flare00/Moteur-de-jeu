@@ -62,8 +62,11 @@ public:
 	float distanceMax = 10000.0f;
 	float distanceMin = 0.1f;
 
+	float fov = 45.0f;
+	float aspect = 4.0f / 3.0f;
+
 public:
-	Camera(vec3 pos = vec3(0.0f, 0.0f, 3.0f), float yaw = YAW, float pitch = PITCH, vec3 up = vec3(0.0f, 1.0f, 0.0f), btGhostObject *bulletFrustum = NULL)
+	Camera(vec3 pos = vec3(0.0f, 0.0f, 3.0f), float yaw = YAW, float pitch = PITCH, vec3 up = vec3(0.0f, 1.0f, 0.0f), btGhostObject* bulletFrustum = NULL)
 	{
 		this->transformation = glm::mat4(1.0f);
 		this->front = vec3(0.0f, 0.0f, -1.0f);
@@ -76,10 +79,10 @@ public:
 		this->yaw = yaw;
 		this->up = up;
 		updateVectors();
-		frustum.init(this->getProjection(), this->getViewMatrix());
+		frustum.init(this->getProjection(), this->getViewMatrix(), fov, aspect, distanceMin, distanceMax);
 	}
 
-	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch, btGhostObject *bulletFrustum = NULL)
+	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch, btGhostObject* bulletFrustum = NULL)
 	{
 		this->transformation = glm::mat4(1.0f);
 		this->front = vec3(0.0f, 0.0f, -1.0f);
@@ -94,12 +97,13 @@ public:
 		this->yaw = yaw;
 		this->pitch = pitch;
 		updateVectors();
-		frustum.init(this->getProjection(), this->getViewMatrix());
+		frustum.init(this->getProjection(), this->getViewMatrix(), this->fov, this->aspect, this->distanceMin, this->distanceMax);
 	}
 
 	mat4 getProjection()
 	{
 		return glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, this->distanceMin, this->distanceMax);
+		frustum.init(this->getProjection(), this->getViewMatrix(), fov, aspect, distanceMin, distanceMax);
 	}
 
 	mat4 getViewMatrix()
@@ -196,9 +200,9 @@ public:
 		return glm::distance(this->position, point);
 	}
 
-	void frustumUpdate()
-	{
-		this->frustum.update(this->getProjection(), this->getViewMatrix(), this->front, this->up, this->right);
+	void frustumUpdate() {
+		this->frustum.update(this->getProjection(), this->getViewMatrix(), this->front, this->up, this->right, this->position);
+
 	}
 
 	bool isInFrustum(glm::vec3 pos)
@@ -206,7 +210,7 @@ public:
 		return this->frustum.isVisible(pos);
 	}
 
-	bool isInFrustum(BoundingBox *box)
+	bool isInFrustum(BoundingBox* box)
 	{
 		return this->frustum.isVisible(box);
 	}

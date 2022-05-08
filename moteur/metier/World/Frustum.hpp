@@ -9,31 +9,54 @@
 
 using namespace glm;
 class Frustum {
+public :
+	class Plane {
+	public:
+		vec3 normal;
+		vec3 point;
+		Plane(glm::vec3 normal, vec3 point) {
+			this->normal = glm::normalize(normal);
+			this->point = point;
+		}
+	};
+private:
 	mat4 matrix = mat4(1.0f);
 	float margin = 1.0f;
 	vec3 front, up, right;
+
+	float fov, aspect, zNear, zFar, halfVSide, halfHSide;
+	std::vector<Plane> plan;
 public:
-	class Plane {
-	public:
-		glm::vec3 pos;
-		glm::vec3 normal;
-		Plane(glm::vec3 pos, glm::vec3 normal) {
-			this->pos = pos;
-			this->normal = normal;
-		}
-	};
+
 	Frustum() {
 	}
 
-	void init(mat4 proj, mat4 view) {
+	void init(mat4 proj, mat4 view, float fov, float aspect, float zNear, float zFar) {
 		this->matrix = proj * view;
+		this->fov = fov;
+		this->aspect = aspect;
+		this->zNear = zNear;
+		this->zFar = zFar;
+		this->halfHSide = this->zFar * glm::tan(this->fov * 0.5);
+		this->halfVSide = halfHSide * aspect;
 	}
 
-	void update(mat4 proj, mat4 view, vec3 front, vec3 up, vec3 right) {
+	void update(mat4 proj, mat4 view, vec3 front, vec3 up, vec3 right, vec3 position) {
 		this->matrix = proj * view;
 		this->front = front;
 		this->up = up;
 		this->right = right;
+
+		plan.clear();
+
+		plan.push_back(Plane(cross((zFar * front) - (right * halfHSide), up), position)); //Left
+		plan.push_back(Plane(cross(up,(zFar * front) + (right * halfHSide)), position)); //Right
+
+		plan.push_back(Plane(cross((zFar * front) + (up * halfVSide), right), position)); //Bottom
+		plan.push_back(Plane(cross(right, (zFar * front) - (up * halfVSide)), position)); //Top
+
+		plan.push_back(Plane(front, position + (front * zNear))); //Near
+		plan.push_back(Plane( - front, position + (front * zFar))); //Far
 	}
 
 	bool isVisible(vec3 a) {
@@ -42,39 +65,41 @@ public:
 			abs(p.y) < p.w + margin &&
 			p.z > -margin &&
 			p.z < p.w + margin;
-
 	}
 
 	bool isVisible(BoundingBox* a) {
-		return true;
-		/*bool resultat = true;
+
+		bool resultat = true;
 		vec3 min = a->getMin();
 		vec3 max = a->getMax();
 
-		std::vector<Plane> plan;
-
-		plan.push_back(Plane(vec3(this->matrix[0][3] + this->matrix[0][0]), -this->right)); // left
-		plan.push_back(Plane(vec3(this->matrix[0][3] - this->matrix[0][0]), this->right)); //right
-		plan.push_back(Plane(vec3(this->matrix[0][3] + this->matrix[0][1]), -this->up)); //bottom
-		plan.push_back(Plane(vec3(this->matrix[0][3] - this->matrix[0][1]), this->up)); //up
-		plan.push_back(Plane(vec3(this->matrix[0][3] + this->matrix[0][2]), this->front)); //near
-		plan.push_back(Plane(vec3(this->matrix[0][3] - this->matrix[0][2]), -this->front)); //far
-
 		vec3 rMin, rMax;
+
 		for (int i = 0; i < 6 && resultat; i++) {
 			for (int j = 0; j < 3; j++) {
 				if (plan[i].normal[j] > 0) {
 					rMin[j] = min[j];
 					rMax[j] = max[j];
 				}
+				else {
+					rMin[j] = max[j];
+					rMax[j] = min[j];
+				}
 			}
-			if (glm::dot(plan[i].normal, rMin) + plan[i].pos > 0) resultat = false;
-			if (glm::dot(plan[i].normal, rMin) + plan[i].pos > 0) resultat = true;
+
+			if (i % 2 == 0) {
+				if (glm::dot(plan[i].normal, rMax - plan[i].point) < 0) {
+					resultat = false;
+				}
+			}
+			else {
+				if (glm::dot(plan[i].normal, rMax - plan[i].point) < 0) {
+					resultat = false;
+				}
+			}
+
 		}
-
-
-
-		return resultat;*/
+		return resultat;
 	}
 };
 

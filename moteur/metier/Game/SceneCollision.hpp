@@ -58,7 +58,7 @@ public:
 
 		//Set Camera
 		
-		Camera *c = new Camera(vec3(0, -2, -16), 90, 0);
+		Camera *c = new Camera(vec3(0, 0, 0), 90, 0);
 		this->cameras.push_back(c);
 
 		//Set global Shader
@@ -103,8 +103,8 @@ public:
 		TerreLOD = new ModeleLOD("Terre", TerreHigh, TerreLow, NULL, terreRigid);
 
 		//Add to scene
-		//this->scene->addChild(SoleilLOD);
-		//this->scene->addChild(TerreLOD);
+		this->scene->addChild(SoleilLOD);
+		this->scene->addChild(TerreLOD);
 		this->scene->addChild(terrain);
 
 		//Set inputCollision
@@ -118,8 +118,8 @@ public:
 		debug->setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints);
 		//bullet->init(debug);
 		bullet->init();
-		//bullet->addRigidbodyToPhysique(sunRigid);
-		//bullet->addRigidbodyToPhysique(terreRigid);
+		bullet->addRigidbodyToPhysique(sunRigid);
+		bullet->addRigidbodyToPhysique(terreRigid);
 		bullet->addRigidbodyToPhysique(terrain->getRigidbody());
 
 		//Place et tourne les objets
