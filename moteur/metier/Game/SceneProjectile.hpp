@@ -70,7 +70,7 @@ public:
 		Texture *texTest = new Texture("Textures/texture_test.jpg");
 
 		// Construct canon
-		canon = new Canon();
+		canon = new Canon(globalShader);
 
 		// Terrain
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");
