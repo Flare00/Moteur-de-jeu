@@ -86,8 +86,12 @@ vec3 calculateLight(Light light, vec3 normal, vec3 cameraDir){
     //Ambient
     vec3 ambient = light.color * light.intensity * u_material.ambiant;
 
-    if(angleAttenuation <=0 || attenuation <= 0.001f){
+    if( attenuation <= 0.001f){
         return ambient;
+    }
+
+    if(angleAttenuation <=0.1f){
+        angleAttenuation = 0.1f;
     }
 
     float shadow = 0.0f;

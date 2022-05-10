@@ -1,8 +1,0 @@
-In file included from /media/sf_Projet_FAC/Moteur-de-jeu/external/bullet3-3.24/src/btBulletCollisionAll.cpp:43:
-/media/sf_Projet_FAC/Moteur-de-jeu/external/bullet3-3.24/src/BulletCollision/NarrowPhaseCollision/btGjkConvexCast.cpp:25: warning: "MAX_ITERATIONS" redefined
-   25 | #define MAX_ITERATIONS 32
-      | 
-In file included from /media/sf_Projet_FAC/Moteur-de-jeu/external/bullet3-3.24/src/btBulletCollisionAll.cpp:37:
-/media/sf_Projet_FAC/Moteur-de-jeu/external/bullet3-3.24/src/BulletCollision/NarrowPhaseCollision/btContinuousConvexCollision.cpp:46: note: this is the location of the previous definition
-   46 | #define MAX_ITERATIONS 64
-      | 

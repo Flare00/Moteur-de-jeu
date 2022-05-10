@@ -4,8 +4,6 @@
 #include <vector>
 #include <Callback/IGlobalGameCallback.hpp>
 #include "Scene.hpp"
-#include "SceneSpace.hpp"
-#include "SceneCollision.hpp"
 #include "SceneProjectile.hpp"
 #include "SceneLight.hpp"
 class Game : IGlobalGameCallback {

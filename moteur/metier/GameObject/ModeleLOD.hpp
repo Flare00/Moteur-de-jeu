@@ -14,7 +14,6 @@
 #include <Light/Material.hpp>
 #include <Texture.hpp>
 #include <Shader/GlobalShader.hpp>
-#include <Tools/SimplifyMesh.hpp>
 
 #include "GameObject.hpp"
 #include <GameObject/ModeleComponent.hpp>
