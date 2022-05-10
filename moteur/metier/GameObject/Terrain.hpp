@@ -38,11 +38,12 @@ protected:
 public:
 	Terrain(std::string id, GlobalShaderExtended *shader, Texture *texture, Texture *heightMap, float maxHeight = 1.0f, float unite =1.0f, int resolution= 8,  GameObject *parent = NULL) : GameObject(id, parent)
 	{
+		this->maxHeight = maxHeight;
 		this->width = heightMap->getWidth() * unite;
 		this->height = heightMap->getHeight() * unite;
 		this->res = (int)(((float)heightMap->getWidth() / 32.0f) * resolution);
 		this->shader = shader;
-		this->modele = new ModeleHeightComponent(shader);
+		this->modele = new ModeleHeightComponent(shader, this->maxHeight);
 		this->shader->setMaxHeight(maxHeight);
 		PrimitiveMesh::generate_plane_terrain(modele, res, res, this->width, this->height);
 
@@ -63,13 +64,13 @@ public:
 		delete this->modele;
 	}
 
-	virtual void compute(Camera *camera, bool dfs = true)
+	virtual void compute(CameraData *data,Lightning * lights, bool dfs = true)
 	{
-		this->modele->draw(camera, this->getTransformMatrix(), this->getPosition());
+		this->modele->draw(data, lights, this->getTransformMatrix(), this->getPosition());
 
 		if (dfs)
 		{
-			GameObject::compute(camera, dfs);
+			GameObject::compute(data, lights, dfs);
 		}
 	}
 };

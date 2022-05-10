@@ -102,7 +102,7 @@ private:
 			// Permet de changer la valeur de l'attribut "isTexture" permettant d'avoir soit une texture_low, soit une coloration selon la position.
 			if (glfwGetKey(global_window, GLFW_KEY_I) == GLFW_PRESS && !cameraPosPress)
 			{
-				std::cout << "Camera Pos   : [ " << camera->position.x << " ; " << camera->position.y << " ; " << camera->position.z << " ]" << std::endl;
+				std::cout << "Camera Pos   : [ " << camera->data.getPosition().x << " ; " << camera->data.getPosition().y << " ; " << camera->data.getPosition().z << " ]" << std::endl;
 				std::cout << "Camera Rotat : [ " << camera->yaw << " ; " << camera->pitch << " ; " << camera->roll << " ]" << std::endl;
 				std::cout << "Camera Front : [ " << camera->front.x << " ; " << camera->front.y << " ; " << camera->front.z << " ]" << std::endl;
 				cameraPosPress = true;
@@ -169,6 +169,10 @@ private:
 			{
 				terrainRotatePress = false;
 			}
+
+
+
+
 
 			if (glfwGetKey(global_window, GLFW_KEY_Z) == GLFW_PRESS && !wireframeModePress)
 			{

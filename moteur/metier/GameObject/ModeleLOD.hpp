@@ -74,10 +74,10 @@ public:
 	}
 
 	// --- METHODES ---
-	virtual void compute(Camera *camera, bool dfs = true)
+	virtual void compute(CameraData *data,Lightning* lights, bool dfs = true)
 	{
 		float distance = -1.0f;
-		distance = camera->distanceFromCamera(this->getPosition());
+		distance = data->distanceFrom(this->getPosition());
 		if (distance >= 0.0f)
 		{
 			int level = 2;
@@ -89,18 +89,18 @@ public:
 			{
 				level = 1;
 			}
-			draw(camera, level);
+			draw(data, lights, level);
 		}
 		else
 		{
-			draw(camera, 0);
+			draw(data, lights, 0);
 		}
 
 		if (dfs)
-			GameObject::compute(camera, dfs);
+			GameObject::compute(data, lights, dfs);
 	}
 
-	void draw(Camera *camera, int level)
+	void draw(CameraData *data, Lightning* lights, int level)
 	{
 		while (level >= 0 && modeles[level] == NULL)
 		{
@@ -108,7 +108,7 @@ public:
 		}
 		if (level >= 0)
 		{
-			modeles[level]->draw(camera, this->getTransformMatrix(), this->getPosition());
+			modeles[level]->draw(data, lights, this->getTransformMatrix(), this->getPosition());
 		}
 	}
 

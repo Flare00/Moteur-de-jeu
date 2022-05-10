@@ -13,7 +13,7 @@
 #include <World/Frustum.hpp>
 #include <Physique/BulletRigidbody.hpp>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
-
+#include <World/CameraData.hpp>
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
 const float ROLL = 0.0f;
@@ -33,12 +33,9 @@ enum CameraAxe
 class Camera
 {
 public:
-	Frustum frustum;
+	CameraData data;
 	// transformation
 	glm::mat4 transformation;
-
-	// position
-	vec3 position;
 
 	// referentiel
 	vec3 front;
@@ -60,13 +57,15 @@ public:
 	bool modeOrbital = false;
 
 	float distanceMax = 10000.0f;
-	float distanceMin = 0.1f;
+	float distanceMin = 0.01f;
 
 	float fov = 45.0f;
 	float aspect = 4.0f / 3.0f;
 
+	bool dirty = true;
+
 public:
-	Camera(vec3 pos = vec3(0.0f, 0.0f, 3.0f), float yaw = YAW, float pitch = PITCH, vec3 up = vec3(0.0f, 1.0f, 0.0f), btGhostObject* bulletFrustum = NULL)
+	Camera(vec3 pos = vec3(0.0f, 0.0f, 3.0f), float yaw = YAW, float pitch = PITCH, vec3 up = vec3(0.0f, 1.0f, 0.0f), btGhostObject* bulletFrustum = NULL) : data(CameraData::CAMERA, new Frustum(), pos)
 	{
 		this->transformation = glm::mat4(1.0f);
 		this->front = vec3(0.0f, 0.0f, -1.0f);
@@ -74,15 +73,15 @@ public:
 		this->rotateSpeed = ROTATE_SPEED;
 		this->roll = ROLL;
 		this->worldUp = up;
-		this->position = pos;
 		this->pitch = pitch;
 		this->yaw = yaw;
 		this->up = up;
 		updateVectors();
-		frustum.init(this->getProjection(), this->getViewMatrix(), fov, aspect, distanceMin, distanceMax);
+
+		data.getFrustum()->init(glm::mat4(1.0f), glm::mat4(1.0f), fov, aspect, distanceMin, distanceMax);
 	}
 
-	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch, btGhostObject* bulletFrustum = NULL)
+	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch, btGhostObject* bulletFrustum = NULL) : data(CameraData::CAMERA, new Frustum(), glm::vec3(posX, posY, posZ))
 	{
 		this->transformation = glm::mat4(1.0f);
 		this->front = vec3(0.0f, 0.0f, -1.0f);
@@ -90,29 +89,40 @@ public:
 		this->rotateSpeed = ROTATE_SPEED;
 
 		this->roll = ROLL;
-		this->position = vec3(posX, posY, posZ);
 		this->worldUp = vec3(upX, upY, upZ);
 		this->up = vec3(upX, upY, upZ);
 
 		this->yaw = yaw;
 		this->pitch = pitch;
 		updateVectors();
-		frustum.init(this->getProjection(), this->getViewMatrix(), this->fov, this->aspect, this->distanceMin, this->distanceMax);
+
+		data.getFrustum()->init(this->getProjection(), this->getViewMatrix(), this->fov, this->aspect, this->distanceMin, this->distanceMax);
 	}
+
+	void checkUpdate() {
+		if (dirty) {
+			this->updateData();
+		}
+	}
+
+
 
 	mat4 getProjection()
 	{
-		return glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, this->distanceMin, this->distanceMax);
-		frustum.init(this->getProjection(), this->getViewMatrix(), fov, aspect, distanceMin, distanceMax);
+		if (dirty) {
+			updateData();
+		}
+		return this->data.getProjection();
+		
 	}
 
 	mat4 getViewMatrix()
 	{
-		if (modeOrbital)
-		{
-			// return lookAt(this->position, this->cibleOrbital, this->up);
+		if (dirty) {
+			updateData();
 		}
-		return lookAt(this->position, this->position + this->front, this->up);
+		
+		return this->data.getView();
 	}
 
 	void move(CameraAxe axe, bool sensPositif, float deltaTime)
@@ -123,13 +133,13 @@ public:
 			switch (axe)
 			{
 			case CameraAxe::X:
-				this->position += this->right * vitesse;
+				data.setPosition(data.getPosition() + this->right * vitesse);
 				break;
 			case CameraAxe::Y:
-				this->position += this->up * vitesse;
+				data.setPosition(data.getPosition() + this->up * vitesse);
 				break;
 			case CameraAxe::Z:
-				this->position += this->front * vitesse;
+				data.setPosition(data.getPosition() + this->front * vitesse);
 				break;
 			}
 		}
@@ -137,6 +147,7 @@ public:
 		{
 			rotate(axe, sensPositif, deltaTime);
 		}
+		dirty = true;
 	}
 
 	void rotate(CameraAxe axe, bool sensPositif, float deltaTime)
@@ -187,32 +198,34 @@ public:
 
 	glm::mat4 getTransformationMatrix()
 	{
+		if (dirty) {
+			updateData();
+		}
 		return this->transformation;
 	}
 
 	glm::vec3 getPosition()
 	{
-		return this->position;
+		if (dirty) {
+			updateData();
+		}
+		return data.getPosition();
 	}
 
 	float distanceFromCamera(glm::vec3 point)
 	{
-		return glm::distance(this->position, point);
+		if (dirty) {
+			updateData();
+		}
+		return glm::distance(data.getPosition(), point);
 	}
 
-	void frustumUpdate() {
-		this->frustum.update(this->getProjection(), this->getViewMatrix(), this->front, this->up, this->right, this->position);
-
-	}
-
-	bool isInFrustum(glm::vec3 pos)
-	{
-		return this->frustum.isVisible(pos);
-	}
-
-	bool isInFrustum(BoundingBox* box)
-	{
-		return this->frustum.isVisible(box);
+	CameraData* getData() {
+		if (dirty) {
+			updateData();
+			dirty = false;
+		}
+		return &this->data;
 	}
 
 	glm::vec3 getFront()
@@ -237,6 +250,13 @@ private:
 		else
 		{
 		}
+		dirty = true;
+	}
+
+	void updateData() {
+		this->data.setValues(data.getPosition(), glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, this->distanceMin, this->distanceMax), lookAt(data.getPosition(), data.getPosition() + this->front, this->up));
+		this->data.getFrustum()->update(data.getProjection(), data.getView(), this->front, this->up, this->right, data.getPosition());
+		this->dirty = false;
 	}
 };
 

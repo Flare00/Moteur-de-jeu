@@ -7,7 +7,8 @@
 #include <vector>
 
 #include <Component.hpp>
-#include <World/Camera.hpp>
+#include <Light/Lightning.hpp>
+#include <World/CameraData.hpp>
 #include <Transformation/Transformation.hpp>
 #include <Transformation/BulletTransformation.hpp>
 
@@ -15,16 +16,16 @@ class GameObject
 {
 protected:
 	std::string identifier;
-	GameObject *parent;
-	std::vector<GameObject *> childs;
-	std::vector<Component *> composants;
-	BulletRigidbody *rigidBody = NULL;
+	GameObject* parent;
+	std::vector<GameObject*> childs;
+	std::vector<Component*> composants;
+	BulletRigidbody* rigidBody = NULL;
 
-	ITransformation *transform = NULL;
+	ITransformation* transform = NULL;
 	bool isBulletDependent = false;
 
 public:
-	GameObject(std::string id, GameObject *parent = NULL, BulletRigidbody *rigidbody = NULL)
+	GameObject(std::string id, GameObject* parent = NULL, BulletRigidbody* rigidbody = NULL)
 	{
 		this->identifier = id;
 		this->parent = parent;
@@ -44,7 +45,7 @@ public:
 		}
 	}
 
-	GameObject(std::string id, GameObject *parent, std::vector<GameObject *> childs, BulletRigidbody *rigidbody = NULL)
+	GameObject(std::string id, GameObject* parent, std::vector<GameObject*> childs, BulletRigidbody* rigidbody = NULL)
 	{
 		this->identifier = id;
 		this->parent = parent;
@@ -73,7 +74,7 @@ public:
 		delete this->transform;
 	}
 
-	void generateRigidbodyTransform(BulletRigidbody *rigidbody)
+	void generateRigidbodyTransform(BulletRigidbody* rigidbody)
 	{
 		this->rigidBody = rigidbody;
 		if (this->transform != NULL)
@@ -125,28 +126,28 @@ public:
 	{
 	}
 
-	void computeDFS(Camera *camera)
+	void computeDFS(CameraData* data,Lightning* lights)
 	{
 		for (size_t i = 0, max = this->childs.size(); i < max; i++)
 		{
-			this->childs[i]->compute(camera, true);
+			this->childs[i]->compute(data, lights, true);
 		}
 	}
 
-	void computeBFS(Camera *camera)
+	void computeBFS(CameraData* data, Lightning* lights)
 	{
-		std::vector<GameObject *> parcours;
+		std::vector<GameObject*> parcours;
 		parcours.push_back(this);
 
 		while (parcours.size() > 0)
 		{
-			GameObject *current = parcours[0];
+			GameObject* current = parcours[0];
 			parcours.erase(parcours.begin());
 			if (current != this)
 			{
-				current->compute(camera, false);
+				current->compute(data, lights, false);
 			}
-			std::vector<GameObject *> currentChilds = current->getChilds();
+			std::vector<GameObject*> currentChilds = current->getChilds();
 			for (size_t i = 0, max = currentChilds.size(); i < max; i++)
 			{
 				parcours.push_back(currentChilds[i]);
@@ -154,15 +155,15 @@ public:
 		}
 	}
 
-	virtual void compute(Camera *camera, bool dfs)
+	virtual void compute(CameraData* data, Lightning* lights, bool dfs)
 	{
 		if (dfs)
 		{
-			this->computeDFS(camera);
+			this->computeDFS(data, lights);
 		}
 		else
 		{
-			this->computeBFS(camera);
+			this->computeBFS(data, lights);
 		}
 	}
 
@@ -172,9 +173,9 @@ public:
 	}
 
 	// Retourne un enfant selon sont identifiant, seulement si enfant directe de l'objet courant.
-	GameObject *findDirectChild(std::string identifier)
+	GameObject* findDirectChild(std::string identifier)
 	{
-		GameObject *res = NULL;
+		GameObject* res = NULL;
 		for (size_t i = 0, max = this->childs.size(); i < max && res == NULL; i++)
 		{
 			if (this->childs[i]->getIdentifier().compare(identifier) == 0)
@@ -186,9 +187,9 @@ public:
 	}
 
 	// Retourne un enfant selon sont identifiant si l'enfant se trouve dans la g�n�alogie. Parcours DFS
-	GameObject *findChild(std::string identifier)
+	GameObject* findChild(std::string identifier)
 	{
-		GameObject *res = NULL;
+		GameObject* res = NULL;
 		for (size_t i = 0, max = this->childs.size(); i < max && res == NULL; i++)
 		{
 			if (this->childs[i]->getIdentifier().compare(identifier) == 0)
@@ -203,17 +204,17 @@ public:
 		return res;
 	}
 
-	GameObject *getChild(int i)
+	GameObject* getChild(int i)
 	{
 		return this->childs[i];
 	}
 
-	std::vector<GameObject *> getChilds()
+	std::vector<GameObject*> getChilds()
 	{
 		return this->childs;
 	}
 
-	void addChild(GameObject *child)
+	void addChild(GameObject* child)
 	{
 		child->setParent(this);
 		this->childs.push_back(child);
@@ -225,7 +226,7 @@ public:
 		this->childs.erase(this->childs.begin() + index);
 	}
 
-	void removeChild(GameObject *obj)
+	void removeChild(GameObject* obj)
 	{
 		size_t found = -1;
 		for (size_t i = 0, max = this->childs.size(); i < max && found == -1; i++)
@@ -242,43 +243,49 @@ public:
 		}
 	}
 
-	ITransformation *getTransform()
+	ITransformation* getTransform()
 	{
 		return this->transform;
 	}
 
-	BulletTransformation *getBulletTransform()
+	Transformation* getOriginalTransform()
 	{
-		return (this->isBulletDependent ? (BulletTransformation *)this->transform : NULL);
+		return (!this->isBulletDependent ? (Transformation*)this->transform : NULL);
 	}
 
-	void setTransform(Transformation *transform)
+
+	BulletTransformation* getBulletTransform()
+	{
+		return (this->isBulletDependent ? (BulletTransformation*)this->transform : NULL);
+	}
+
+	void setTransform(Transformation* transform)
 	{
 		this->transform = transform;
 	}
 
-	GameObject *getParent()
+	GameObject* getParent()
 	{
 		return this->parent;
 	}
 
-	void setParent(GameObject *parent)
+	void setParent(GameObject* parent)
 	{
 		this->parent = parent;
 	}
 
-	void addComponent(Component *component)
+	void addComponent(Component* component)
 	{
 		this->composants.push_back(component);
 	}
-	std::vector<Component *> getComponents()
+	std::vector<Component*> getComponents()
 	{
 		return this->composants;
 	}
-	std::vector<Component *> getComponentsByType(Component::Type type)
+	std::vector<Component*> getComponentsByType(Component::Type type)
 	{
 		size_t i = 0, max = this->composants.size();
-		std::vector<Component *> res;
+		std::vector<Component*> res;
 		while (i < max)
 		{
 			if (this->composants[i]->getType() == type)
@@ -290,10 +297,10 @@ public:
 		return res;
 	}
 
-	Component *getOneComponentByType(Component::Type type)
+	Component* getOneComponentByType(Component::Type type)
 	{
 		size_t i = 0, max = this->composants.size();
-		Component *res = NULL;
+		Component* res = NULL;
 		while (i < max && res == NULL)
 		{
 			if (this->composants[i]->getType() == type)
@@ -320,33 +327,33 @@ public:
 		return res;
 	}
 
-	std::vector<Component *> getAllComponentsByTypeRecursive(Component::Type type)
+	std::vector<Component*> getAllComponentsByTypeRecursive(Component::Type type)
 	{
-		std::vector<Component *> res = this->getComponentsByType(type);
+		std::vector<Component*> res = this->getComponentsByType(type);
 		for (size_t i = 0, max = this->childs.size(); i < max; i++)
 		{
-			std::vector<Component *> tmp = this->childs[i]->getAllComponentsByTypeRecursive(type);
+			std::vector<Component*> tmp = this->childs[i]->getAllComponentsByTypeRecursive(type);
 			res.insert(res.end(), tmp.begin(), tmp.end());
 		}
 		return res;
 	}
 
-	std::vector<GameObject *> getAllGameObjectByComponentType(Component::Type type)
+	std::vector<GameObject*> getAllGameObjectByComponentType(Component::Type type)
 	{
-		std::vector<GameObject *> res;
+		std::vector<GameObject*> res;
 		if (hasOneComponentByType(type))
 		{
 			res.push_back(this);
 		}
 		for (size_t i = 0, max = this->childs.size(); i < max; i++)
 		{
-			std::vector<GameObject *> tmp = this->childs[i]->getAllGameObjectByComponentType(type);
+			std::vector<GameObject*> tmp = this->childs[i]->getAllGameObjectByComponentType(type);
 			res.insert(res.end(), tmp.begin(), tmp.end());
 		}
 		return res;
 	}
 
-	BulletRigidbody *getRigidBody()
+	BulletRigidbody* getRigidBody()
 	{
 		return this->rigidBody;
 	}

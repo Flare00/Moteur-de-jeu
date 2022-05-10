@@ -31,6 +31,18 @@ const int limiteur = 60;
 
 Game* game;
 
+// glfw: whenever the global_window size changed (by OS or user resize) this callback function executes
+// ---------------------------------------------------------------------------------------------
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	screen_width = width;
+	screen_height = height;
+	// make sure the viewport matches the new window dimensions; note that width and
+	// height will be significantly larger than specified on retina displays.
+	glViewport(0, 0, width, height);
+}
+
+
 void mainLoop() {
 	game = new Game();
 	double lastFrame = 0.0f;
@@ -68,6 +80,7 @@ void mainLoop() {
 
 int main(void)
 {
+	//Init GLFW
 	screen_width = SCR_WIDTH;
 	screen_height = SCR_HEIGHT;
 	// Initialise GLFW
@@ -94,6 +107,7 @@ int main(void)
 		return -1;
 	}
 	glfwMakeContextCurrent(global_window);
+	glfwSetFramebufferSizeCallback(global_window, framebuffer_size_callback);
 
 	// Initialize GLEW
 	glewExperimental = true; // Needed for core profile
@@ -116,6 +130,8 @@ int main(void)
 	glfwPollEvents();
 	glfwSetCursorPos(global_window, SCR_WIDTH / 2, SCR_HEIGHT / 2);
 
+	//Init OpenGL
+
 	// Dark blue background
 	glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
 
@@ -123,6 +139,8 @@ int main(void)
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 
 	// Cull triangles which normal is not towards the camera
 	//glEnable(GL_CULL_FACE);
@@ -130,28 +148,22 @@ int main(void)
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
 
-	GLuint VertexArrayID;
+	/*GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
+	glBindVertexArray(VertexArrayID);*/
 
 	//Launch main loop
 	mainLoop();
 
 	// Cleanup VBO and shader
 
-	glDeleteVertexArrays(1, &VertexArrayID);
+	//glDeleteVertexArrays(1, &VertexArrayID);
 
 	// Close OpenGL global_window and terminate GLFW
 	glfwTerminate();
 
+
+
 	return 0;
 }
 
-// glfw: whenever the global_window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	// make sure the viewport matches the new window dimensions; note that width and
-	// height will be significantly larger than specified on retina displays.
-	glViewport(0, 0, width, height);
-}

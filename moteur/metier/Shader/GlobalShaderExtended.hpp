@@ -1,7 +1,6 @@
 #ifndef __GLOBAL_SHADER_EXTENDED_H__
 #define __GLOBAL_SHADER_EXTENDED_H__
 
-#define MAX_LIGHT 128
 #include <string>
 #include <vector>
 
@@ -36,10 +35,12 @@ public:
         }
     }
 
-    virtual void drawMesh(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix)
+    virtual void drawMesh(CameraData* data, GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix)
     {
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glUniform1i(this->u_nb_texture, (GLint)this->u_textures.size());
+        if(data->getType() == CameraData::CAMERA){
+            glUniform1i(this->u_nb_texture, (GLint)this->u_textures.size());
+        }
         glUniform1f(this->u_max_height, maxHeight);
         glUniformMatrix4fv(this->u_model, 1, GL_FALSE, &transformMatrix[0][0]);
 

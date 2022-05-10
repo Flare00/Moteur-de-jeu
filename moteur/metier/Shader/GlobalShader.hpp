@@ -1,7 +1,7 @@
 #ifndef __GLOBAL_SHADER_H__
 #define __GLOBAL_SHADER_H__
 
-#define MAX_LIGHT 128
+#define MAX_LIGHT 28
 #include <string>
 #include <vector>
 
@@ -10,6 +10,8 @@
 #include <Global.hpp>
 #include <Light/Material.hpp>
 #include <Light/ILight.hpp>
+#include <Light/DirectionnalLight.hpp>
+#include <World/CameraData.hpp>
 
 class GlobalShader : public Shader
 {
@@ -22,18 +24,15 @@ protected:
 		GLuint shininess;
 	};
 
-	struct U_PointLight
+	struct U_Light
 	{
 		GLuint position;
 		GLuint color;
 		GLuint intensity;
-	};
-
-	struct U_SunLight
-	{
-		GLuint direction;
-		GLuint color;
-		GLuint intensity;
+		GLuint light_dir;
+		GLuint generate_shadows;
+		GLuint shadow_map;
+		GLuint light_matrix;
 	};
 
 	// vertex
@@ -50,17 +49,16 @@ protected:
 	GLuint u_gamma_correction;
 
 	U_Material u_material;
-	//U_Light u_lights[MAX_LIGHT];
-	//std::vector<Light> lights;
-
+	U_Light u_lights[MAX_LIGHT];
 	float nbTexture = 0;
 
+	GLuint u_mult_shader; //TEST ONLY
 public:
 	GlobalShader(std::string vertex, std::string fragment, std::string geometry = "", std::string tessControl = "", std::string tessEval = "") : Shader(vertex, fragment, geometry, tessControl, tessEval)
 	{
 		this->u_model = glGetUniformLocation(this->id, "u_model");
 
-		for (int i = 0; i < 32; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			this->u_textures.push_back(glGetUniformLocation(this->id, (std::string("u_textures[") + std::to_string(i) + std::string("]")).c_str()));
 		}
@@ -74,28 +72,56 @@ public:
 		this->u_gamma_correction = glGetUniformLocation(this->id, "u_gamma_correction");
 
 		this->u_light_number = glGetUniformLocation(this->id, "u_light_number");
-		/*for (int i = 0; i < MAX_LIGHT; i++)
+		for (int i = 0; i < MAX_LIGHT; i++)
 		{
 			this->u_lights[i].position = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].position")).c_str());
 			this->u_lights[i].color = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].color")).c_str());
 			this->u_lights[i].intensity = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].intensity")).c_str());
-		}*/
-
+			this->u_lights[i].generate_shadows = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].generate_shadows")).c_str());
+			this->u_lights[i].shadow_map = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].shadow_map")).c_str());
+			this->u_lights[i].light_dir = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].light_dir")).c_str());
+			this->u_lights[i].light_matrix = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].light_matrix")).c_str());
+		}
+		this->u_mult_shader = glGetUniformLocation(this->id, "u_mult_shader");
 		//lights.push_back(Light(vec3(0, 1, -2), vec3(1, 1, 1), 3.0f));
 	}
 
-	void setLight()
+	void setLights(std::vector<ILight*> lights)
 	{
-		/*GLint nbLight = (lights.size() < MAX_LIGHT ? (GLint)lights.size() : MAX_LIGHT);
-		glUniform1f(this->u_gamma_correction, 2.2f);
+		GLint nbLight = (lights.size() < MAX_LIGHT ? (GLint)lights.size() : MAX_LIGHT);
+		glUniform1f(this->u_gamma_correction, gammaCorrection);
 		glUniform1i(this->u_light_number, nbLight);
 		// Load Lights
 		for (int i = 0; i < nbLight; i++)
 		{
-			glUniform3fv(u_lights[i].position, 1, &(lights[i].getPosition())[0]);
-			glUniform3fv(u_lights[i].color, 1, &(lights[i].getColor())[0]);
-			glUniform1f(u_lights[i].intensity, lights[i].getIntensity());
-		}*/
+			glm::vec3 lightDir(0.0f);
+			glm::mat4 lightMatrix(1.0f);
+			bool generateShadow = false;
+			glUniform3fv(u_lights[i].position, 1, &(lights[i]->getPosition())[0]);
+			glUniform3fv(u_lights[i].color, 1, &(lights[i]->getColor())[0]);
+			glUniform1f(u_lights[i].intensity, lights[i]->getIntensity());
+			//Passe les shadow
+			if (lights[i]->getType() == ILight::DIRECTIONAL) {
+				DirectionnalLight* tmpLight = (DirectionnalLight*)lights[i];
+				lightDir = tmpLight->getDirection();
+				if (tmpLight->isGeneratingShadow()) {
+					generateShadow = true;
+					lightMatrix = tmpLight->getShadowMap()->getLightMatrix();
+					//bind la texture, 4 texture reservé pour le modèle
+					//test->draw(u_lights[i].shadow_map, this->nbTexture + i);
+					glActiveTexture(GL_TEXTURE0 + this->nbTexture + i);
+					glBindTexture(GL_TEXTURE_2D, tmpLight->getShadowMap()->getDepthTexture());
+					glUniform1i(this->u_lights[i].shadow_map, (this->nbTexture + i));
+
+					glActiveTexture(GL_TEXTURE0 + this->nbTexture + i);
+					glBindTexture(GL_TEXTURE_2D, tmpLight->getShadowMap()->getDepthTexture());
+					glUniform1i(this->u_lights[i].shadow_map, GL_TEXTURE0 + this->nbTexture + i);
+				}
+			}
+			glUniformMatrix4fv(u_lights[i].light_matrix, 1, GL_FALSE, &lightMatrix[0][0]);
+			glUniform3fv(u_lights[i].light_dir, lights[i]->getIntensity(), &lightDir[0]);
+			glUniform1i(u_lights[i].generate_shadows, (generateShadow ? 1 : 0));
+		}
 	}
 
 	void drawMaterial(Material material)
@@ -106,22 +132,19 @@ public:
 		glUniform1f(this->u_material.shininess, material.getShininess());
 	}
 
-	void drawTexture(Texture *texture, int id)
+	void drawTexture(Texture* texture, int id)
 	{
 		if (texture != NULL)
 		{
 			texture->draw(this->u_textures[id], id);
+			this->nbTexture++;
 		}
 	}
 
 	virtual void drawMesh(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix)
 	{
-		glUniform1i(this->u_nb_texture, (GLint)this->u_textures.size());
-
-		// Load Vertex
 		glUniformMatrix4fv(this->u_model, 1, GL_FALSE, &transformMatrix[0][0]);
-
-		// Bind VAO
+		glUniform1i(this->u_nb_texture, (GLint)this->nbTexture);
 
 		if (global_wireframe)
 		{
@@ -132,8 +155,14 @@ public:
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 
+		// Bind VAO
+
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, size_indice, GL_UNSIGNED_INT, 0);
+	}
+
+	void resetNbTexture() {
+		this->nbTexture = 0;
 	}
 };
 

@@ -18,9 +18,11 @@
 #include <Game/Wall.hpp>
 
 #include <Global.hpp>
-
+#include <Light/Lightning.hpp>
+#include <Light/DirectionnalLight.hpp>
 #include <Physique/PhysiqueBullet.hpp>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
+
 
 class SceneProjecile : public Scene, IProjectileCallback
 {
@@ -28,6 +30,7 @@ private:
 	// Init
 	GlobalShader *globalShader = NULL;
 	GlobalShaderExtended *shaderTerrain = NULL;
+	Lightning* lightScene = NULL;
 	DebugShader *debugShader = NULL;
 	InputProjectile *inputCol;
 	Text2D *text2D;
@@ -57,13 +60,16 @@ public:
 
 	virtual void Init()
 	{
+		//Create LightScene
+		lightScene = new Lightning();
+
 		// Texte
 		Text2DShader *textShader = new Text2DShader("Shaders/text2d_vertex.glsl", "Shaders/text2d_fragment.glsl", glm::ortho(0.0f, 1.0f * screen_width, 0.0f, 1.0f * screen_height));
 		Texture *atlasText = new Texture("Textures/Font/Atlas_Monofonto.jpg");
 		text2D = new Text2D(textShader, atlasText, 128, 256);
 
 		// Set Camera
-		Camera *c = new Camera(vec3(0, -2, -16), 90, 0);
+		Camera *c = new Camera(vec3(0, 0, -15), 90, 0);
 		this->cameras.push_back(c);
 
 		// Set global Shader
@@ -108,6 +114,50 @@ public:
 
 		// Place et tourne les objets
 		terrain->getTransform()->translate(glm::vec3(0, -10, 0));
+
+		this->lightScene->addLight(new DirectionnalLight(glm::vec3(-8.0, 0, 0), glm::vec3(-1, 0, 0)));
+		//this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, 0, -8), glm::vec3(0, 0, -1)));
+
+		//Test light
+		/*ModeleComponent* ballComponent = new ModeleComponent(globalShader);
+		ballComponent->addTexture(texBall, false);
+		PrimitiveMesh::generate_uv_sphere(ballComponent, 16, 16, 1.0f);
+
+		ModeleLOD* ball = new ModeleLOD("Ball", ballComponent, NULL, NULL, NULL, this->scene);
+		ball->getTransform()->setTranslate(glm::vec3(0, -1, 0));
+		ModeleLOD* tmpB = ball->duplicate();
+		tmpB->getTransform()->setTranslate(glm::vec3(0, 1, 0));
+		tmpB = ball->duplicate();
+		tmpB->getTransform()->setTranslate(glm::vec3(-1, 0, 0));
+		tmpB = ball->duplicate();
+		tmpB->getTransform()->setTranslate(glm::vec3(1, 0, 0));
+		tmpB = ball->duplicate();
+		tmpB->getTransform()->setTranslate(glm::vec3(0, 0, -1));
+		tmpB = ball->duplicate();
+		tmpB->getTransform()->setTranslate(glm::vec3(0, 0, 1));
+
+		ModeleLOD* plane = new ModeleLOD("Plane", globalShader, ModeleComponent::OBJ, "Model/wallplane.obj", NULL, this->scene);
+		plane->getTransform()->setTranslate(glm::vec3(0, -10, 0));
+
+		plane = plane->duplicate();
+		plane->getOriginalTransform()->setTranslate(glm::vec3(0, 0, 20));
+		plane->getOriginalTransform()->setSelfRotation(glm::vec3(M_PI / 2.0f, 0, 0));
+
+		plane = plane->duplicate();
+		plane->getOriginalTransform()->setTranslate(glm::vec3(0, 0, -20));
+		plane->getOriginalTransform()->setSelfRotation(glm::vec3(M_PI / 2.0f,0, 0));
+
+		plane = plane->duplicate();
+		plane->getOriginalTransform()->setTranslate(glm::vec3(20, 0, 0));
+		plane->getOriginalTransform()->setSelfRotation(glm::vec3(M_PI / 2.0f, M_PI / 2.0f, 0));
+
+		plane = plane->duplicate();
+		plane->getOriginalTransform()->setTranslate(glm::vec3(-20, 0, 0));
+		plane->getOriginalTransform()->setSelfRotation(glm::vec3(M_PI / 2.0f, -M_PI / 2.0f, 0));
+
+
+		plane = plane->duplicate();
+		plane->getOriginalTransform()->setTranslate(glm::vec3(0, 20, 0));*/
 	}
 
 	ModeleLOD *createBall()
@@ -155,28 +205,17 @@ public:
 		canon->move(glm::vec3(0, 0, 1));
 	}
 
+
+
 	virtual void Draw(float deltaTime)
 	{
 		this->waitTimeFireBall -= deltaTime;
 		this->cooldownFPS -= deltaTime;
 		// Process input
 		inputCol->processInput(deltaTime);
+		//Draw Shadows
 		if (!global_pause)
 		{
-			if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size())
-			{
-
-				this->cameras[activeCamera]->frustumUpdate();
-
-				if (globalShader != NULL)
-				{
-				}
-				globalShader->drawView(this->cameras[this->activeCamera]);
-				if (shaderTerrain != NULL)
-					shaderTerrain->drawView(this->cameras[this->activeCamera]);
-				if (debugShader != NULL)
-					debugShader->drawView(this->cameras[this->activeCamera]);
-			}
 			if (!wait1Frame)
 			{
 				bullet->loop(deltaTime);
@@ -187,9 +226,29 @@ public:
 			}
 		}
 
+		this->lightScene->compute(this->scene);
+
+		if (!global_pause)
+		{
+			if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size())
+			{
+
+				this->cameras[activeCamera]->checkUpdate();
+
+				if (globalShader != NULL)
+				{
+				}
+				globalShader->drawView(this->cameras[this->activeCamera]);
+				if (shaderTerrain != NULL)
+					shaderTerrain->drawView(this->cameras[this->activeCamera]);
+				if (debugShader != NULL)
+					debugShader->drawView(this->cameras[this->activeCamera]);
+			}
+		}
+
 		if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size())
 		{
-			this->scene->compute(this->cameras[this->activeCamera], true);
+			this->scene->compute(this->cameras[this->activeCamera]->getData(),this->lightScene, true);
 		}
 		// compute FPS
 		if (this->cooldownFPS <= 0)

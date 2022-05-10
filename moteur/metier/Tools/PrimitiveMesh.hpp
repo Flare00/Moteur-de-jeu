@@ -149,12 +149,12 @@ public:
 					int p2 = p1 + (nbMeridien + 1);
 
 					indices.push_back(p1);
-					indices.push_back(p2);
 					indices.push_back(p1 + 1);
+					indices.push_back(p2);
 
 					indices.push_back(p1 + 1);
-					indices.push_back(p2);
 					indices.push_back(p2 + 1);
+					indices.push_back(p2);
 				}
 			}
 		}

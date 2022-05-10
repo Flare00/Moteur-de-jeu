@@ -60,6 +60,14 @@ public:
 		glUniform3fv(this->u_camera_pos, 1, &camera->getPosition()[0]);
 	}
 
+	void drawView(glm::mat4 view, glm::mat4 projection, glm::vec3 position)
+	{
+		glUseProgram(id);
+		glUniformMatrix4fv(this->u_view, 1, GL_FALSE, &view[0][0]);
+		glUniformMatrix4fv(this->u_projection, 1, GL_FALSE, &projection[0][0]);
+		glUniform3fv(this->u_camera_pos, 1, &position[0]);
+	}
+
 	GLuint getProgramID()
 	{
 		return this->id;

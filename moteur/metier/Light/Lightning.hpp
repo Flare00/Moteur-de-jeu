@@ -1,21 +1,26 @@
 #ifndef __LIGHTNING_HPP__
 #define __LIGHTNING_HPP__
 
-#include <vector>;
+#include <vector>
 #include <Light/ILight.hpp>
+#include <GameObject/GameObject.hpp>
+#include <Global.hpp>
 
 class Lightning {
 protected:
 	std::vector<ILight*> lights;
 public:
-	Lightning(){}
-	~Lightning(){}
+	Lightning() {}
+	~Lightning() {}
 
-	virtual void compute() {
-		for (size_t i = 0, max = lights.size(); i < max) {
-			lights[i]->compute();
-			lights[i]->getShadowMap()->save_PPM_file(std::string("shadom_map_") + std::to_string(i) + std::string(".ppm"));
+	void compute(GameObject* scene) {
+		for (size_t i = 0, max = lights.size(); i < max; i++) {
+			lights[i]->compute(scene);
+			ShadowMap::bindScreen();
+			glViewport(0, 0, screen_width, screen_height);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
+ // Erase the color and z buffers.
 	}
 
 	void addLight(ILight* light) {
@@ -24,7 +29,7 @@ public:
 
 	void removeLight(ILight* light) {
 		size_t found = -1;
-		for (size_t i = 0; max = lights.size(); i < max && found == -1; i++) {
+		for (size_t i = 0, max = lights.size(); i < max && found == -1; i++) {
 			if (lights[i] == light) {
 				found = i;
 			}
@@ -36,6 +41,10 @@ public:
 
 	void clearLights() {
 		this->lights.clear();
+	}
+
+	std::vector<ILight*> getLights() {
+		return this->lights;
 	}
 
 };

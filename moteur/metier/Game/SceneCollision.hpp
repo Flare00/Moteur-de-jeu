@@ -139,7 +139,7 @@ public:
 		{
 			if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size()) {
 
-				this->cameras[activeCamera]->frustumUpdate();
+				this->cameras[activeCamera]->checkUpdate();
 
 				if (globalShader != NULL) {}
 					globalShader->drawView(this->cameras[this->activeCamera]);
@@ -157,7 +157,7 @@ public:
 		}
 
 		if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size()) {
-			this->scene->compute(this->cameras[this->activeCamera], true);
+			this->scene->compute(this->cameras[this->activeCamera]->getData(), NULL, true);
 		}
 		// compute FPS
 		if (this->cooldownFPS <= 0)

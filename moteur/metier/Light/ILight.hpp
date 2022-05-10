@@ -3,24 +3,31 @@
 
 #include <glm/glm.hpp>
 #include <Light/ShadowMap.hpp>
+#include <GameObject/GameObject.hpp>
 using namespace glm;
 
 class ILight {
+public:
+	enum Type {
+		DIRECTIONAL
+	};
 protected:
-	ShadowMap shadow;
+	vec3 position;
 	vec3 color;
 	float intensity;
+	Type type;
+	bool dirty = false;
 public :
 
-	/// <summary>
-	/// shadowResolution de 1 à 12, (calcul 2^n, si shadowResolution = 4 alors shadow map de taille 16, si shadowResolution = 12 alors shadow map de taille 4096)
-	/// </summary>
-	ILight(vec3 color = vec3(1.0f), float intensity = 1.0f, int shadowResolution = 10) : shadow(shadowResolution) {
+
+	ILight(Type t, vec3 position = vec3(0), vec3 color = vec3(1.0f), float intensity = 1.0f)  {
 		this->color = color;
 		this->intensity = intensity;
+		this->type = t;
+		this->position = position;
 	}
 
-	virtual void compute() = 0;
+	virtual void compute(GameObject* scene) = 0;
 
 	vec3 getColor() {
 		return this->color;
@@ -36,10 +43,18 @@ public :
 		this->intensity = intensity;
 	}
 
-	ShadowMap* getShadowMap() {
-		return &this->shadow;
+	Type getType() {
+		return this->type;
 	}
 
+	vec3 getPosition() {
+		return this->position;
+	}
+
+	void setPosition(vec3 position) {
+		this->position = position;
+		this->dirty = true;
+	}
 };
 
 #endif // !__I_LIGHT_HPP__

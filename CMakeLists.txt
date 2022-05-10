@@ -1,6 +1,6 @@
 # CMake entry point
 cmake_minimum_required (VERSION 3.0)
-
+set(GLFW_BUILD_EXAMPLES 0)
 project (Moteur)
 find_package(OpenGL REQUIRED)
 
@@ -48,7 +48,7 @@ add_definitions(
 add_executable(moteur
 		 common/objloader.hpp
 		common/objloader.cpp
-        moteur/Moteur.cpp "moteur/metier/Physique/DebugDrawer.hpp"  "moteur/metier/Physique/GestionContraintes.hpp" "moteur/metier/Physique/BulletRigidbody.hpp"   "moteur/metier/Transformation/ITransformation.hpp" "moteur/metier/Light/Lightning.hpp" "moteur/metier/Light/ILight.hpp" "moteur/metier/Light/DirectionnalLight.hpp" "moteur/metier/Light/ShadowMap.hpp" )
+        moteur/Moteur.cpp "moteur/metier/Physique/DebugDrawer.hpp"  "moteur/metier/Physique/GestionContraintes.hpp" "moteur/metier/Physique/BulletRigidbody.hpp"   "moteur/metier/Transformation/ITransformation.hpp" "moteur/metier/Light/Lightning.hpp" "moteur/metier/Light/ILight.hpp" "moteur/metier/Light/DirectionnalLight.hpp" "moteur/metier/Light/ShadowMap.hpp"  "moteur/metier/World/CameraData.hpp")
 
 
 target_link_libraries(moteur
