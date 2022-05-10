@@ -9,8 +9,6 @@
 #include <iostream>
 #include <math.h>
 
-#include <objloader.hpp>
-
 #include <Light/Material.hpp>
 #include <Texture.hpp>
 #include <Shader/GlobalShader.hpp>
@@ -73,7 +71,7 @@ public:
 	}
 
 	// --- METHODES ---
-	virtual void compute(CameraData *data,Lightning* lights, bool dfs = true)
+	virtual void compute(CameraData *data, Lightning *lights, bool dfs = true)
 	{
 		float distance = -1.0f;
 		distance = data->distanceFrom(this->getPosition());
@@ -99,7 +97,7 @@ public:
 			GameObject::compute(data, lights, dfs);
 	}
 
-	void draw(CameraData *data, Lightning* lights, int level)
+	void draw(CameraData *data, Lightning *lights, int level)
 	{
 		while (level >= 0 && modeles[level] == NULL)
 		{

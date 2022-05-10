@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <iostream>
-#include <time.h>       /* time */
+#include <time.h> /* time */
 #include <fstream>
 #include <string>
 
@@ -29,11 +29,11 @@ const unsigned int SCR_WIDTH = 1600;
 const unsigned int SCR_HEIGHT = 900;
 const int limiteur = 60;
 
-Game* game;
+Game *game;
 
 // glfw: whenever the global_window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
 	screen_width = width;
 	screen_height = height;
@@ -42,15 +42,16 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-
-void mainLoop() {
+void mainLoop()
+{
 	game = new Game();
 	double lastFrame = 0.0f;
 	double currentFrame = glfwGetTime();
 	double deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 	double sumDelta = 0.0f;
-	do {
+	do
+	{
 		// Measure speed
 		// per-frame time logic
 		// --------------------
@@ -62,7 +63,8 @@ void mainLoop() {
 		// FPS : float fps = 1.0f/deltaTime;
 		// input
 		// -----
-		if (sumDelta >= 1.0f / (limiteur + 1)) {
+		if (sumDelta >= 1.0f / (limiteur + 1))
+		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			game->Loop((float)sumDelta);
@@ -76,11 +78,9 @@ void mainLoop() {
 	while (!global_stop && glfwWindowShouldClose(global_window) == 0);
 }
 
-
-
 int main(void)
 {
-	//Init GLFW
+	// Init GLFW
 	screen_width = SCR_WIDTH;
 	screen_height = SCR_HEIGHT;
 	// Initialise GLFW
@@ -100,7 +100,8 @@ int main(void)
 
 	// Open a global_window and create its OpenGL context
 	global_window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Moteur - GLFW", NULL, NULL);
-	if (global_window == NULL) {
+	if (global_window == NULL)
+	{
 		fprintf(stderr, "Failed to open GLFW global_window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
 		getchar();
 		glfwTerminate();
@@ -111,7 +112,8 @@ int main(void)
 
 	// Initialize GLEW
 	glewExperimental = true; // Needed for core profile
-	if (glewInit() != GLEW_OK) {
+	if (glewInit() != GLEW_OK)
+	{
 		fprintf(stderr, "Failed to initialize GLEW\n");
 		getchar();
 		glfwTerminate();
@@ -130,7 +132,7 @@ int main(void)
 	glfwPollEvents();
 	glfwSetCursorPos(global_window, SCR_WIDTH / 2, SCR_HEIGHT / 2);
 
-	//Init OpenGL
+	// Init OpenGL
 
 	// Dark blue background
 	glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
@@ -139,13 +141,13 @@ int main(void)
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
+	// glEnable(GL_CULL_FACE);
+	// glCullFace(GL_BACK);
 
 	// Cull triangles which normal is not towards the camera
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
 
-	//glEnable(GL_CULL_FACE);
+	// glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_FRAMEBUFFER_SRGB);
 
@@ -153,18 +155,15 @@ int main(void)
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);*/
 
-	//Launch main loop
+	// Launch main loop
 	mainLoop();
 
 	// Cleanup VBO and shader
 
-	//glDeleteVertexArrays(1, &VertexArrayID);
+	// glDeleteVertexArrays(1, &VertexArrayID);
 
 	// Close OpenGL global_window and terminate GLFW
 	glfwTerminate();
 
-
-
 	return 0;
 }
-

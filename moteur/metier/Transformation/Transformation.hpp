@@ -9,7 +9,6 @@
 class Transformation : public ITransformation
 {
 protected:
-
 	// Transformation that can be applied to descendance.
 	float scale;
 	glm::vec3 rotation;
@@ -25,9 +24,7 @@ protected:
 	bool globalHasBeenChanged;
 	bool localHasBeenChanged;
 
-
 public:
-
 	Transformation(float scale = 1.0f, glm::vec3 translate = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), float selfScale = 1.0f, glm::vec3 selfRotation = glm::vec3(0.0f), glm::vec3 selfTranslation = glm::vec3(0.0f))
 	{
 		this->scale = scale;
@@ -42,7 +39,7 @@ public:
 		this->localHasBeenChanged = true;
 	}
 
-	virtual ITransformation* translate(glm::vec3 t)
+	virtual ITransformation *translate(glm::vec3 t)
 	{
 		this->translation += t;
 		this->globalHasBeenChanged = true;
@@ -56,7 +53,7 @@ public:
 		return this;
 	}
 
-	virtual ITransformation*setTranslate(glm::vec3 pos)
+	virtual ITransformation *setTranslate(glm::vec3 pos)
 	{
 		this->translation = pos;
 		this->globalHasBeenChanged = true;
@@ -82,7 +79,7 @@ public:
 		return this;
 	}
 
-	virtual ITransformation*rotate(glm::vec3 v)
+	virtual ITransformation *rotate(glm::vec3 v)
 	{
 		this->rotation = this->rotation + v;
 		this->globalHasBeenChanged = true;
@@ -96,7 +93,7 @@ public:
 		return this;
 	}
 
-	virtual ITransformation*setRotation(glm::vec3 r)
+	virtual ITransformation *setRotation(glm::vec3 r)
 	{
 		this->rotation = r;
 		this->globalHasBeenChanged = true;

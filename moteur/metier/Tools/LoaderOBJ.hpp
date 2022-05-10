@@ -99,7 +99,7 @@ public:
                 if (allWordsLine.size() == 5)
                 { // 5 car je compte le "f" en plus
                     unsigned int faceTmp[4];
-  
+
                     for (size_t i = 1; i < 5; i++)
                     {
                         std::vector<std::string> tmpString;

@@ -16,34 +16,34 @@ class Canon
 {
 protected:
 	// Physic
-	BulletRigidbody* cylinder_Rigid;
-	BulletRigidbody* base_Rigid;
-	BulletRigidbody* bind_Rigid_left;
-	BulletRigidbody* bind_Rigid_right;
-	BulletRigidbody* wheel_Rigid_left;
-	BulletRigidbody* wheel_Rigid_right;
-	BulletRigidbody* contre_poid_rigid;
+	BulletRigidbody *cylinder_Rigid;
+	BulletRigidbody *base_Rigid;
+	BulletRigidbody *bind_Rigid_left;
+	BulletRigidbody *bind_Rigid_right;
+	BulletRigidbody *wheel_Rigid_left;
+	BulletRigidbody *wheel_Rigid_right;
+	BulletRigidbody *contre_poid_rigid;
 
-	GameObject* go;
-	BulletRigidbody* rigid;
+	GameObject *go;
+	BulletRigidbody *rigid;
 
 	// Modele
-	ModeleLOD* cylinder;
-	ModeleLOD* base;
-	ModeleLOD* bind_left;
-	ModeleLOD* bind_right;
-	ModeleLOD* wheel_left;
-	ModeleLOD* wheel_right;
+	ModeleLOD *cylinder;
+	ModeleLOD *base;
+	ModeleLOD *bind_left;
+	ModeleLOD *bind_right;
+	ModeleLOD *wheel_left;
+	ModeleLOD *wheel_right;
 
 	int group, mask;
 
 public:
-	Canon(GlobalShader* globalShader)
+	Canon(GlobalShader *globalShader)
 	{
 		rigid = BulletRigidbody::generateAABB(glm::vec3(0.1f), 1.0f);
 		go = new GameObject("Canon", NULL, rigid);
 
-		Texture* texture = new Texture("Textures/texture_test.jpg");
+		Texture *texture = new Texture("Textures/texture_test.jpg");
 
 		// PHYSIC
 		cylinder_Rigid = BulletRigidbody::generateCylinder(glm::vec3(0.37f, 1.86f, 0.37f), 20.0f, ITransformation::generateMatrix(glm::vec3(-0.4f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, M_PI / 2.0f)));
@@ -79,20 +79,19 @@ public:
 		bind_right->getTransform()->setTranslate(pos);
 		wheel_left->getTransform()->setTranslate(pos);
 		wheel_right->getTransform()->setTranslate(pos);
-		
 	}
 
-	GameObject* getGameObject()
+	GameObject *getGameObject()
 	{
 		return this->go;
 	}
 
-	BulletTransformation* getTransform()
+	BulletTransformation *getTransform()
 	{
 		return this->go->getBulletTransform();
 	}
 
-	void addToPhysique(PhysiqueBullet* physique, int group = 2, int mask = 0)
+	void addToPhysique(PhysiqueBullet *physique, int group = 2, int mask = 0)
 	{
 		this->group = group;
 		this->mask = mask;
@@ -103,8 +102,6 @@ public:
 		physique->addRigidbodyToPhysique(this->bind_Rigid_right, group, mask);
 		physique->addRigidbodyToPhysique(this->wheel_Rigid_left, group, mask);
 		physique->addRigidbodyToPhysique(this->wheel_Rigid_right, group, mask);
-		
-
 
 		// CONSTRAINTS
 		physique->getGestionContraintes()->addFixedContrainte(
@@ -153,7 +150,7 @@ public:
 		this->wheel_Rigid_left->getRigidbody()->setFriction(btScalar(10.0f));
 	}
 
-	void removeFromPhysique(PhysiqueBullet* physique)
+	void removeFromPhysique(PhysiqueBullet *physique)
 	{
 		physique->removeRigidbodyFromPhysique(this->cylinder_Rigid);
 		physique->removeRigidbodyFromPhysique(this->contre_poid_rigid);
@@ -164,8 +161,8 @@ public:
 		physique->removeRigidbodyFromPhysique(this->wheel_Rigid_right);
 	}
 
-	glm::vec3 getFront() {
-
+	glm::vec3 getFront()
+	{
 
 		/*btScalar x, y, z;
 		this->cylinder_Rigid->getRigidbody()->getWorldTransform().getRotation().getEulerZYX(z, y, x);
@@ -176,7 +173,8 @@ public:
 		return glm::normalize(glm::vec3(worldFront.getX(), worldFront.getY(), worldFront.getZ()));
 	}
 
-	glm::vec3 getCanonPos() {
+	glm::vec3 getCanonPos()
+	{
 		btVector3 vec = this->cylinder_Rigid->getRigidbody()->getWorldTransform().getOrigin();
 		return (const glm::vec3)glm::vec3(vec.getX(), vec.getY(), vec.getZ());
 	}
@@ -189,32 +187,35 @@ public:
 		btVector3 worldRight = world * btVector3(1.0f, 0.0f, 0.0f);
 		this->wheel_Rigid_left->getRigidbody()->activate();
 		this->wheel_Rigid_right->getRigidbody()->activate();
-		if (dir == 0) {
+		if (dir == 0)
+		{
 			this->wheel_Rigid_left->getRigidbody()->applyTorque((const btVector3)worldTorque);
 			this->wheel_Rigid_right->getRigidbody()->applyTorque((const btVector3)worldTorque);
-
 		}
-		else if (dir == 1) {
+		else if (dir == 1)
+		{
 			this->wheel_Rigid_left->getRigidbody()->applyTorque((const btVector3)-worldTorque);
 			this->wheel_Rigid_right->getRigidbody()->applyTorque((const btVector3)-worldTorque);
-
 		}
-		else if (dir == 2) {
-			this->wheel_Rigid_left->getRigidbody()->applyTorque((const btVector3)-worldTorque *1.5f);
-			this->wheel_Rigid_right->getRigidbody()->applyTorque((const btVector3)worldTorque *1.5f);
-
+		else if (dir == 2)
+		{
+			this->wheel_Rigid_left->getRigidbody()->applyTorque((const btVector3)-worldTorque * 1.5f);
+			this->wheel_Rigid_right->getRigidbody()->applyTorque((const btVector3)worldTorque * 1.5f);
 		}
-		else if (dir == 3) {
+		else if (dir == 3)
+		{
 			this->wheel_Rigid_left->getRigidbody()->applyTorque((const btVector3)worldTorque * 1.5f);
 			this->wheel_Rigid_right->getRigidbody()->applyTorque((const btVector3)-worldTorque * 1.5f);
 		}
 	}
 
-	int getGroup() {
+	int getGroup()
+	{
 		return group;
 	}
 
-	int getMask() {
+	int getMask()
+	{
 		return mask;
 	}
 };

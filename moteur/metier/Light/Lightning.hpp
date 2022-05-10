@@ -6,15 +6,19 @@
 #include <GameObject/GameObject.hpp>
 #include <Global.hpp>
 
-class Lightning {
+class Lightning
+{
 protected:
-	std::vector<ILight*> lights;
+	std::vector<ILight *> lights;
+
 public:
 	Lightning() {}
 	~Lightning() {}
 
-	void compute(GameObject* scene) {
-		for (size_t i = 0, max = lights.size(); i < max; i++) {
+	void compute(GameObject *scene)
+	{
+		for (size_t i = 0, max = lights.size(); i < max; i++)
+		{
 			lights[i]->compute(scene);
 			ShadowMap::bindScreen();
 			glViewport(0, 0, screen_width, screen_height);
@@ -25,30 +29,36 @@ public:
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void addLight(ILight* light) {
+	void addLight(ILight *light)
+	{
 		this->lights.push_back(light);
 	}
 
-	void removeLight(ILight* light) {
+	void removeLight(ILight *light)
+	{
 		size_t found = -1;
-		for (size_t i = 0, max = lights.size(); i < max && found == -1; i++) {
-			if (lights[i] == light) {
+		for (size_t i = 0, max = lights.size(); i < max && found == -1; i++)
+		{
+			if (lights[i] == light)
+			{
 				found = i;
 			}
 		}
-		if (found != -1) {
+		if (found != -1)
+		{
 			lights.erase(lights.begin() + found);
 		}
 	}
 
-	void clearLights() {
+	void clearLights()
+	{
 		this->lights.clear();
 	}
 
-	std::vector<ILight*> getLights() {
+	std::vector<ILight *> getLights()
+	{
 		return this->lights;
 	}
-
 };
 
 #endif // !

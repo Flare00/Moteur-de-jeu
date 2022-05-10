@@ -65,7 +65,8 @@ public:
 		this->front = front;
 		this->up = up;
 		this->right = right;
-		if (!ortho) {
+		if (!ortho)
+		{
 			plan.clear();
 
 			plan.push_back(Plane(cross((zFar * front) - (right * halfHSide), up), position)); // Left
@@ -83,16 +84,17 @@ public:
 	{
 		vec4 p = this->matrix * vec4(a, 1.0f);
 		return abs(p.x) < p.w + margin &&
-			abs(p.y) < p.w + margin &&
-			p.z > -margin &&
-			p.z < p.w + margin;
+			   abs(p.y) < p.w + margin &&
+			   p.z > -margin &&
+			   p.z < p.w + margin;
 	}
 
-	bool isVisible(BoundingBox* a)
+	bool isVisible(BoundingBox *a)
 	{
 		bool resultat = true;
 
-		if (!ortho) {
+		if (!ortho)
+		{
 			vec3 min = a->getMin();
 			vec3 max = a->getMax();
 
@@ -130,13 +132,12 @@ public:
 				}
 			}
 		}
-		else {
-			//Todo OBB to AABB
+		else
+		{
+			// Todo OBB to AABB
 		}
 		return resultat;
 	}
-
-
 };
 
 #endif // !__FRUSTUM_HPP__

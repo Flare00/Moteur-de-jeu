@@ -1,8 +1,6 @@
 ﻿#ifndef __MODELE_COMPONENT_HPP__
 #define __MODELE_COMPONENT_HPP__
 
-#include <objloader.hpp>
-
 #include <vector>
 #include <glm/glm.hpp>
 
@@ -16,11 +14,11 @@
 class ModeleComponent : public Component
 {
 private:
-	GlobalShader* shader;
+	GlobalShader *shader;
 
 protected:
 	// Modele
-	BoundingBox* boundingBox = NULL;
+	BoundingBox *boundingBox = NULL;
 	std::vector<glm::vec3> vertexArray;
 	std::vector<glm::vec2> texCoords;
 	std::vector<glm::vec3> normals;
@@ -32,7 +30,7 @@ protected:
 	// Texture
 	struct TextureContainer
 	{
-		Texture* texture = NULL;
+		Texture *texture = NULL;
 		bool destroyAtEnd;
 	};
 	std::vector<TextureContainer> textures;
@@ -51,28 +49,15 @@ public:
 
 	enum FileType
 	{
-		OFF,
 		OBJ
 	};
 
-	ModeleComponent(GlobalShader* shader, FileType type, std::string file) : Component(Component::Type::MODELE)
+	ModeleComponent(GlobalShader *shader, FileType type, std::string file) : Component(Component::Type::MODELE)
 	{
 
 		this->shader = shader;
 
-		if (type == FileType::OFF)
-		{
-			std::vector<unsigned short> indices; // Triangles concat dans une liste
-			std::vector<std::vector<unsigned short>> triangles;
-
-			// Chargement du fichier de maillage
-			loadOFF(file, this->vertexArray, indices, triangles);
-			for (size_t i = 0, max = indices.size(); i < max; i++)
-			{
-				this->indices.push_back((int)indices[i]);
-			}
-		}
-		else if (type == FileType::OBJ)
+		if (type == FileType::OBJ)
 		{
 			LoaderOBJ::ObjModelInfo infoObj = LoaderOBJ::load(file);
 			this->vertexArray = infoObj.vertices;
@@ -84,12 +69,12 @@ public:
 		boundingBox = new BoundingBox(this->vertexArray);
 	}
 
-	ModeleComponent(GlobalShader* shader) : Component(Component::Type::MODELE)
+	ModeleComponent(GlobalShader *shader) : Component(Component::Type::MODELE)
 	{
 		this->shader = shader;
 	}
 
-	ModeleComponent(GlobalShader* shader, std::vector<glm::vec3> indexed_vertices, std::vector<glm::vec3> normals, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords) : Component(Component::Type::MODELE)
+	ModeleComponent(GlobalShader *shader, std::vector<glm::vec3> indexed_vertices, std::vector<glm::vec3> normals, std::vector<unsigned int> indices, std::vector<glm::vec2> texCoords) : Component(Component::Type::MODELE)
 	{
 		this->shader = shader;
 		this->normals = normals;
@@ -115,21 +100,21 @@ public:
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, this->VBO[0]);
 		glBufferData(GL_ARRAY_BUFFER, this->vertexArray.size() * sizeof(vec3), &this->vertexArray[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 
 		if (this->texCoords.size() > 0)
 		{
 			glEnableVertexAttribArray(1);
 			glBindBuffer(GL_ARRAY_BUFFER, this->VBO[1]);
 			glBufferData(GL_ARRAY_BUFFER, this->texCoords.size() * sizeof(vec2), &this->texCoords[0], GL_STATIC_DRAW);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void *)0);
 		}
 		if (this->normals.size() > 0)
 		{
 			glEnableVertexAttribArray(2);
 			glBindBuffer(GL_ARRAY_BUFFER, this->VBO[2]);
 			glBufferData(GL_ARRAY_BUFFER, this->normals.size() * sizeof(vec3), &this->normals[0], GL_STATIC_DRAW);
-			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 		}
 		if (this->indices.size() > 0)
 		{
@@ -151,13 +136,14 @@ public:
 		}
 	}
 
-	virtual void draw(CameraData* data,Lightning* lights, glm::mat4 transform, glm::vec3 position)
+	virtual void draw(CameraData *data, Lightning *lights, glm::mat4 transform, glm::vec3 position)
 	{
 		if (!hasData)
 		{
 			return;
 		}
-		if (data->getType() == CameraData::CAMERA) {
+		if (data->getType() == CameraData::CAMERA)
+		{
 			bool isInFOV = false;
 
 			if (this->boundingBox != NULL)
@@ -175,7 +161,6 @@ public:
 			if (!isInFOV)
 				return;
 
-
 			this->shader->use();
 			glEnable(GL_TEXTURE_2D);
 
@@ -188,14 +173,14 @@ public:
 
 			this->shader->drawMaterial(this->material);
 			this->shader->drawMesh(this->VAO, (GLsizei)this->indices.size(), transform);
-
 		}
-		else {
+		else
+		{
 			data->getShadowShader()->drawMesh(this->VAO, (GLsizei)this->indices.size(), transform);
 		}
 	}
 
-	Texture* getTexture(int i)
+	Texture *getTexture(int i)
 	{
 		return this->textures[i].texture;
 	}
@@ -210,7 +195,7 @@ public:
 		return this->textures[i];
 	}
 
-	void addTexture(Texture* texture, bool destroyAtEnd)
+	void addTexture(Texture *texture, bool destroyAtEnd)
 	{
 		TextureContainer tc;
 		tc.texture = texture;
@@ -258,7 +243,7 @@ public:
 	{
 		return this->normals;
 	}
-	GlobalShader* getShader()
+	GlobalShader *getShader()
 	{
 		return this->shader;
 	}
@@ -272,7 +257,7 @@ public:
 		return this->texCoords;
 	}
 
-	Material* getMaterial()
+	Material *getMaterial()
 	{
 		return &this->material;
 	}

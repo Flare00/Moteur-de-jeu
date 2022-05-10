@@ -81,32 +81,35 @@ public:
 			this->u_lights[i].light_dir = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].light_dir")).c_str());
 			this->u_lights[i].light_matrix = glGetUniformLocation(this->id, (std::string("u_lights[") + std::to_string(i) + std::string("].light_matrix")).c_str());
 		}
-		//lights.push_back(Light(vec3(0, 1, -2), vec3(1, 1, 1), 3.0f));
+		// lights.push_back(Light(vec3(0, 1, -2), vec3(1, 1, 1), 3.0f));
 	}
 
-	void setLights(std::vector<ILight*> lights)
+	void setLights(std::vector<ILight *> lights)
 	{
 		int nbLight = 0;
 		glUniform1f(this->u_gamma_correction, gammaCorrection);
 		// Load Lights
 		for (size_t i = 0, max = lights.size(); i < max && nbLight < MAX_LIGHT; i++)
 		{
-			if (lights[i]->isActive()) {
-				
+			if (lights[i]->isActive())
+			{
+
 				glm::vec3 lightDir(0.0f);
 				glm::mat4 lightMatrix(1.0f);
 				bool generateShadow = false;
 				glUniform3fv(u_lights[nbLight].position, 1, &(lights[i]->getPosition())[0]);
 				glUniform3fv(u_lights[nbLight].color, 1, &(lights[i]->getColor())[0]);
 				glUniform1f(u_lights[nbLight].intensity, lights[i]->getIntensity());
-				//Passe les shadow
-				if (lights[i]->getType() == ILight::DIRECTIONAL) {
-					DirectionnalLight* tmpLight = (DirectionnalLight*)lights[i];
+				// Passe les shadow
+				if (lights[i]->getType() == ILight::DIRECTIONAL)
+				{
+					DirectionnalLight *tmpLight = (DirectionnalLight *)lights[i];
 					lightDir = tmpLight->getDirection();
-					if (tmpLight->isGeneratingShadow()) {
+					if (tmpLight->isGeneratingShadow())
+					{
 						generateShadow = true;
 						lightMatrix = tmpLight->getShadowMap()->getLightMatrix();
-						//bind la texture,4 texture reservé pour le modèle
+						// bind la texture,4 texture reservï¿½ pour le modï¿½le
 						glActiveTexture(GL_TEXTURE0 + this->nbTexture + nbLight);
 						glBindTexture(GL_TEXTURE_2D, tmpLight->getShadowMap()->getDepthTexture());
 						glUniform1i(this->u_lights[nbLight].shadow_map, this->nbTexture + nbLight);
@@ -119,7 +122,6 @@ public:
 			}
 		}
 		glUniform1i(this->u_light_number, nbLight);
-
 	}
 
 	void drawMaterial(Material material)
@@ -130,7 +132,7 @@ public:
 		glUniform1f(this->u_material.shininess, material.getShininess());
 	}
 
-	void drawTexture(Texture* texture, int id)
+	void drawTexture(Texture *texture, int id)
 	{
 		if (texture != NULL)
 		{
@@ -159,7 +161,8 @@ public:
 		glDrawElements(GL_TRIANGLES, size_indice, GL_UNSIGNED_INT, 0);
 	}
 
-	void resetNbTexture() {
+	void resetNbTexture()
+	{
 		this->nbTexture = 0;
 	}
 };

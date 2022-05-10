@@ -1,8 +1,6 @@
 #ifndef __MODELE_HEIGHT_COMPONENT_HPP__
 #define __MODELE_HEIGHT_COMPONENT_HPP__
 
-#include <objloader.hpp>
-
 #include <vector>
 #include <glm/glm.hpp>
 
@@ -18,6 +16,7 @@ private:
 protected:
     TextureContainer heightMap;
     float maxHeight;
+
 public:
     // --- CONSTRUCTEURS ET DESTRUCTEURS ---
 
@@ -42,14 +41,15 @@ public:
         this->shader->setMaxHeight(this->maxHeight);
     }
 
-    virtual void draw(CameraData *data,Lightning* lights, glm::mat4 transform, glm::vec3 position)
+    virtual void draw(CameraData *data, Lightning *lights, glm::mat4 transform, glm::vec3 position)
     {
         if (!hasData)
         {
             return;
         }
         bool isInFOV = true;
-        if(data->getType() == CameraData::CAMERA){
+        if (data->getType() == CameraData::CAMERA)
+        {
             bool isInFOV = false;
 
             if (this->boundingBox != NULL)
@@ -68,7 +68,7 @@ public:
                 return;
 
             this->shader->use();
-        
+
             glEnable(GL_TEXTURE_2D);
             this->shader->resetNbTexture();
             for (size_t i = 0, max = textures.size(); i < max; i++)
@@ -80,12 +80,11 @@ public:
             this->shader->drawMaterial(this->material);
             this->shader->drawMesh(data, this->VAO, (GLsizei)this->indices.size(), transform);
         }
-        else {
+        else
+        {
             data->getShadowShader()->drawHeightMap(heightMap.texture, 0, this->maxHeight);
         }
     }
-
-
 
     void setHeightMap(Texture *t, bool destroyEnd)
     {

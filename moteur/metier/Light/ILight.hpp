@@ -6,13 +6,16 @@
 #include <GameObject/GameObject.hpp>
 using namespace glm;
 
-class ILight {
+class ILight
+{
 public:
-	enum Type {
+	enum Type
+	{
 		AUCUN,
 		POINT,
 		DIRECTIONAL
 	};
+
 protected:
 	vec3 position;
 	vec3 color;
@@ -20,50 +23,59 @@ protected:
 	Type type;
 	bool active = true;
 	bool dirty = false;
-public :
 
-
-	ILight(Type t, vec3 position = vec3(0), vec3 color = vec3(1.0f), float intensity = 1.0f)  {
+public:
+	ILight(Type t, vec3 position = vec3(0), vec3 color = vec3(1.0f), float intensity = 1.0f)
+	{
 		this->color = color;
 		this->intensity = intensity;
 		this->type = t;
 		this->position = position;
 	}
 
-	virtual void compute(GameObject* scene) = 0;
+	virtual void compute(GameObject *scene) = 0;
 
-	vec3 getColor() {
+	vec3 getColor()
+	{
 		return this->color;
 	}
-	float getIntensity() {
+	float getIntensity()
+	{
 		return this->intensity;
 	}
 
-	void setColor(vec3 color) {
+	void setColor(vec3 color)
+	{
 		this->color = color;
 	}
-	void setIntensity(float intensity) {
+	void setIntensity(float intensity)
+	{
 		this->intensity = intensity;
 	}
 
-	Type getType() {
+	Type getType()
+	{
 		return this->type;
 	}
 
-	vec3 getPosition() {
+	vec3 getPosition()
+	{
 		return this->position;
 	}
 
-	void setPosition(vec3 position) {
+	void setPosition(vec3 position)
+	{
 		this->position = position;
 		this->dirty = true;
 	}
 
-	void setActive(bool value) {
+	void setActive(bool value)
+	{
 		this->active = value;
 	}
 
-	bool isActive() {
+	bool isActive()
+	{
 		return this->active;
 	}
 };

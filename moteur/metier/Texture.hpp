@@ -18,7 +18,7 @@ private:
 	int width, height;
 
 	unsigned int texture_index;
-	unsigned char* texture_data;
+	unsigned char *texture_data;
 
 	bool loaded;
 
@@ -64,7 +64,7 @@ public:
 			this->loaded = false;
 		}
 
-		//stbi_image_free(this->texture_data);
+		// stbi_image_free(this->texture_data);
 	}
 
 	void draw(GLuint u_texture, int index)

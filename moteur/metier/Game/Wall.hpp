@@ -32,8 +32,9 @@ public:
             {
                 for (int k = 0; k < depth; k++)
                 {
-                    if (!(i == 0 && k == 0 && j == 0)) {
-                        ModeleLOD* cubeTmp = cube->duplicate();
+                    if (!(i == 0 && k == 0 && j == 0))
+                    {
+                        ModeleLOD *cubeTmp = cube->duplicate();
                         cubeTmp->getTransform()->setTranslate(glm::vec3((float)k * 2, (float)j * 2, (float)i * 2) + pos);
                     }
                 }
@@ -46,30 +47,30 @@ public:
         return this->go;
     }
 
-	void addToPhysique(PhysiqueBullet* physique, int group = 1, int mask = 1)
-	{
-		this->group = group;
-		this->mask = mask;
+    void addToPhysique(PhysiqueBullet *physique, int group = 1, int mask = 1)
+    {
+        this->group = group;
+        this->mask = mask;
 
-        std::vector<GameObject*> listWallGo = go->getChilds();
+        std::vector<GameObject *> listWallGo = go->getChilds();
 
-        
-        for (size_t i = 0, maxSize = listWallGo.size(); i < maxSize; i++) {
+        for (size_t i = 0, maxSize = listWallGo.size(); i < maxSize; i++)
+        {
 
             physique->addRigidbodyToPhysique(listWallGo[i]->getRigidBody(), group, mask);
         }
-	}
+    }
 
-	void removeFromPhysique(PhysiqueBullet* physique)
-	{
-        std::vector<GameObject*> listWallGo = go->getChilds();
+    void removeFromPhysique(PhysiqueBullet *physique)
+    {
+        std::vector<GameObject *> listWallGo = go->getChilds();
 
-        for (size_t i = 0, maxSize = listWallGo.size(); i < maxSize; i++) {
+        for (size_t i = 0, maxSize = listWallGo.size(); i < maxSize; i++)
+        {
 
             physique->removeRigidbodyFromPhysique(listWallGo[i]->getRigidBody());
         }
-	}
-
+    }
 };
 
 #endif

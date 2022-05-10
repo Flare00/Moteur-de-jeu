@@ -5,22 +5,26 @@
 #include <World/Frustum.hpp>
 #include <Shader/ShadowShader.hpp>
 
-class CameraData {
+class CameraData
+{
 public:
-	enum Type {
+	enum Type
+	{
 		CAMERA,
 		SHADOW
 	};
+
 protected:
 	glm::mat4 perspective;
 	glm::mat4 view;
 	glm::vec3 position;
 	Frustum *frustum;
 	Type type;
-	ShadowShader* shadowShader = NULL;
-public :
+	ShadowShader *shadowShader = NULL;
 
-	CameraData(Type type, Frustum* frustum, glm::vec3 position = glm::vec3(0.0f), glm::mat4 perspective = glm::mat4(1.0f), glm::mat4 view = glm::mat4(1.0f)) {
+public:
+	CameraData(Type type, Frustum *frustum, glm::vec3 position = glm::vec3(0.0f), glm::mat4 perspective = glm::mat4(1.0f), glm::mat4 view = glm::mat4(1.0f))
+	{
 		this->position = position;
 		this->perspective = perspective;
 		this->view = view;
@@ -28,58 +32,70 @@ public :
 		this->frustum = frustum;
 	}
 
-	void setValues(glm::vec3 position, glm::mat4 perspective, glm::mat4 view) {
+	void setValues(glm::vec3 position, glm::mat4 perspective, glm::mat4 view)
+	{
 		this->position = position;
 		this->perspective = perspective;
 		this->view = view;
 	}
 
-	glm::mat4 getProjection() {
+	glm::mat4 getProjection()
+	{
 		return this->perspective;
 	}
 
-	glm::mat4 getView() {
+	glm::mat4 getView()
+	{
 		return this->view;
 	}
 
-	glm::vec3 getPosition() {
+	glm::vec3 getPosition()
+	{
 		return this->position;
 	}
 
-	Frustum* getFrustum() {
+	Frustum *getFrustum()
+	{
 		return this->frustum;
 	}
 
-
-	void setPerspective(glm::mat4 a) {
+	void setPerspective(glm::mat4 a)
+	{
 		this->perspective = a;
 	}
-	void setView(glm::mat4 a) {
+	void setView(glm::mat4 a)
+	{
 		this->view = a;
 	}
 
-	void setPosition(glm::vec3 a) {
+	void setPosition(glm::vec3 a)
+	{
 		this->position = a;
 	}
 
-	void setFrustum(Frustum* frustum) {
+	void setFrustum(Frustum *frustum)
+	{
 		this->frustum = frustum;
 	}
 
-	float distanceFrom(glm::vec3 point) {
+	float distanceFrom(glm::vec3 point)
+	{
 		return glm::distance(this->position, point);
 	}
 
-	Type getType() {
+	Type getType()
+	{
 		return this->type;
 	}
 
-	ShadowShader* getShadowShader() {
+	ShadowShader *getShadowShader()
+	{
 		return this->shadowShader;
 	}
 
-	void setShadowShader(ShadowShader* shader) {
-		 this->shadowShader = shader;
+	void setShadowShader(ShadowShader *shader)
+	{
+		this->shadowShader = shader;
 	}
 };
 

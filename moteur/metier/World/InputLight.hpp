@@ -21,7 +21,7 @@ using namespace glm;
 class InputLight : public Input
 {
 protected:
-	ILightCallback* lightCallback = NULL;
+	ILightCallback *lightCallback = NULL;
 
 	bool wireframeModePress = false;
 	bool torchModePress = false;
@@ -55,7 +55,6 @@ protected:
 			lastMouseY = (float)yPos;
 
 			lightCallback->mouseMovement(yOffset * sensivityMouseX, xOffset * sensivityMouseY);
-
 		}
 		// void rotate(CameraAxe axe, bool sensPositif, float deltaTime) {
 	}
@@ -104,11 +103,10 @@ protected:
 	}
 
 public:
-	InputLight(IGlobalGameCallback* gameCallback, IGlobalSceneCallback* sceneCallback, ILightCallback * lightCallback) : Input(gameCallback, sceneCallback)
+	InputLight(IGlobalGameCallback *gameCallback, IGlobalSceneCallback *sceneCallback, ILightCallback *lightCallback) : Input(gameCallback, sceneCallback)
 	{
 		this->lightCallback = lightCallback;
 	}
-
 };
 
 #endif

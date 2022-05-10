@@ -41,18 +41,18 @@ public:
 	}
 
 	// HINGE2
-	btHingeConstraint*addHingeContrainte(BulletTransformation *rbA, BulletTransformation *rbB, glm::vec3 pivotA, glm::vec3 pivotB, glm::vec3 axisA, glm::vec3 axisB)
+	btHingeConstraint *addHingeContrainte(BulletTransformation *rbA, BulletTransformation *rbB, glm::vec3 pivotA, glm::vec3 pivotB, glm::vec3 axisA, glm::vec3 axisB)
 	{
 		return addHingeContrainte(rbA->getBulletRigidbody()->getRigidbody(), rbB->getBulletRigidbody()->getRigidbody(), pivotA, pivotB, axisA, axisB);
 	}
-	btHingeConstraint*addHingeContrainte(btRigidBody *rbA, btRigidBody *rbB, glm::vec3 pivotA, glm::vec3 pivotB, glm::vec3 axisA, glm::vec3 axisB)
+	btHingeConstraint *addHingeContrainte(btRigidBody *rbA, btRigidBody *rbB, glm::vec3 pivotA, glm::vec3 pivotB, glm::vec3 axisA, glm::vec3 axisB)
 	{
 		btVector3 pivotABt = btVector3(pivotA.x, pivotA.y, pivotA.z);
 		btVector3 pivotBBt = btVector3(pivotB.x, pivotB.y, pivotB.z);
 		btVector3 axisABt = btVector3(axisA.x, axisA.y, axisA.z);
 		btVector3 axisBBt = btVector3(axisB.x, axisB.y, axisB.z);
 
-		btHingeConstraint*c = new btHingeConstraint(*rbA, *rbB,(const btVector3) pivotABt, (const btVector3)pivotBBt, (const btVector3)axisABt, (const btVector3)axisBBt);
+		btHingeConstraint *c = new btHingeConstraint(*rbA, *rbB, (const btVector3)pivotABt, (const btVector3)pivotBBt, (const btVector3)axisABt, (const btVector3)axisBBt);
 		this->world->addConstraint(c, true);
 		this->contraintes = contraintes;
 		return c;
@@ -86,12 +86,12 @@ public:
 	}
 
 	// GENERIC 6 DOF
-	btGeneric6DofConstraint *addGeneric6DOFContrainte(BulletTransformation* rbA, BulletTransformation* rbB, glm::vec3 originA = glm::vec3(0.0f), glm::vec3 originB = glm::vec3(0.0f), glm::vec3 rotationA = glm::vec3(0.0f), glm::vec3 rotationB = glm::vec3(0.0f), bool useLinearReferenceFrameA = true)
+	btGeneric6DofConstraint *addGeneric6DOFContrainte(BulletTransformation *rbA, BulletTransformation *rbB, glm::vec3 originA = glm::vec3(0.0f), glm::vec3 originB = glm::vec3(0.0f), glm::vec3 rotationA = glm::vec3(0.0f), glm::vec3 rotationB = glm::vec3(0.0f), bool useLinearReferenceFrameA = true)
 	{
 		return addGeneric6DOFContrainte(rbA->getBulletRigidbody()->getRigidbody(), rbB->getBulletRigidbody()->getRigidbody(), originA, originB, rotationA, rotationB, useLinearReferenceFrameA);
 	}
 
-	btGeneric6DofConstraint *addGeneric6DOFContrainte(btRigidBody* rbA, btRigidBody* rbB, glm::vec3 originA = glm::vec3(0.0f), glm::vec3 originB = glm::vec3(0.0f), glm::vec3 rotationA = glm::vec3(0.0f), glm::vec3 rotationB = glm::vec3(0.0f), bool useLinearReferenceFrameA = true)
+	btGeneric6DofConstraint *addGeneric6DOFContrainte(btRigidBody *rbA, btRigidBody *rbB, glm::vec3 originA = glm::vec3(0.0f), glm::vec3 originB = glm::vec3(0.0f), glm::vec3 rotationA = glm::vec3(0.0f), glm::vec3 rotationB = glm::vec3(0.0f), bool useLinearReferenceFrameA = true)
 	{
 		btTransform frameInA = btTransform::getIdentity(), frameInB = btTransform::getIdentity();
 		frameInA.setOrigin(btVector3(originA.x, originA.y, originA.z));

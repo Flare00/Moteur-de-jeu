@@ -16,6 +16,7 @@ protected:
 	GLuint u_heightmap;
 	GLuint u_max_height;
 	float maxHeight = 1.0f;
+
 public:
 	GlobalShaderExtended(std::string vertex, std::string fragment, std::string tessControl, std::string tessEval, std::string geometry = "") : GlobalShader(vertex, fragment, geometry, tessControl, tessEval)
 	{
@@ -23,11 +24,12 @@ public:
 		this->u_max_height = glGetUniformLocation(this->id, "u_max_height");
 	}
 
-	void setMaxHeight(float maxHeight) {
+	void setMaxHeight(float maxHeight)
+	{
 		this->maxHeight = maxHeight;
 	}
 
-	void drawHeightMap(Texture* texture, int id)
+	void drawHeightMap(Texture *texture, int id)
 	{
 		if (texture != NULL)
 		{
@@ -35,10 +37,11 @@ public:
 		}
 	}
 
-	virtual void drawMesh(CameraData* data, GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix)
+	virtual void drawMesh(CameraData *data, GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix)
 	{
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		if (data->getType() == CameraData::CAMERA) {
+		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		if (data->getType() == CameraData::CAMERA)
+		{
 			glUniform1i(this->u_nb_texture, (GLint)this->u_textures.size());
 
 			glUniform1f(this->u_max_height, maxHeight);
@@ -46,7 +49,6 @@ public:
 		}
 		glBindVertexArray(VAO);
 		glDrawElements(GL_PATCHES, size_indice, GL_UNSIGNED_INT, 0);
-
 	}
 };
 

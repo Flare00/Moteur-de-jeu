@@ -3,24 +3,28 @@
 #include "GameObject/GameObject.hpp"
 class GameObject;
 
-class Component {
-public :
-	enum Type {
+class Component
+{
+public:
+	enum Type
+	{
 		AUCUN,
 		COLLISION,
 		RIGIDBODY,
 		MODELE
 	};
 
-protected :
+protected:
 	Type type;
 
-public :
-	Component(Type type) {
+public:
+	Component(Type type)
+	{
 		this->type = type;
 	}
 
-	Type getType() {
+	Type getType()
+	{
 		return this->type;
 	}
 };

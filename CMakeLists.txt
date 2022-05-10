@@ -25,7 +25,6 @@ include_directories(
 	external/glm-0.9.8.5/
 	external/bullet3-3.24/include/
 	external/stb/
-	common/
 	moteur/metier/
 )
 
@@ -46,8 +45,6 @@ add_definitions(
 
 # Moteur
 add_executable(moteur
-		 common/objloader.hpp
-		common/objloader.cpp
         moteur/Moteur.cpp
  "moteur/metier/Light/PointLight.hpp")
 
@@ -59,7 +56,6 @@ target_link_libraries(moteur
 set_target_properties(moteur PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/moteur/")
 create_target_launcher(moteur WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/moteur/")
 
-SOURCE_GROUP(common REGULAR_EXPRESSION ".*/common/.*" )
 SOURCE_GROUP(shaders REGULAR_EXPRESSION ".*Shaders/.*glsl$" )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/moteur/Shaders/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Shaders/)

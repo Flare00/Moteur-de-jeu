@@ -9,7 +9,6 @@
 class DebugShader : public Shader
 {
 protected:
-
 	GLuint u_color;
 
 public:
@@ -21,14 +20,12 @@ public:
 	virtual void drawMesh(GLuint VAO, GLsizei size_indice, glm::vec3 color)
 	{
 		glUseProgram(id);
-		glUniform3fv(this->u_color,1, &color[0]);
+		glUniform3fv(this->u_color, 1, &color[0]);
 		glLineWidth(1.0f);
 
 		// Bind VAO
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, size_indice, GL_UNSIGNED_INT, 0);
-
-
 	}
 };
 

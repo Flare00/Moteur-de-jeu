@@ -51,7 +51,6 @@ public:
 		this->u_view = glGetUniformLocation(this->id, "u_view");
 		;*/
 
-
 		/*this->u_is_tesselate = glGetUniformLocation(this->id, "u_is_tesselate");
 		this->u_is_terrain = glGetUniformLocation(this->id, "u_is_terrain");
 		this->u_heightmap = glGetUniformLocation(this->id, "u_heightmap");
@@ -81,7 +80,7 @@ public:
 		glUniformMatrix4fv(this->u_light_matrix, 1, GL_FALSE, &lightMatrix[0][0]);
 	}
 
-	void drawHeightMap(Texture* texture, int id, float maxHeight)
+	void drawHeightMap(Texture *texture, int id, float maxHeight)
 	{
 		if (texture != NULL)
 		{
@@ -124,6 +123,5 @@ public:
 		return this->id;
 	}
 };
-
 
 #endif

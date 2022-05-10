@@ -87,28 +87,29 @@ public:
 			}
 		}
 
-		for (size_t i = 0, max = indexed_vertices.size(); i < max; i+=4)
+		for (size_t i = 0, max = indexed_vertices.size(); i < max; i += 4)
 		{
 			indices.push_back((unsigned int)i);
-			indices.push_back((unsigned int)i+1);
-			indices.push_back((unsigned int)i+2);
-			indices.push_back((unsigned int)i+3);
+			indices.push_back((unsigned int)i + 1);
+			indices.push_back((unsigned int)i + 2);
+			indices.push_back((unsigned int)i + 3);
 		}
 		modele->setData(indexed_vertices, indices, texCoords, normals);
 	}
 
-	static void generate_plane_terrain_test(ModeleComponent* modele,  float size_x, float size_y) {
+	static void generate_plane_terrain_test(ModeleComponent *modele, float size_x, float size_y)
+	{
 		std::vector<glm::vec3> indexed_vertices;
 		std::vector<glm::vec3> normals;
 		std::vector<unsigned int> indices;
 		std::vector<glm::vec2> texCoords;
-		float halfSizeX = size_x /2;
-		float halfSizeY = size_y /2;
+		float halfSizeX = size_x / 2;
+		float halfSizeY = size_y / 2;
 
 		indexed_vertices.push_back(glm::vec3(-halfSizeX, 0.0f, halfSizeY));
-		indexed_vertices.push_back(glm::vec3(halfSizeX, 0.0f,halfSizeY));
-		indexed_vertices.push_back(glm::vec3(halfSizeX, 0.0f,-halfSizeY));
-		indexed_vertices.push_back(glm::vec3(-halfSizeX, 0.0f,-halfSizeY));
+		indexed_vertices.push_back(glm::vec3(halfSizeX, 0.0f, halfSizeY));
+		indexed_vertices.push_back(glm::vec3(halfSizeX, 0.0f, -halfSizeY));
+		indexed_vertices.push_back(glm::vec3(-halfSizeX, 0.0f, -halfSizeY));
 
 		texCoords.push_back(glm::vec2(0, 0));
 		texCoords.push_back(glm::vec2(1, 0));

@@ -65,7 +65,7 @@ public:
 	bool dirty = true;
 
 public:
-	Camera(vec3 pos = vec3(0.0f, 0.0f, 3.0f), float yaw = YAW, float pitch = PITCH, vec3 up = vec3(0.0f, 1.0f, 0.0f), btGhostObject* bulletFrustum = NULL) : data(CameraData::CAMERA, new Frustum(), pos)
+	Camera(vec3 pos = vec3(0.0f, 0.0f, 3.0f), float yaw = YAW, float pitch = PITCH, vec3 up = vec3(0.0f, 1.0f, 0.0f), btGhostObject *bulletFrustum = NULL) : data(CameraData::CAMERA, new Frustum(), pos)
 	{
 		this->transformation = glm::mat4(1.0f);
 		this->front = vec3(0.0f, 0.0f, -1.0f);
@@ -81,7 +81,7 @@ public:
 		data.getFrustum()->init(glm::mat4(1.0f), glm::mat4(1.0f), fov, aspect, distanceMin, distanceMax);
 	}
 
-	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch, btGhostObject* bulletFrustum = NULL) : data(CameraData::CAMERA, new Frustum(), glm::vec3(posX, posY, posZ))
+	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch, btGhostObject *bulletFrustum = NULL) : data(CameraData::CAMERA, new Frustum(), glm::vec3(posX, posY, posZ))
 	{
 		this->transformation = glm::mat4(1.0f);
 		this->front = vec3(0.0f, 0.0f, -1.0f);
@@ -99,29 +99,30 @@ public:
 		data.getFrustum()->init(this->getProjection(), this->getViewMatrix(), this->fov, this->aspect, this->distanceMin, this->distanceMax);
 	}
 
-	void checkUpdate() {
-		if (dirty) {
+	void checkUpdate()
+	{
+		if (dirty)
+		{
 			this->updateData();
 		}
 	}
 
-
-
 	mat4 getProjection()
 	{
-		if (dirty) {
+		if (dirty)
+		{
 			updateData();
 		}
 		return this->data.getProjection();
-		
 	}
 
 	mat4 getViewMatrix()
 	{
-		if (dirty) {
+		if (dirty)
+		{
 			updateData();
 		}
-		
+
 		return this->data.getView();
 	}
 
@@ -198,7 +199,8 @@ public:
 
 	glm::mat4 getTransformationMatrix()
 	{
-		if (dirty) {
+		if (dirty)
+		{
 			updateData();
 		}
 		return this->transformation;
@@ -206,7 +208,8 @@ public:
 
 	glm::vec3 getPosition()
 	{
-		if (dirty) {
+		if (dirty)
+		{
 			updateData();
 		}
 		return data.getPosition();
@@ -214,14 +217,17 @@ public:
 
 	float distanceFromCamera(glm::vec3 point)
 	{
-		if (dirty) {
+		if (dirty)
+		{
 			updateData();
 		}
 		return glm::distance(data.getPosition(), point);
 	}
 
-	CameraData* getData() {
-		if (dirty) {
+	CameraData *getData()
+	{
+		if (dirty)
+		{
 			updateData();
 			dirty = false;
 		}
@@ -253,7 +259,8 @@ private:
 		dirty = true;
 	}
 
-	void updateData() {
+	void updateData()
+	{
 		this->data.setValues(data.getPosition(), glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, this->distanceMin, this->distanceMax), lookAt(data.getPosition(), data.getPosition() + this->front, this->up));
 		this->data.getFrustum()->update(data.getProjection(), data.getView(), this->front, this->up, this->right, data.getPosition());
 		this->dirty = false;

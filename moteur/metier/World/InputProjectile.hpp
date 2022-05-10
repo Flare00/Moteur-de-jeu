@@ -30,7 +30,7 @@ protected:
 
     // Mouse movement
     int firstMouseMovement = 2;
-    float lastMouseX = 0.0f, lastMouseY= 0.0f;
+    float lastMouseX = 0.0f, lastMouseY = 0.0f;
     float sensivityMouseX = 0.001f;
     float sensivityMouseY = 0.001f;
 
@@ -56,7 +56,6 @@ protected:
             lastMouseX = (float)xPos;
             lastMouseY = (float)yPos;
             callback->mouseMovement(yOffset * sensivityMouseX, xOffset * sensivityMouseY);
-
         }
         // void rotate(CameraAxe axe, bool sensPositif, float deltaTime) {
     }
@@ -82,7 +81,7 @@ protected:
                 this->callback->moveDirection(0, IProjectileCallback::HAUT, deltaTime);
             if (glfwGetKey(global_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
                 this->callback->moveDirection(0, IProjectileCallback::BAS, deltaTime);
-         
+
             if (glfwGetKey(global_window, GLFW_KEY_Z) == GLFW_PRESS && !wireframeModePress)
             {
                 global_wireframe = !global_wireframe;
@@ -115,19 +114,20 @@ protected:
                 this->callback->actionFireBall();
             }
 
-            if (glfwGetKey(global_window, GLFW_KEY_G) == GLFW_PRESS && !debugModePress) {
+            if (glfwGetKey(global_window, GLFW_KEY_G) == GLFW_PRESS && !debugModePress)
+            {
                 debugModePress = true;
                 this->callback->togglePhysicDebug();
             }
-            else if  (glfwGetKey(global_window, GLFW_KEY_G) == GLFW_RELEASE && debugModePress) {
+            else if (glfwGetKey(global_window, GLFW_KEY_G) == GLFW_RELEASE && debugModePress)
+            {
                 debugModePress = false;
             }
-            
         }
     }
 
 public:
-    InputProjectile(IGlobalGameCallback* gameCallback, IGlobalSceneCallback* sceneCallback, IProjectileCallback *callback) : Input(gameCallback, sceneCallback)
+    InputProjectile(IGlobalGameCallback *gameCallback, IGlobalSceneCallback *sceneCallback, IProjectileCallback *callback) : Input(gameCallback, sceneCallback)
     {
         this->callback = callback;
     }

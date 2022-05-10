@@ -9,7 +9,6 @@
 #include <iostream>
 #include <math.h>
 
-#include <objloader.hpp>
 #include <Light/Material.hpp>
 #include <Texture.hpp>
 #include <Shader/GlobalShader.hpp>
@@ -21,21 +20,20 @@
 class Terrain : public GameObject
 {
 private:
-
-	BulletRigidbody* terrainRigid;
+	BulletRigidbody *terrainRigid;
 
 	GlobalShaderExtended *shader;
 	Material material;
-	float maxHeight; //Hauteur max de la heightmap;
+	float maxHeight;	 // Hauteur max de la heightmap;
 	float width, height; // Taille plan
-	int res;		 // Résolution
+	int res;			 // Résolution
 	int multiplicatorCollision = 4;
 
 protected:
 	ModeleHeightComponent *modele;
 
 public:
-	Terrain(std::string id, GlobalShaderExtended *shader, Texture *texture, Texture *heightMap, float maxHeight = 1.0f, float unite =1.0f, int resolution= 8,  GameObject *parent = NULL) : GameObject(id, parent)
+	Terrain(std::string id, GlobalShaderExtended *shader, Texture *texture, Texture *heightMap, float maxHeight = 1.0f, float unite = 1.0f, int resolution = 8, GameObject *parent = NULL) : GameObject(id, parent)
 	{
 		this->maxHeight = maxHeight;
 		this->width = heightMap->getWidth() * unite;
@@ -54,7 +52,8 @@ public:
 		generateRigidbodyTransform(terrainRigid);
 	}
 
-	BulletRigidbody* getRigidbody() {
+	BulletRigidbody *getRigidbody()
+	{
 		return this->terrainRigid;
 	}
 
@@ -63,7 +62,7 @@ public:
 		delete this->modele;
 	}
 
-	virtual void compute(CameraData *data,Lightning * lights, bool dfs = true)
+	virtual void compute(CameraData *data, Lightning *lights, bool dfs = true)
 	{
 		this->modele->draw(data, lights, this->getTransformMatrix(), this->getPosition());
 

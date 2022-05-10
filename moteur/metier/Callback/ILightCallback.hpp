@@ -5,7 +5,8 @@ class ILightCallback
 {
 
 public:
-	enum Direction {
+	enum Direction
+	{
 		DEVANT,
 		DERRIERE,
 		GAUCHE,
@@ -13,11 +14,7 @@ public:
 		HAUT,
 		BAS
 	};
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="id">Numero de l'action</param>
-	/// <param name="direction">Direction appuyer</param>
+
 	virtual void moveDirection(int id, Direction direction, float deltaTime) = 0;
 	virtual void mouseMovement(float x, float y) = 0;
 	virtual void toggleTorchMode() = 0;

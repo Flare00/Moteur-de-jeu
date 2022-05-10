@@ -22,7 +22,7 @@ public:
 
 	GestionContraintes *gestionContraintes = NULL;
 	CollisionFilter *collisionFilter = NULL;
-	btDiscreteDynamicsWorld *dynamicsWorld = NULL;;
+	btDiscreteDynamicsWorld *dynamicsWorld = NULL;
 	btSequentialImpulseConstraintSolver *solver = NULL;
 	btDbvtBroadphase *overlappingPairCache = NULL;
 	btCollisionDispatcher *dispatcher = NULL;
@@ -34,7 +34,7 @@ public:
 	{
 	}
 
-	void init(DebugDrawer * debug = NULL)
+	void init(DebugDrawer *debug = NULL)
 	{
 		// Mise en place de la configuration pour collision
 		collisionConfig = new btDefaultCollisionConfiguration();
@@ -75,12 +75,12 @@ public:
 		}
 	}
 
-	void draw() {
-
-
+	void draw()
+	{
 	}
 
-	void toogleDebug() {
+	void toogleDebug()
+	{
 		debugState = !debugState;
 	}
 
@@ -158,7 +158,6 @@ public:
 
 		delete collisionConfig;
 		collisionConfig = NULL;
-
 	}
 };
 #endif

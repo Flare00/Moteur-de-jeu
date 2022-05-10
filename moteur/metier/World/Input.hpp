@@ -13,10 +13,11 @@
 #include <Callback/IGlobalGameCallback.hpp>
 #include <Callback/IGlobalSceneCallback.hpp>
 
-class Input {
+class Input
+{
 protected:
-	IGlobalGameCallback* gameCallback = NULL;
-	IGlobalSceneCallback* sceneCallback = NULL;
+	IGlobalGameCallback *gameCallback = NULL;
+	IGlobalSceneCallback *sceneCallback = NULL;
 	bool pausePress = false;
 	bool nextScenePress = false;
 	bool nextCameraPress = false;
@@ -24,13 +25,15 @@ protected:
 public:
 	bool pause = false;
 
-	Input(IGlobalGameCallback* gameCallback, IGlobalSceneCallback* sceneCallback) {
+	Input(IGlobalGameCallback *gameCallback, IGlobalSceneCallback *sceneCallback)
+	{
 		this->gameCallback = gameCallback;
 		this->sceneCallback = sceneCallback;
 	}
 
 	virtual void mouseInput() = 0;
-	virtual void keyboardInput(float deltaTime) {
+	virtual void keyboardInput(float deltaTime)
+	{
 
 		if (glfwGetKey(global_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(global_window, true);
@@ -48,7 +51,8 @@ public:
 
 		if (glfwGetKey(global_window, GLFW_KEY_ENTER) == GLFW_PRESS && !nextScenePress)
 		{
-			if (gameCallback != NULL) {
+			if (gameCallback != NULL)
+			{
 				gameCallback->askNextScene(true);
 			}
 			nextScenePress = true;
@@ -57,7 +61,6 @@ public:
 		{
 			nextScenePress = false;
 		}
-
 
 		if (glfwGetKey(global_window, GLFW_KEY_TAB) == GLFW_PRESS && !nextCameraPress)
 		{
@@ -75,7 +78,5 @@ public:
 		keyboardInput(deltaTime);
 	}
 };
-
-
 
 #endif
