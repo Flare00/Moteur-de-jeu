@@ -64,23 +64,26 @@ public:
 		Scene::Load();
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
-		//Create LightScene
-		lightScene = new Lightning();
-
-		// Texte
-		Text2DShader* textShader = new Text2DShader("Shaders/text2d_vertex.glsl", "Shaders/text2d_fragment.glsl", glm::ortho(0.0f, 1.0f * screen_width, 0.0f, 1.0f * screen_height));
-		Texture* atlasText = new Texture("Textures/Font/Atlas_Monofonto.jpg");
-		text2D = new Text2D(textShader, atlasText, 128, 256);
 
 		// Set Camera
 		Camera* c = new Camera(vec3(0, 0, -15), 90, 0);
 		this->cameras.push_back(c);
 
+		//Create LightScene
+		lightScene = new Lightning();
+
+
+		this->lightScene->addLight(new DirectionnalLight(glm::vec3(-8, 0, 0), glm::vec3(-1, 0, 0)));
+		this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, 0, -8), glm::vec3(0, 0, -1)));
+		
+		// Texte
+		Text2DShader* textShader = new Text2DShader("Shaders/text2d_vertex.glsl", "Shaders/text2d_fragment.glsl", glm::ortho(0.0f, 1.0f * screen_width, 0.0f, 1.0f * screen_height));
+		Texture* atlasText = new Texture("Textures/Font/Atlas_Monofonto.jpg");
+		text2D = new Text2D(textShader, atlasText, 128, 256);
+
 		// Set global Shader
 		globalShader = new GlobalShader("Shaders/vertex_shader.glsl", "Shaders/fragment_shader.glsl");
 		this->activeCamera = 0;
-
-		// Set inputCollision
 
 		// INIT Physique
 		bullet = new PhysiqueBullet();
@@ -93,15 +96,16 @@ public:
 
 		// Place et tourne les objets
 
-		this->lightScene->addLight(new DirectionnalLight(glm::vec3(-8, 0, 0), glm::vec3(-1, 0, 0)));
-		//this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, 0, -8), glm::vec3(0, 0, -1)));
 
 		texBall = new Texture("Textures/SystemeSolaire/earth_daymap.jpg");
-		ModeleComponent* ballComponent = new ModeleComponent(globalShader);
-		ballComponent->addTexture(texBall, false);
-		PrimitiveMesh::generate_uv_sphere(ballComponent, 16, 16, 1.0f);
+		ModeleComponent* ballComponentHigh = new ModeleComponent(globalShader);
+		ballComponentHigh->addTexture(texBall, false);
+		PrimitiveMesh::generate_uv_sphere(ballComponentHigh, 16, 16, 1.0f);
+		ModeleComponent* ballComponentLow = new ModeleComponent(globalShader);
+		ballComponentLow->addTexture(texBall, false);
+		PrimitiveMesh::generate_uv_sphere(ballComponentLow, 6, 6, 1.0f);
 
-		ModeleLOD* ball = new ModeleLOD("Ball", ballComponent, NULL, NULL, NULL, this->scene);
+		ModeleLOD* ball = new ModeleLOD("Ball", ballComponentHigh, ballComponentLow, NULL, NULL, this->scene);
 		ball->getTransform()->setTranslate(glm::vec3(0, -1, 0));
 		ModeleLOD* tmpB = ball->duplicate();
 		tmpB->getTransform()->setTranslate(glm::vec3(0, 1, 0));
@@ -234,8 +238,10 @@ public:
 			}
 		}
 	}
+	bool lightActive = true;
 	virtual void toggleTorchMode() {
-
+		lightActive = !lightActive;
+		this->lightScene->getLights()[0]->setActive(lightActive);
 	}
 	virtual void togglePhysicDebug() {
 		this->bullet->toogleDebug();

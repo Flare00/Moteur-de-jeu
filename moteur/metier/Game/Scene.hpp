@@ -54,8 +54,10 @@ public:
 	}
 	virtual void UnLoad() {
 		delete this->scene;
+		for (size_t i = 0, max = this->cameras.size(); i < max; i++) {
+			delete this->cameras[i];
+		}
 		this->cameras.clear();
-		printf("Size cam : %d\n", this->cameras.size());
  		this->active = false;
 	}
 	virtual void Draw(float deltaTime) {

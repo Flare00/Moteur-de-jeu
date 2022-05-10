@@ -63,6 +63,10 @@ public:
 		bind_Rigid_right = bind_right->getRigidBody();
 		wheel_Rigid_right = wheel_right->getRigidBody();
 
+		this->wheel_Rigid_right->getRigidbody()->setActivationState(DISABLE_DEACTIVATION);
+		this->wheel_Rigid_left->getRigidbody()->setActivationState(DISABLE_DEACTIVATION);
+
+
 		// ADD TO GAMEOBJECT
 		go->addChild(cylinder);
 		go->addChild(base);
@@ -103,6 +107,8 @@ public:
 		physique->addRigidbodyToPhysique(this->bind_Rigid_right, group, mask);
 		physique->addRigidbodyToPhysique(this->wheel_Rigid_left, group, mask);
 		physique->addRigidbodyToPhysique(this->wheel_Rigid_right, group, mask);
+		
+
 
 		// CONSTRAINTS
 		physique->getGestionContraintes()->addFixedContrainte(
@@ -170,8 +176,8 @@ public:
 		glm::vec3 res(-z, y, x);
 		return glm::normalize(res);*/
 
-		btVector3 worldTorque = this->cylinder_Rigid->getRigidbody()->getWorldTransform().getBasis() * btVector3(0.0f, 1.0f, 0.0f);
-		return glm::normalize(glm::vec3(worldTorque.getX(), worldTorque.getY(), worldTorque.getZ()));
+		btVector3 worldFront = this->cylinder_Rigid->getRigidbody()->getWorldTransform().getBasis() * btVector3(0.0f, 1.0f, 0.0f);
+		return glm::normalize(glm::vec3(worldFront.getX(), worldFront.getY(), worldFront.getZ()));
 	}
 
 	glm::vec3 getCanonPos() {
@@ -183,18 +189,25 @@ public:
 	{
 		printf("AAA : %d\n", dir);
 
-		btVector3 worldTorque = this->wheel_Rigid_left->getRigidbody()->getWorldTransform().getBasis() * btVector3(0.0f,100.0f,0.0f);
+		btMatrix3x3 world = this->wheel_Rigid_left->getRigidbody()->getWorldTransform().getBasis();
+		btVector3 worldTorque = world * btVector3(0.0f, 100.0f, 0.0f);
+		btVector3 worldFront = world * btVector3(0.0f, 1.0f, 0.0f);
+		btVector3 worldRight = world * btVector3(1.0f, 0.0f, 0.0f);
+
 		if (dir == 0) {
 			this->wheel_Rigid_left->getRigidbody()->applyTorque((const btVector3)worldTorque);
 			this->wheel_Rigid_right->getRigidbody()->applyTorque((const btVector3)worldTorque);
+
 		}
 		else if (dir == 1) {
 			this->wheel_Rigid_left->getRigidbody()->applyTorque((const btVector3)-worldTorque);
 			this->wheel_Rigid_right->getRigidbody()->applyTorque((const btVector3)-worldTorque);
+
 		}
 		else if (dir == 2) {
 			this->wheel_Rigid_left->getRigidbody()->applyTorque((const btVector3)-worldTorque *1.5f);
 			this->wheel_Rigid_right->getRigidbody()->applyTorque((const btVector3)worldTorque *1.5f);
+
 		}
 		else if (dir == 3) {
 			this->wheel_Rigid_left->getRigidbody()->applyTorque((const btVector3)worldTorque * 1.5f);

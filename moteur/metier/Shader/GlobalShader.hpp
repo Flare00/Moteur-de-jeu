@@ -92,13 +92,13 @@ public:
 		for (size_t i = 0, max = lights.size(); i < max && nbLight < MAX_LIGHT; i++)
 		{
 			if (lights[i]->isActive()) {
-				nbLight++;
+				
 				glm::vec3 lightDir(0.0f);
 				glm::mat4 lightMatrix(1.0f);
 				bool generateShadow = false;
-				glUniform3fv(u_lights[i].position, 1, &(lights[i]->getPosition())[0]);
-				glUniform3fv(u_lights[i].color, 1, &(lights[i]->getColor())[0]);
-				glUniform1f(u_lights[i].intensity, lights[i]->getIntensity());
+				glUniform3fv(u_lights[nbLight].position, 1, &(lights[i]->getPosition())[0]);
+				glUniform3fv(u_lights[nbLight].color, 1, &(lights[i]->getColor())[0]);
+				glUniform1f(u_lights[nbLight].intensity, lights[i]->getIntensity());
 				//Passe les shadow
 				if (lights[i]->getType() == ILight::DIRECTIONAL) {
 					DirectionnalLight* tmpLight = (DirectionnalLight*)lights[i];
@@ -106,20 +106,16 @@ public:
 					if (tmpLight->isGeneratingShadow()) {
 						generateShadow = true;
 						lightMatrix = tmpLight->getShadowMap()->getLightMatrix();
-						//bind la texture, 4 texture reservé pour le modèle
-						//test->draw(u_lights[i].shadow_map, this->nbTexture + i);
-						glActiveTexture(GL_TEXTURE0 + this->nbTexture + i);
+						//bind la texture,4 texture reservé pour le modèle
+						glActiveTexture(GL_TEXTURE0 + this->nbTexture + nbLight);
 						glBindTexture(GL_TEXTURE_2D, tmpLight->getShadowMap()->getDepthTexture());
-						glUniform1i(this->u_lights[i].shadow_map, (this->nbTexture + i));
-
-						glActiveTexture(GL_TEXTURE0 + this->nbTexture + i);
-						glBindTexture(GL_TEXTURE_2D, tmpLight->getShadowMap()->getDepthTexture());
-						glUniform1i(this->u_lights[i].shadow_map, GL_TEXTURE0 + this->nbTexture + i);
+						glUniform1i(this->u_lights[nbLight].shadow_map, this->nbTexture + nbLight);
 					}
 				}
-				glUniformMatrix4fv(u_lights[i].light_matrix, 1, GL_FALSE, &lightMatrix[0][0]);
-				glUniform3fv(u_lights[i].light_dir, lights[i]->getIntensity(), &lightDir[0]);
-				glUniform1i(u_lights[i].generate_shadows, (generateShadow ? 1 : 0));
+				glUniformMatrix4fv(u_lights[nbLight].light_matrix, 1, GL_FALSE, &lightMatrix[0][0]);
+				glUniform3fv(u_lights[nbLight].light_dir, lights[i]->getIntensity(), &lightDir[0]);
+				glUniform1i(u_lights[nbLight].generate_shadows, (generateShadow ? 1 : 0));
+				nbLight++;
 			}
 		}
 		glUniform1i(this->u_light_number, nbLight);

@@ -52,7 +52,7 @@ float computeShadow(Light light, vec3 normal, vec3 lightdir){
     float bias = max(0.01 * (1.0 - dot(normal, lightdir)), 0.001);
     //shadow = currentDepth -bias > closestDepth ? 1.0 : 0.0;
     vec2 texelSize = 1.0 / textureSize(light.shadow_map, 0);
-    int flou_res = 4;
+    int flou_res = 2;
 
     for(int x = -flou_res; x <= flou_res; ++x)
     {
@@ -62,7 +62,7 @@ float computeShadow(Light light, vec3 normal, vec3 lightdir){
             shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
         }    
     }
-    shadow /= (flou_res * flou_res) + 1.0f;
+    shadow /= (((flou_res*2)+1) * ((flou_res*2)+1));
 
     if(projCoords.z > 1.0)
         shadow = 0.0;
@@ -78,9 +78,6 @@ vec3 calculateLight(Light light, vec3 normal, vec3 cameraDir){
         lightDir = lightToFragment;
     } 
 
-    //Attenuation
-    float angleAttenuation = dot(lightDir, lightToFragment);
-
     float attenuation = min(1.0 / distance(light.position, FragPos), 1.0);
 
     //Ambient
@@ -90,17 +87,13 @@ vec3 calculateLight(Light light, vec3 normal, vec3 cameraDir){
         return ambient;
     }
 
-    if(angleAttenuation <=0.1f){
-        angleAttenuation = 0.1f;
-    }
-
     float shadow = 0.0f;
     //Shadow
     if(light.generate_shadows == 1){
        shadow = computeShadow(light, normal, lightDir);
     }
 
-    vec3 lCI = light.color * light.intensity * attenuation * angleAttenuation;
+    vec3 lCI = light.color * light.intensity * attenuation;
 
     //diffuse
     float diff = max(dot(normal, lightToFragment), 0.0);

@@ -17,7 +17,7 @@ public:
 	/// <summary>
 	/// shadowResolution de 1 à 12, (calcul 2^n, si shadowResolution = 4 alors shadow map de taille 16, si shadowResolution = 12 alors shadow map de taille 4096)
 	/// </summary>
-	DirectionnalLight(vec3 position, vec3 direction, vec3 color = vec3(1), float intensity = 1.0f, float distance = 100.0f, int shadowResolution = 6, bool generateShadow = true) : ILight(Type::DIRECTIONAL, position, color, intensity), shadow(shadowResolution) {
+	DirectionnalLight(vec3 position, vec3 direction, vec3 color = vec3(1), float intensity = 1.0f, float distance = 500.0f, int shadowResolution = 8, bool generateShadow = true) : ILight(Type::DIRECTIONAL, position, color, intensity), shadow(shadowResolution) {
 		this->direction = normalize(direction);
 		this->shadow.setMappingParameter(this->position, direction);//this->position - this->direction);
 		this->generateShadow = generateShadow;
@@ -33,6 +33,10 @@ public:
 			this->shadow.drawData();
 			scene->compute(this->shadow.getData(), NULL, true);
 			glCullFace(GL_BACK);
+			if (first) {
+				this->shadow.save_PPM_file("test.ppm");
+				first = false;
+			}
 		}
 	}
 

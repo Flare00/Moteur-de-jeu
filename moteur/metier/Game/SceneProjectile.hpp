@@ -71,18 +71,17 @@ public:
 		delete canon;
 		delete wall;
 	}
-
+	 
 	virtual void Load()
 	{
 		Scene::Load();
 		// Set Camera
-		this->cameras.clear();
 		Camera* c = new Camera(vec3(0, 0, -15), 90, 0);
 		this->cameras.push_back(c);
 
 		//Create LightScene
 		lightScene = new Lightning();
-		this->lightScene->addLight(new DirectionnalLight(glm::vec3(-15, 20, -15), glm::vec3(1, -1, 1)));
+		this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, -5, 0), glm::vec3(0, -1,0)));
 		//this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, 0, -8), glm::vec3(0, 0, -1)));
 		
 		// Texte
@@ -130,8 +129,8 @@ public:
 		debug->setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints);
 
 		bullet->init(debug);
-		bullet->addRigidbodyToPhysique(terrain->getRigidbody());
-		bullet->addRigidbodyToPhysique(plateformeRigid);
+		bullet->addRigidbodyToPhysique(terrain->getRigidbody(),5,0);
+		bullet->addRigidbodyToPhysique(plateformeRigid, 5, 0);
 		canon->addToPhysique(bullet);
 		wall->addToPhysique(bullet);
 
