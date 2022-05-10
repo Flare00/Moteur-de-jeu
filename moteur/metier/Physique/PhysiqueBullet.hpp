@@ -18,6 +18,9 @@ class PhysiqueBullet
 {
 
 public:
+	DebugDrawer* debug = NULL;
+	bool debugState = false;
+
 	GestionContraintes *gestionContraintes = NULL;
 	CollisionFilter *collisionFilter = NULL;
 	btDiscreteDynamicsWorld *dynamicsWorld;
@@ -33,6 +36,7 @@ public:
 
 	void init(DebugDrawer *debug = NULL)
 	{
+		this->debug = debug;
 		// Mise en place de la configuration pour collision
 		collisionConfig = new btDefaultCollisionConfiguration();
 		// Mono Thread dispatcher (Regarder les BulletMultiThreaded pour le multi Thread)
@@ -65,6 +69,20 @@ public:
 		{
 			dynamicsWorld->stepSimulation(deltaTime);
 			dynamicsWorld->debugDrawWorld();
+		}
+	}
+
+	void toogleDebug() {
+		printf("Ask Debug\n");
+		if (this->debug != NULL) {
+			printf("PASS Debug\n");
+			if (debugState) {
+				dynamicsWorld->setDebugDrawer(NULL);
+			}
+			else {
+				dynamicsWorld->setDebugDrawer(this->debug);
+			}
+			debugState = !debugState;
 		}
 	}
 

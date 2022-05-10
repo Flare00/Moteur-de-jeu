@@ -31,7 +31,6 @@ private:
 
 	bool cameraPosPress = false;
 	bool pausePress = false;
-	bool cameraModePress = false;
 	bool terrainRotatePress = false;
 	bool wireframeModePress = false;
 	// Mouse movement
@@ -88,29 +87,6 @@ private:
 			glfwSetWindowShouldClose(global_window, true);
 		if (!pause)
 		{
-			// Mode de camera
-			if (glfwGetKey(global_window, GLFW_KEY_C) == GLFW_PRESS && !cameraModePress)
-			{
-				camera->switchOrbitalMode();
-				cameraModePress = true;
-			}
-			else if (glfwGetKey(global_window, GLFW_KEY_C) == GLFW_RELEASE && cameraModePress)
-			{
-				cameraModePress = false;
-			}
-
-			// Permet de changer la valeur de l'attribut "isTexture" permettant d'avoir soit une texture_low, soit une coloration selon la position.
-			if (glfwGetKey(global_window, GLFW_KEY_I) == GLFW_PRESS && !cameraPosPress)
-			{
-				std::cout << "Camera Pos   : [ " << camera->data.getPosition().x << " ; " << camera->data.getPosition().y << " ; " << camera->data.getPosition().z << " ]" << std::endl;
-				std::cout << "Camera Rotat : [ " << camera->yaw << " ; " << camera->pitch << " ; " << camera->roll << " ]" << std::endl;
-				std::cout << "Camera Front : [ " << camera->front.x << " ; " << camera->front.y << " ; " << camera->front.z << " ]" << std::endl;
-				cameraPosPress = true;
-			}
-			if (glfwGetKey(global_window, GLFW_KEY_I) == GLFW_RELEASE && cameraPosPress)
-			{
-				cameraPosPress = false;
-			}
 
 			// Rotation de la camera
 			if (glfwGetKey(global_window, GLFW_KEY_A) == GLFW_PRESS)
@@ -140,26 +116,6 @@ private:
 			if (glfwGetKey(global_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 				camera->move(CameraAxe::Y, false, deltaTime);
 
-			/*//Pr�cision
-			if (glfwGetKey(global_window, GLFW_KEY_KP_ADD) == GLFW_PRESS) {
-				meshPrecision++;
-				//generate_plane((Modele*)scene->getChild(0), meshPrecision, meshPrecision, meshSize, meshSize);
-				std::cout << "Precision : " << meshPrecision << std::endl;
-			}
-
-			if (glfwGetKey(global_window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS) {
-				meshPrecision--;
-				//generate_plane((Modele*)scene->getChild(0), meshPrecision, meshPrecision, meshSize, meshSize);
-				std::cout << "Precision : " << meshPrecision << std::endl;
-			}*/
-
-			// Rotation de terrain
-			if (glfwGetKey(global_window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
-				rotateSpeed += 0.05f;
-			if (glfwGetKey(global_window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
-				rotateSpeed -= 0.05f;
-			;
-
 			if (glfwGetKey(global_window, GLFW_KEY_R) == GLFW_PRESS && !terrainRotatePress)
 			{
 				rotateTerrain = !rotateTerrain;
@@ -169,10 +125,6 @@ private:
 			{
 				terrainRotatePress = false;
 			}
-
-
-
-
 
 			if (glfwGetKey(global_window, GLFW_KEY_Z) == GLFW_PRESS && !wireframeModePress)
 			{

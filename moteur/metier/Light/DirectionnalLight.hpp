@@ -32,13 +32,7 @@ public:
 			glCullFace(GL_FRONT);
 			this->shadow.drawData();
 			scene->compute(this->shadow.getData(), NULL, true);
-			if (first) {
-				this->shadow.showMinMax();
-				this->shadow.save_PPM_file("test.ppm");
-				first = false;
-			}
 			glCullFace(GL_BACK);
-
 		}
 	}
 

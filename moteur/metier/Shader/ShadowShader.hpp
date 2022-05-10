@@ -83,12 +83,12 @@ public:
 
 	void drawHeightMap(Texture* texture, int id, float maxHeight)
 	{
-		/*if (texture != NULL)
+		if (texture != NULL)
 		{
 			this->maxHeight = maxHeight;
 			texture->draw(this->u_heightmap, id);
 			hasHeightMap = true;
-		}*/
+		}
 	}
 
 	void drawMesh(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix)
@@ -102,6 +102,20 @@ public:
 		glUniformMatrix4fv(this->u_model, 1, GL_FALSE, &transformMatrix[0][0]);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, size_indice, GL_UNSIGNED_INT, 0);
+		hasHeightMap = false;
+	}
+
+	void drawPatch(GLuint VAO, GLsizei size_indice, glm::mat4 transformMatrix)
+	{
+		/*
+		glUniform1i(this->u_is_tesselate, (hasHeightMap ? 1 : 0));
+		glUniform1i(this->u_is_terrain, (hasHeightMap ? 1 : 0));
+		glUniform1i(this->u_max_height, maxHeight);*/
+
+		// Bind VAO
+		glUniformMatrix4fv(this->u_model, 1, GL_FALSE, &transformMatrix[0][0]);
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_PATCHES, 0, size_indice);
 		hasHeightMap = false;
 	}
 

@@ -16,6 +16,7 @@ protected:
 	vec3 color;
 	float intensity;
 	Type type;
+	bool active = true;
 	bool dirty = false;
 public :
 
@@ -54,6 +55,14 @@ public :
 	void setPosition(vec3 position) {
 		this->position = position;
 		this->dirty = true;
+	}
+
+	void setActive(bool value) {
+		this->active = value;
+	}
+
+	bool isActive() {
+		return this->active;
 	}
 };
 

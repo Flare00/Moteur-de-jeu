@@ -1,4 +1,4 @@
-#version 330 core
+#version 450 core
 #define MAX_LIGHT 28
 
 // Ouput data
@@ -120,7 +120,6 @@ void main(){
         lightVec += calculateLight(u_lights[i], norm, cameraDir);
     }
     lightVec = pow(lightVec, vec3(1.0/u_gamma_correction)); // GAMMA Correction
-
 
 	if(u_nb_texture > 0){
 		color = vec4(lightVec,1.0f) * (texture2D(u_textures[0], vec2(-TexCoord.x, TexCoord.y)));

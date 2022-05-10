@@ -143,10 +143,11 @@ int main(void)
 	glCullFace(GL_BACK);
 
 	// Cull triangles which normal is not towards the camera
+	glPatchParameteri(GL_PATCH_VERTICES, 4);
+
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_FRAMEBUFFER_SRGB);
-	glPatchParameteri(GL_PATCH_VERTICES, 4);
 
 	/*GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);

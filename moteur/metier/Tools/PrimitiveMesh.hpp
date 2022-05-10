@@ -87,9 +87,12 @@ public:
 			}
 		}
 
-		for (size_t i = 0, max = indexed_vertices.size(); i < max; i++)
+		for (size_t i = 0, max = indexed_vertices.size(); i < max; i+=4)
 		{
 			indices.push_back((unsigned int)i);
+			indices.push_back((unsigned int)i+1);
+			indices.push_back((unsigned int)i+2);
+			indices.push_back((unsigned int)i+3);
 		}
 		modele->setData(indexed_vertices, indices, texCoords, normals);
 	}

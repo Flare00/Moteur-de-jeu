@@ -44,19 +44,48 @@ public:
 
     virtual void draw(CameraData *data,Lightning* lights, glm::mat4 transform, glm::vec3 position)
     {
+        if (!hasData)
+        {
+            return;
+        }
         bool isInFOV = true;
         if(data->getType() == CameraData::CAMERA){
+            bool isInFOV = false;
+
+            if (this->boundingBox != NULL)
+            {
+                boundingBox->applyTransformation(transform);
+                isInFOV = data->getFrustum()->isVisible(boundingBox);
+            }
+            else
+            {
+                isInFOV = data->getFrustum()->isVisible(position);
+            }
+
+            isInFOV = true;
+
+            if (!isInFOV)
+                return;
+
             this->shader->use();
         
             glEnable(GL_TEXTURE_2D);
+            this->shader->resetNbTexture();
+            for (size_t i = 0, max = textures.size(); i < max; i++)
+            {
+                this->shader->drawTexture(this->textures[i].texture, (int)i);
+            }
+            this->shader->setLights(lights->getLights());
             this->shader->drawHeightMap(heightMap.texture, (int)textures.size());
-            ModeleComponent::draw(data, lights, transform, position);
+            this->shader->drawMaterial(this->material);
+            this->shader->drawMesh(data, this->VAO, (GLsizei)this->indices.size(), transform);
         }
         else {
             data->getShadowShader()->drawHeightMap(heightMap.texture, 0, this->maxHeight);
-            ModeleComponent::draw(data, lights, transform, position);
         }
     }
+
+
 
     void setHeightMap(Texture *t, bool destroyEnd)
     {

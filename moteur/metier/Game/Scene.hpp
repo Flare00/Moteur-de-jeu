@@ -13,9 +13,11 @@
 #include <Texture.hpp>
 #include <World/Camera.hpp>
 #include <World/Input.hpp>
+#include <Callback/IGlobalSceneCallback.hpp>
 
-class Scene {
+class Scene : public IGlobalSceneCallback {
 protected:
+	IGlobalGameCallback* globalGameCallback;
 	std::string id;
 
 	int activeCamera = -1;
@@ -25,7 +27,8 @@ protected:
 	GameObject* scene;
 
 public:
-	Scene(std::string id = "Scene") {
+	Scene(IGlobalGameCallback* globalGameCallback = NULL, std::string id = "Scene") {
+		this->globalGameCallback;
 		this->id = id;
 		this->scene = new GameObject(id);
 	}
@@ -50,14 +53,27 @@ public:
 		this->scene = scene;
 	}
 
-	virtual void Init() {
+	virtual void Init() = 0;
+	virtual void Draw(float deltaTime) = 0;
+	virtual void askCameraChange(int numero) {
+		if (numero >= 0 && numero < this->cameras.size()) {
+			this->activeCamera = numero;
+		}
 	}
-	virtual void Draw(float deltaTime) {
+	virtual void askNextCamera(bool next) {
+		if (this->cameras.size() > 1) {
+			if (next && this->activeCamera + 1 >= this->cameras.size()) {
+				this->activeCamera = 0;
+			}
+			else if (!next && this->activeCamera - 1 < 0) {
+				this->activeCamera = this->cameras.size() - 1;
+			}
+			else {
+				this->activeCamera = this->activeCamera + (next ? 1 : -1);
+			}
+		}
 	}
 
-	virtual void ChangeActiveCamera(int id) {
-		this->activeCamera = id;
-	}
 };
 
 #endif

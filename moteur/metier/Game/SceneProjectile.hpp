@@ -24,7 +24,7 @@
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
 
-class SceneProjecile : public Scene, IProjectileCallback
+class SceneProjectile : public Scene, IProjectileCallback
 {
 private:
 	// Init
@@ -32,7 +32,7 @@ private:
 	GlobalShaderExtended *shaderTerrain = NULL;
 	Lightning* lightScene = NULL;
 	DebugShader *debugShader = NULL;
-	InputProjectile *inputCol;
+	InputProjectile *inputProj;
 	Text2D *text2D;
 	PhysiqueBullet *bullet;
 	Canon *canon;
@@ -49,13 +49,23 @@ private:
 	bool wait1Frame = true;
 
 public:
-	SceneProjecile()
+	SceneProjectile(IGlobalGameCallback* globalGameCallback) : Scene(globalGameCallback)
 	{
+		this->inputProj = new InputProjectile(globalGameCallback, this, this);
 	}
 
-	~SceneProjecile()
+	~SceneProjectile()
 	{
 		delete bullet;
+		delete globalShader;
+		delete shaderTerrain;
+		delete lightScene;
+		delete debugShader;
+		delete inputProj;
+		delete text2D;
+		delete texBall;
+		delete canon;
+		delete wall;
 	}
 
 	virtual void Init()
@@ -97,9 +107,6 @@ public:
 		this->scene->addChild(canon->getGameObject());
 		this->scene->addChild(wall->getGameObject());
 
-		// Set inputCollision
-		this->inputCol = new InputProjectile(c, this);
-
 		// INIT Physique
 		bullet = new PhysiqueBullet();
 
@@ -115,49 +122,9 @@ public:
 		// Place et tourne les objets
 		terrain->getTransform()->translate(glm::vec3(0, -10, 0));
 
-		this->lightScene->addLight(new DirectionnalLight(glm::vec3(-8.0, 0, 0), glm::vec3(-1, 0, 0)));
+		this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, 20, 0), glm::vec3(-1, -1, 0)));
 		//this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, 0, -8), glm::vec3(0, 0, -1)));
 
-		//Test light
-		/*ModeleComponent* ballComponent = new ModeleComponent(globalShader);
-		ballComponent->addTexture(texBall, false);
-		PrimitiveMesh::generate_uv_sphere(ballComponent, 16, 16, 1.0f);
-
-		ModeleLOD* ball = new ModeleLOD("Ball", ballComponent, NULL, NULL, NULL, this->scene);
-		ball->getTransform()->setTranslate(glm::vec3(0, -1, 0));
-		ModeleLOD* tmpB = ball->duplicate();
-		tmpB->getTransform()->setTranslate(glm::vec3(0, 1, 0));
-		tmpB = ball->duplicate();
-		tmpB->getTransform()->setTranslate(glm::vec3(-1, 0, 0));
-		tmpB = ball->duplicate();
-		tmpB->getTransform()->setTranslate(glm::vec3(1, 0, 0));
-		tmpB = ball->duplicate();
-		tmpB->getTransform()->setTranslate(glm::vec3(0, 0, -1));
-		tmpB = ball->duplicate();
-		tmpB->getTransform()->setTranslate(glm::vec3(0, 0, 1));
-
-		ModeleLOD* plane = new ModeleLOD("Plane", globalShader, ModeleComponent::OBJ, "Model/wallplane.obj", NULL, this->scene);
-		plane->getTransform()->setTranslate(glm::vec3(0, -10, 0));
-
-		plane = plane->duplicate();
-		plane->getOriginalTransform()->setTranslate(glm::vec3(0, 0, 20));
-		plane->getOriginalTransform()->setSelfRotation(glm::vec3(M_PI / 2.0f, 0, 0));
-
-		plane = plane->duplicate();
-		plane->getOriginalTransform()->setTranslate(glm::vec3(0, 0, -20));
-		plane->getOriginalTransform()->setSelfRotation(glm::vec3(M_PI / 2.0f,0, 0));
-
-		plane = plane->duplicate();
-		plane->getOriginalTransform()->setTranslate(glm::vec3(20, 0, 0));
-		plane->getOriginalTransform()->setSelfRotation(glm::vec3(M_PI / 2.0f, M_PI / 2.0f, 0));
-
-		plane = plane->duplicate();
-		plane->getOriginalTransform()->setTranslate(glm::vec3(-20, 0, 0));
-		plane->getOriginalTransform()->setSelfRotation(glm::vec3(M_PI / 2.0f, -M_PI / 2.0f, 0));
-
-
-		plane = plane->duplicate();
-		plane->getOriginalTransform()->setTranslate(glm::vec3(0, 20, 0));*/
 	}
 
 	ModeleLOD *createBall()
@@ -202,7 +169,47 @@ public:
 	virtual void actionGoUp()
 	{
 		canon->getTransform()->applyForce(glm::vec3(1.0f, 0.0f, 0.0f));
-		canon->move(glm::vec3(0, 0, 1));
+	}
+
+	virtual void moveDirection(int id, Direction direction, float deltaTime) {
+
+		if (id == 0) {
+			switch (direction) {
+			case Direction::DEVANT:
+				this->cameras[this->activeCamera]->move(CameraAxe::Z, true, deltaTime);
+				break;
+			case Direction::DERRIERE:
+				this->cameras[this->activeCamera]->move(CameraAxe::Z, false, deltaTime);
+				break;
+			case Direction::GAUCHE:
+				this->cameras[this->activeCamera]->move(CameraAxe::X, false, deltaTime);
+				break;
+			case Direction::DROITE:
+				this->cameras[this->activeCamera]->move(CameraAxe::X, true, deltaTime);
+				break;
+			case Direction::HAUT:
+				this->cameras[this->activeCamera]->move(CameraAxe::Y, true, deltaTime);
+				break;
+			case Direction::BAS:
+				this->cameras[this->activeCamera]->move(CameraAxe::Y, false, deltaTime);
+				break;
+			}
+		}
+		else if (id == 1) {
+			if (Direction::DEVANT == direction) {
+				canon->move(glm::vec3(0, 0, 1));
+			}
+		}
+	}
+	virtual void toggleTorchMode() {
+
+	}
+	virtual void togglePhysicDebug() {
+		this->bullet->toogleDebug();
+	}
+	virtual void mouseMovement(float x, float y) {
+		this->cameras[this->activeCamera]->rotate(CameraAxe::X, x);
+		this->cameras[this->activeCamera]->rotate(CameraAxe::Y, y);
 	}
 
 
@@ -212,7 +219,7 @@ public:
 		this->waitTimeFireBall -= deltaTime;
 		this->cooldownFPS -= deltaTime;
 		// Process input
-		inputCol->processInput(deltaTime);
+		this->inputProj->processInput(deltaTime);
 		//Draw Shadows
 		if (!global_pause)
 		{
