@@ -134,7 +134,7 @@ public:
 		wall->addToPhysique(bullet);
 
 		// Place et tourne les objets
-		terrain->getTransform()->translate(glm::vec3(0, -15, 0));
+		terrain->getTransform()->translate(glm::vec3(0, -8, 0));
 	}
 
 	ModeleLOD *createBall()
@@ -168,10 +168,10 @@ public:
 				this->scene->addChild(b);
 				this->bullet->addRigidbodyToPhysique(b->getRigidBody(), canon->getGroup(), 1);
 
-				// b->getTransform()->setTranslate(this->canon->getCanonPos());
-				// b->getBulletTransform()->applyImpule(this->canon->getFront() * 2000.0f);
-				b->getTransform()->setTranslate(this->cameras[0]->getPosition());
-				b->getBulletTransform()->applyImpule(this->cameras[0]->getFront() * 2000.0f);
+				b->getTransform()->setTranslate(this->canon->getCanonPos());
+				b->getBulletTransform()->applyImpule(this->canon->getFront() * 2000.0f);
+				//b->getTransform()->setTranslate(this->cameras[0]->getPosition());
+				//b->getBulletTransform()->applyImpule(this->cameras[0]->getFront() * 2000.0f);
 			}
 		}
 	}

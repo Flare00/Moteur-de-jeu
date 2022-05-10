@@ -57,7 +57,7 @@ public:
 		std::vector<glm::vec2> texCoords;
 
 		float subSizeX = (size_x / (float)res_x);
-		float subSizeY = (size_x / (float)res_x);
+		float subSizeY = (size_y / (float)res_y);
 		float centerX = size_x / 2.0f;
 		float centerY = size_y / 2.0f;
 
