@@ -30,14 +30,16 @@ public:
 	}
 
 	virtual void drawTriangle(const btVector3& v0, const btVector3& v1, const btVector3& v2, const btVector3& color, btScalar alpha) {
+		this->points.push_back(glm::vec3(v0.getX(), v0.getY(), v0.getZ()));
+		this->points.push_back(glm::vec3(v1.getX(), v1.getY(), v1.getZ()));
+		this->points.push_back(glm::vec3(v2.getX(), v2.getY(), v2.getZ()));
+		this->indices.push_back(lastIndices);
+		this->indices.push_back(lastIndices+1);
+		this->indices.push_back(lastIndices+2);
+		this->lastIndices += 3;
 	}
 
 	virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) {
-		this->points.push_back(glm::vec3(from.getX(), from.getY(), from.getZ()));
-		this->points.push_back(glm::vec3(to.getX(), to.getY(), to.getZ()));
-
-		this->indices.push_back(lastIndices);
-		this->indices.push_back(lastIndices + 1);
 	}
 
 
@@ -58,7 +60,7 @@ public:
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(unsigned int), &this->indices[0], GL_STATIC_DRAW);
 
-		this->shader->drawMesh(VAO, 2, glm::vec3(1, 0, 0));
+		this->shader->drawMesh(VAO, this->indices.size(), glm::vec3(1, 0, 0));
 	}
 
 	virtual void setDebugMode(int debugMode)

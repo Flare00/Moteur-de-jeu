@@ -19,6 +19,8 @@
 
 #include <Global.hpp>
 #include <Light/Lightning.hpp>
+#include <Light/PointLight.hpp>
+
 #include <Light/DirectionnalLight.hpp>
 #include <Physique/PhysiqueBullet.hpp>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
@@ -81,7 +83,7 @@ public:
 
 		//Create LightScene
 		lightScene = new Lightning();
-		this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, -5, 0), glm::vec3(0, -1,0)));
+		this->lightScene->addLight(new PointLight(glm::vec3(-100, 100, -50), glm::vec3(1, 1, 1), 50.0f));
 		//this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, 0, -8), glm::vec3(0, 0, -1)));
 		
 		// Texte
@@ -109,7 +111,7 @@ public:
 		this->shaderTerrain = new GlobalShaderExtended("Shaders/Terrain/terrain_vertex.glsl", "Shaders/fragment_shader.glsl", "Shaders/Terrain/terrain_tessControl.glsl", "Shaders/Terrain/terrain_tessEval.glsl");
 		Texture* textureTerrain = new Texture("Textures/HeightMap/test.png");
 		Texture* heightMapTerrain = new Texture("Textures/HeightMap/test.png");
-		Terrain* terrain = new Terrain("Terrain", shaderTerrain, textureTerrain, heightMapTerrain, 5, 1.0f, 1);
+		Terrain* terrain = new Terrain("Terrain", shaderTerrain, textureTerrain, heightMapTerrain, 20, 1.0f, 1);
 
 		// Plateforme;
 		BulletRigidbody* plateformeRigid = BulletRigidbody::generateAABB(glm::vec3(30,1,30), 0.0f);
@@ -135,7 +137,7 @@ public:
 		wall->addToPhysique(bullet);
 
 		// Place et tourne les objets
-		terrain->getTransform()->translate(glm::vec3(0, -10, 0));
+		terrain->getTransform()->translate(glm::vec3(0, -15, 0));
 		
 
 
@@ -172,8 +174,10 @@ public:
 				this->scene->addChild(b);
 				this->bullet->addRigidbodyToPhysique(b->getRigidBody(), canon->getGroup(), 1);
 
-				b->getTransform()->setTranslate(this->canon->getCanonPos());
-				b->getBulletTransform()->applyImpule(this->canon->getFront() * 2000.0f);
+				//b->getTransform()->setTranslate(this->canon->getCanonPos());
+				//b->getBulletTransform()->applyImpule(this->canon->getFront() * 2000.0f);
+				b->getTransform()->setTranslate(this->cameras[0]->getPosition());
+				b->getBulletTransform()->applyImpule(this->cameras[0]->getFront() * 2000.0f);
 			}
 		}
 	}
@@ -188,7 +192,7 @@ public:
 		if (id == 0) {
 			switch (direction) {
 			case Direction::DEVANT:
-				this->cameras[this->activeCamera]->move(CameraAxe::Z, true, deltaTime);
+				this->cameras[this->activeCamera]->move(CameraAxe::Z, true, deltaTime * 10.0f);
 				break;
 			case Direction::DERRIERE:
 				this->cameras[this->activeCamera]->move(CameraAxe::Z, false, deltaTime);

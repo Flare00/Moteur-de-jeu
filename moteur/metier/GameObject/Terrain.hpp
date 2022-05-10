@@ -50,7 +50,7 @@ public:
 		this->modele->setHeightMap(heightMap, true);
 
 		terrainRigid = new BulletRigidbody();
-		terrainRigid->setToHeightTerrain(heightMap, maxHeight, width);
+		terrainRigid->setToHeightTerrain(heightMap, this->maxHeight, this->width);
 		generateRigidbodyTransform(terrainRigid);
 	}
 

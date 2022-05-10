@@ -9,6 +9,8 @@ using namespace glm;
 class ILight {
 public:
 	enum Type {
+		AUCUN,
+		POINT,
 		DIRECTIONAL
 	};
 protected:

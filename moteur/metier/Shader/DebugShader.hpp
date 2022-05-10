@@ -26,8 +26,7 @@ public:
 
 		// Bind VAO
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_LINES, 0, size_indice);
-		//glDrawElements(GL_LINES, size_indice, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, size_indice, GL_UNSIGNED_INT, 0);
 
 
 	}

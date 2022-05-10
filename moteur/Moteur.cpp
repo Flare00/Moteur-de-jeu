@@ -25,8 +25,8 @@ using namespace glm;
 #include <Game/Game.hpp>
 
 // settings
-const unsigned int SCR_WIDTH = 1024;
-const unsigned int SCR_HEIGHT = 768;
+const unsigned int SCR_WIDTH = 1600;
+const unsigned int SCR_HEIGHT = 900;
 const int limiteur = 60;
 
 Game* game;

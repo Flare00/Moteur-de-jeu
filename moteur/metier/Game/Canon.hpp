@@ -63,10 +63,6 @@ public:
 		bind_Rigid_right = bind_right->getRigidBody();
 		wheel_Rigid_right = wheel_right->getRigidBody();
 
-		this->wheel_Rigid_right->getRigidbody()->setActivationState(DISABLE_DEACTIVATION);
-		this->wheel_Rigid_left->getRigidbody()->setActivationState(DISABLE_DEACTIVATION);
-
-
 		// ADD TO GAMEOBJECT
 		go->addChild(cylinder);
 		go->addChild(base);
@@ -187,13 +183,12 @@ public:
 
 	void move(int dir)
 	{
-		printf("AAA : %d\n", dir);
-
 		btMatrix3x3 world = this->wheel_Rigid_left->getRigidbody()->getWorldTransform().getBasis();
 		btVector3 worldTorque = world * btVector3(0.0f, 100.0f, 0.0f);
 		btVector3 worldFront = world * btVector3(0.0f, 1.0f, 0.0f);
 		btVector3 worldRight = world * btVector3(1.0f, 0.0f, 0.0f);
-
+		this->wheel_Rigid_left->getRigidbody()->activate();
+		this->wheel_Rigid_right->getRigidbody()->activate();
 		if (dir == 0) {
 			this->wheel_Rigid_left->getRigidbody()->applyTorque((const btVector3)worldTorque);
 			this->wheel_Rigid_right->getRigidbody()->applyTorque((const btVector3)worldTorque);
@@ -213,7 +208,6 @@ public:
 			this->wheel_Rigid_left->getRigidbody()->applyTorque((const btVector3)worldTorque * 1.5f);
 			this->wheel_Rigid_right->getRigidbody()->applyTorque((const btVector3)-worldTorque * 1.5f);
 		}
-
 	}
 
 	int getGroup() {

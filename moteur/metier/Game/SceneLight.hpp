@@ -73,8 +73,8 @@ public:
 		lightScene = new Lightning();
 
 
-		this->lightScene->addLight(new DirectionnalLight(glm::vec3(-8, 0, 0), glm::vec3(-1, 0, 0)));
-		this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, 0, -8), glm::vec3(0, 0, -1)));
+		this->lightScene->addLight(new DirectionnalLight(glm::vec3(-8, 0, 0), glm::vec3(-1, 0, 0), glm::vec3(1,0,1)));
+		this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, 0, -8), glm::vec3(0, 0, -1), glm::vec3(1, 1,1)));
 		
 		// Texte
 		Text2DShader* textShader = new Text2DShader("Shaders/text2d_vertex.glsl", "Shaders/text2d_fragment.glsl", glm::ortho(0.0f, 1.0f * screen_width, 0.0f, 1.0f * screen_height));
@@ -125,9 +125,9 @@ public:
 		plane->getOriginalTransform()->setTranslate(glm::vec3(0, 0, 20));
 		plane->getOriginalTransform()->setSelfRotation(glm::vec3(M_PI / 2.0f, 0, 0));
 
-		plane = plane->duplicate();
+		/*plane = plane->duplicate();
 		plane->getOriginalTransform()->setTranslate(glm::vec3(0, 0, -20));
-		plane->getOriginalTransform()->setSelfRotation(glm::vec3(M_PI / 2.0f, 0, 0));
+		plane->getOriginalTransform()->setSelfRotation(glm::vec3(M_PI / 2.0f, 0, 0));*/
 
 		plane = plane->duplicate();
 		plane->getOriginalTransform()->setTranslate(glm::vec3(20, 0, 0));

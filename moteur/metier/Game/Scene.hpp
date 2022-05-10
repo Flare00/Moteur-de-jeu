@@ -76,7 +76,7 @@ public:
 				this->activeCamera = 0;
 			}
 			else if (!next && this->activeCamera - 1 < 0) {
-				this->activeCamera = this->cameras.size() - 1;
+				this->activeCamera = (int)this->cameras.size() - 1;
 			}
 			else {
 				this->activeCamera = this->activeCamera + (next ? 1 : -1);
