@@ -23,9 +23,17 @@ public:
         {
             return true;
         }
-        if (proxy0->m_collisionFilterGroup == proxy1->m_collisionFilterGroup && proxy0->m_collisionFilterMask == proxy1->m_collisionFilterMask)
+        if (proxy0->m_collisionFilterGroup == proxy1->m_collisionFilterGroup)
         {
-            return false;
+            if (proxy0->m_collisionFilterMask == 0 || proxy1->m_collisionFilterMask == 0) {
+                return false;
+            }
+            else if(proxy0->m_collisionFilterMask == proxy1->m_collisionFilterMask) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
         return true;
     }

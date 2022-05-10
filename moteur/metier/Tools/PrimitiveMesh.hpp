@@ -97,6 +97,37 @@ public:
 		modele->setData(indexed_vertices, indices, texCoords, normals);
 	}
 
+	static void generate_plane_terrain_test(ModeleComponent* modele,  float size_x, float size_y) {
+		std::vector<glm::vec3> indexed_vertices;
+		std::vector<glm::vec3> normals;
+		std::vector<unsigned int> indices;
+		std::vector<glm::vec2> texCoords;
+		float halfSizeX = size_x /2;
+		float halfSizeY = size_y /2;
+
+		indexed_vertices.push_back(glm::vec3(-halfSizeX, 0.0f, halfSizeY));
+		indexed_vertices.push_back(glm::vec3(halfSizeX, 0.0f,halfSizeY));
+		indexed_vertices.push_back(glm::vec3(halfSizeX, 0.0f,-halfSizeY));
+		indexed_vertices.push_back(glm::vec3(-halfSizeX, 0.0f,-halfSizeY));
+
+		texCoords.push_back(glm::vec2(0, 0));
+		texCoords.push_back(glm::vec2(1, 0));
+		texCoords.push_back(glm::vec2(0, 1));
+		texCoords.push_back(glm::vec2(1, 1));
+
+		normals.push_back(glm::normalize(glm::vec3(0, 1, 0)));
+		normals.push_back(glm::normalize(glm::vec3(0, 1, 0)));
+		normals.push_back(glm::normalize(glm::vec3(0, 1, 0)));
+		normals.push_back(glm::normalize(glm::vec3(0, 1, 0)));
+
+		indices.push_back(0);
+		indices.push_back(1);
+		indices.push_back(2);
+		indices.push_back(3);
+
+		modele->setData(indexed_vertices, indices, texCoords, normals);
+	}
+
 	static void generate_plane_terrain_collision(ModeleComponent *modele, int res_x, int res_y, float size_x, float size_y)
 	{
 		std::vector<glm::vec3> indexed_vertices;

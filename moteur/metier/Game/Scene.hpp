@@ -23,38 +23,46 @@ protected:
 	int activeCamera = -1;
 	std::vector<Camera*> cameras;
 
-	Input* input;
 	GameObject* scene;
+	bool active = false;
 
 public:
 	Scene(IGlobalGameCallback* globalGameCallback = NULL, std::string id = "Scene") {
 		this->globalGameCallback;
 		this->id = id;
-		this->scene = new GameObject(id);
 	}
 
 	~Scene() {
-		free(this->input);
 		for (size_t i = 0, max = this->cameras.size(); i < max; i++) {
 			free(this->cameras[i]);
 		}
-		free(this->scene);
+		delete this->scene;
 	}
 
 	void AddCamera(Camera* camera) {
 		this->cameras.push_back(camera);
 	}
 
-	void SetInput(Input* input) {
-		this->input = input;
-	}
 
 	void SetSceneGameObject(GameObject* scene) {
 		this->scene = scene;
 	}
 
-	virtual void Init() = 0;
-	virtual void Draw(float deltaTime) = 0;
+	virtual void Load() {
+		this->scene = new GameObject(id);
+		this->active = true;
+	}
+	virtual void UnLoad() {
+		delete this->scene;
+		this->cameras.clear();
+		printf("Size cam : %d\n", this->cameras.size());
+ 		this->active = false;
+	}
+	virtual void Draw(float deltaTime) {
+		if (!active) {
+			return;
+		}
+	}
 	virtual void askCameraChange(int numero) {
 		if (numero >= 0 && numero < this->cameras.size()) {
 			this->activeCamera = numero;
@@ -72,6 +80,10 @@ public:
 				this->activeCamera = this->activeCamera + (next ? 1 : -1);
 			}
 		}
+	}
+
+	bool isActive() {
+		return this->active;
 	}
 
 };

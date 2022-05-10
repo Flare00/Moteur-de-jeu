@@ -26,10 +26,11 @@ protected:
     IProjectileCallback *callback;
 
     bool wireframeModePress = false;
+    bool debugModePress = false;
 
     // Mouse movement
     int firstMouseMovement = 2;
-    float lastMouseX, lastMouseY;
+    float lastMouseX = 0.0f, lastMouseY= 0.0f;
     float sensivityMouseX = 0.001f;
     float sensivityMouseY = 0.001f;
 
@@ -112,6 +113,14 @@ protected:
             if (glfwGetKey(global_window, GLFW_KEY_K) == GLFW_PRESS)
             {
                 this->callback->actionFireBall();
+            }
+
+            if (glfwGetKey(global_window, GLFW_KEY_G) == GLFW_PRESS && !debugModePress) {
+                debugModePress = true;
+                this->callback->togglePhysicDebug();
+            }
+            else if  (glfwGetKey(global_window, GLFW_KEY_G) == GLFW_RELEASE && debugModePress) {
+                debugModePress = false;
             }
             
         }

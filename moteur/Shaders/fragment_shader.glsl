@@ -52,7 +52,7 @@ float computeShadow(Light light, vec3 normal, vec3 lightdir){
     float bias = max(0.01 * (1.0 - dot(normal, lightdir)), 0.001);
     //shadow = currentDepth -bias > closestDepth ? 1.0 : 0.0;
     vec2 texelSize = 1.0 / textureSize(light.shadow_map, 0);
-    int flou_res = 8;
+    int flou_res = 4;
 
     for(int x = -flou_res; x <= flou_res; ++x)
     {

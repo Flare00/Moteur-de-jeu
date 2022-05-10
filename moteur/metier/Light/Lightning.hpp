@@ -20,7 +20,9 @@ public:
 			glViewport(0, 0, screen_width, screen_height);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
- // Erase the color and z buffers.
+		ShadowMap::bindScreen();
+		glViewport(0, 0, screen_width, screen_height);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void addLight(ILight* light) {

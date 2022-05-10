@@ -23,6 +23,8 @@ public:
         cubeComponent->addTexture(texture, false);
         PrimitiveMesh::generate_cube(cubeComponent);
         ModeleLOD *cube = new ModeleLOD("Cube", cubeComponent, NULL, NULL, rigid, go);
+        glm::vec3 pos(10, -7.0f, -10.0f);
+        cube->getTransform()->setTranslate(pos);
 
         for (int i = 0; i < width; i++)
         {
@@ -32,7 +34,7 @@ public:
                 {
                     if (!(i == 0 && k == 0 && j == 0)) {
                         ModeleLOD* cubeTmp = cube->duplicate();
-                        cubeTmp->getTransform()->setTranslate(glm::vec3((float)i * 2, (float)j * 2, (float)k * 2));
+                        cubeTmp->getTransform()->setTranslate(glm::vec3((float)k * 2, (float)j * 2, (float)i * 2) + pos);
                     }
                 }
             }

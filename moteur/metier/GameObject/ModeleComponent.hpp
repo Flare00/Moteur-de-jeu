@@ -188,6 +188,7 @@ public:
 
 			this->shader->drawMaterial(this->material);
 			this->shader->drawMesh(this->VAO, (GLsizei)this->indices.size(), transform);
+
 		}
 		else {
 			data->getShadowShader()->drawMesh(this->VAO, (GLsizei)this->indices.size(), transform);

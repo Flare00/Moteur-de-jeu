@@ -49,7 +49,7 @@ add_executable(moteur
 		 common/objloader.hpp
 		common/objloader.cpp
         moteur/Moteur.cpp
- "moteur/metier/Game/SceneLight.hpp" "moteur/metier/World/InputLight.hpp" "moteur/metier/Callback/IGlobalGameCallback.hpp" "moteur/metier/Callback/IGlobalSceneCallback.hpp" "moteur/metier/Callback/ILightCallback.hpp")
+)
 
 
 target_link_libraries(moteur

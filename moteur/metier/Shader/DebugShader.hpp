@@ -22,12 +22,14 @@ public:
 	{
 		glUseProgram(id);
 		glUniform3fv(this->u_color,1, &color[0]);
-
 		glLineWidth(1.0f);
 
 		// Bind VAO
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_LINES, 0, size_indice);
+		//glDrawElements(GL_LINES, size_indice, GL_UNSIGNED_INT, 0);
+
+
 	}
 };
 

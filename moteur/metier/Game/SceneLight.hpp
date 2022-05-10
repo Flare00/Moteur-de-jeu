@@ -56,18 +56,14 @@ public:
 
 	~SceneLight()
 	{
-		delete bullet;
-		delete globalShader;
-		delete shaderTerrain;
-		delete lightScene;
-		delete debugShader;
-		delete inputLight;
-		delete text2D;
-		delete texBall;
+
 	}
 
-	virtual void Init()
+	virtual void Load()
 	{
+		Scene::Load();
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
 		//Create LightScene
 		lightScene = new Lightning();
 
@@ -142,56 +138,71 @@ public:
 		plane->getOriginalTransform()->setTranslate(glm::vec3(0, 20, 0));
 	}
 
+	virtual void UnLoad() {
+		Scene::UnLoad();
+		glDisable(GL_CULL_FACE);
+		delete bullet;
+		delete globalShader;
+		delete shaderTerrain;
+		delete lightScene;
+		delete debugShader;
+		delete text2D;
+		delete texBall;
+	}
+
 	virtual void Draw(float deltaTime)
 	{
-		this->waitTimeFireBall -= deltaTime;
-		this->cooldownFPS -= deltaTime;
-		// Process input
 		inputLight->processInput(deltaTime);
-		//Draw Shadows
-		if (!global_pause)
-		{
-			if (!wait1Frame)
+		Scene::Draw(deltaTime);
+		if (isActive()) {
+			this->waitTimeFireBall -= deltaTime;
+			this->cooldownFPS -= deltaTime;
+			// Process input
+			//Draw Shadows
+			if (!global_pause)
 			{
-				bullet->loop(deltaTime);
+				if (!wait1Frame)
+				{
+					bullet->loop(deltaTime);
+				}
+				else
+				{
+					wait1Frame = false;
+				}
 			}
-			else
+
+			this->lightScene->compute(this->scene);
+
+			if (!global_pause)
 			{
-				wait1Frame = false;
+				if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size())
+				{
+
+					this->cameras[activeCamera]->checkUpdate();
+
+					if (globalShader != NULL)
+					{
+					}
+					globalShader->drawView(this->cameras[this->activeCamera]);
+
+					if (debugShader != NULL)
+						debugShader->drawView(this->cameras[this->activeCamera]);
+				}
 			}
-		}
 
-		this->lightScene->compute(this->scene);
-
-		if (!global_pause)
-		{
 			if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size())
 			{
-
-				this->cameras[activeCamera]->checkUpdate();
-
-				if (globalShader != NULL)
-				{
-				}
-				globalShader->drawView(this->cameras[this->activeCamera]);
-
-				if (debugShader != NULL)
-					debugShader->drawView(this->cameras[this->activeCamera]);
+				this->scene->compute(this->cameras[this->activeCamera]->getData(), this->lightScene, true);
 			}
-		}
+			// compute FPS
+			if (this->cooldownFPS <= 0)
+			{
+				fps = (int)(1.0f / deltaTime);
+				this->cooldownFPS = 1.0f;
+			}
 
-		if (this->activeCamera >= 0 && this->activeCamera < this->cameras.size())
-		{
-			this->scene->compute(this->cameras[this->activeCamera]->getData(), this->lightScene, true);
+			this->text2D->DrawText(std::to_string(fps), -1, 1, 0.9f);
 		}
-		// compute FPS
-		if (this->cooldownFPS <= 0)
-		{
-			fps = (int)(1.0f / deltaTime);
-			this->cooldownFPS = 1.0f;
-		}
-
-		this->text2D->DrawText(std::to_string(fps), -1, 1, 0.9f);
 	}
 
 
@@ -233,6 +244,8 @@ public:
 		this->cameras[this->activeCamera]->rotate(CameraAxe::X, x);
 		this->cameras[this->activeCamera]->rotate(CameraAxe::Y, y);
 	}
+
+	
 
 };
 

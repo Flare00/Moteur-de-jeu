@@ -18,25 +18,24 @@ class PhysiqueBullet
 {
 
 public:
-	DebugDrawer* debug = NULL;
 	bool debugState = false;
 
 	GestionContraintes *gestionContraintes = NULL;
 	CollisionFilter *collisionFilter = NULL;
-	btDiscreteDynamicsWorld *dynamicsWorld;
-	btSequentialImpulseConstraintSolver *solver;
-	btDbvtBroadphase *overlappingPairCache;
-	btCollisionDispatcher *dispatcher;
-	btDefaultCollisionConfiguration *collisionConfig;
+	btDiscreteDynamicsWorld *dynamicsWorld = NULL;;
+	btSequentialImpulseConstraintSolver *solver = NULL;
+	btDbvtBroadphase *overlappingPairCache = NULL;
+	btCollisionDispatcher *dispatcher = NULL;
+	btDefaultCollisionConfiguration *collisionConfig = NULL;
 
 	std::vector<BulletRigidbody *> rigidbodies;
+
 	PhysiqueBullet()
 	{
 	}
 
-	void init(DebugDrawer *debug = NULL)
+	void init(DebugDrawer * debug = NULL)
 	{
-		this->debug = debug;
 		// Mise en place de la configuration pour collision
 		collisionConfig = new btDefaultCollisionConfiguration();
 		// Mono Thread dispatcher (Regarder les BulletMultiThreaded pour le multi Thread)
@@ -53,6 +52,7 @@ public:
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfig);
 		// Ajoute la gravit�
 		dynamicsWorld->setGravity(btVector3(0, -9.8f, 0));
+
 		if (debug != NULL)
 		{
 			dynamicsWorld->setDebugDrawer(debug);
@@ -65,25 +65,23 @@ public:
 
 	void loop(float deltaTime)
 	{
-		if (dynamicsWorld)
+		if (dynamicsWorld != NULL)
 		{
 			dynamicsWorld->stepSimulation(deltaTime);
-			dynamicsWorld->debugDrawWorld();
+			if (dynamicsWorld != NULL && debugState)
+			{
+				dynamicsWorld->debugDrawWorld();
+			}
 		}
 	}
 
+	void draw() {
+
+
+	}
+
 	void toogleDebug() {
-		printf("Ask Debug\n");
-		if (this->debug != NULL) {
-			printf("PASS Debug\n");
-			if (debugState) {
-				dynamicsWorld->setDebugDrawer(NULL);
-			}
-			else {
-				dynamicsWorld->setDebugDrawer(this->debug);
-			}
-			debugState = !debugState;
-		}
+		debugState = !debugState;
 	}
 
 	GestionContraintes *getGestionContraintes()
@@ -146,29 +144,21 @@ public:
 				delete obj;
 			}
 		}
-		// delete collision shapes
-		/*for (int j = 0; j < collisionShapes.size(); j++)
-		{
-			btCollisionShape* shape = collisionShapes[j];
-			delete shape;
-		}
-		collisionShapes.clear();*/
 
 		delete dynamicsWorld;
+		dynamicsWorld = NULL;
 		delete solver;
-		delete overlappingPairCache;
-		delete dispatcher;
-		delete collisionConfig;
-	}
+		solver = NULL;
 
-	/*~PhysiqueBullet() {
-		size_t last;
-		while ((last = rigidbodies.size()) > 0) {
-			BulletRigidbody* b = rigidbodies[last - 1];
-			rigidbodies.pop_back();
-			this->dynamicsWorld->removeRigidBody(b->getRigidbody());
-			delete b;
-		}
-	}*/
+		delete overlappingPairCache;
+		overlappingPairCache = NULL;
+
+		delete dispatcher;
+		dispatcher = NULL;
+
+		delete collisionConfig;
+		collisionConfig = NULL;
+
+	}
 };
 #endif
