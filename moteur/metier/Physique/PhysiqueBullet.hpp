@@ -18,6 +18,7 @@ class PhysiqueBullet
 {
 
 public:
+	DebugDrawer* debug;
 	bool debugState = false;
 
 	GestionContraintes *gestionContraintes = NULL;
@@ -53,6 +54,7 @@ public:
 		// Ajoute la gravit�
 		dynamicsWorld->setGravity(btVector3(0, -9.8f, 0));
 
+		this->debug = debug;
 		if (debug != NULL)
 		{
 			dynamicsWorld->setDebugDrawer(debug);
@@ -68,7 +70,7 @@ public:
 		if (dynamicsWorld != NULL)
 		{
 			dynamicsWorld->stepSimulation(deltaTime);
-			if (dynamicsWorld != NULL && debugState)
+			if (dynamicsWorld != NULL && debugState && debug != NULL)
 			{
 				dynamicsWorld->debugDrawWorld();
 			}

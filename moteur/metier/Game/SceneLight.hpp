@@ -201,7 +201,7 @@ public:
 				this->cooldownFPS = 1.0f;
 			}
 
-			//this->text2D->DrawText(std::to_string(fps), -1, 1, 0.9f);
+			this->text2D->DrawText(std::to_string(fps), -1, 1, 0.9f);
 		}
 	}
 
