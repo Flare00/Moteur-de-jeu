@@ -13,7 +13,7 @@ Khélian LARVET
 ### Technique_2  
 mkdir build   
 cmake . -B"build"
-cmake --build "build" --config Debug
+cmake --build "build" --config Release
 ./build/launch-moteur.sh  
 
 ## FONCTIONNALITES

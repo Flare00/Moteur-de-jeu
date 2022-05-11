@@ -15,7 +15,7 @@ clear
 
 
 if [ "$OSTYPE" == "msys" ]; then
-	./"$DIR"/launch-moteur.sh --debugger 2> log/cmake.log
+	./"$DIR"/launch-moteur.sh --debugger 2> log/exec.log
 else 
-	./"$DIR"/launch-moteur.sh --debugger 2> log/cmake.log
+	./"$DIR"/launch-moteur.sh --debugger 2> log/exec.log
 fi
