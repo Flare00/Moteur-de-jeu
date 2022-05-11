@@ -82,7 +82,7 @@ public:
 
 		// Create LightScene
 		lightScene = new Lightning();
-		this->lightScene->addLight(new PointLight(glm::vec3(-100, 100, -50), glm::vec3(1, 1, 1), 50.0f));
+		this->lightScene->addLight(new PointLight(glm::vec3(-100, 100, -50), glm::vec3(1, 1, 1), 10.0f));
 		// this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, 0, -8), glm::vec3(0, 0, -1)));
 
 		// Texte
@@ -189,7 +189,7 @@ public:
 			switch (direction)
 			{
 			case Direction::DEVANT:
-				this->cameras[this->activeCamera]->move(CameraAxe::Z, true, deltaTime * 10.0f);
+				this->cameras[this->activeCamera]->move(CameraAxe::Z, true, deltaTime);
 				break;
 			case Direction::DERRIERE:
 				this->cameras[this->activeCamera]->move(CameraAxe::Z, false, deltaTime);
@@ -296,7 +296,7 @@ public:
 				this->cooldownFPS = 1.0f;
 			}
 
-			this->text2D->DrawText(std::to_string(fps), -1, 1, 0.9f);
+			//this->text2D->DrawText(std::to_string(fps), -1, 1, 0.9f);
 		}
 	}
 };

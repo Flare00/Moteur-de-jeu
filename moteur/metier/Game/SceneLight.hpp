@@ -64,13 +64,13 @@ public:
 		glCullFace(GL_BACK);
 
 		// Set Camera
-		Camera *c = new Camera(vec3(0, 0, -15), 90, 0);
+		Camera *c = new Camera(vec3(0, 0, -5), 90, 0);
 		this->cameras.push_back(c);
 
 		// Create LightScene
 		lightScene = new Lightning();
 
-		this->lightScene->addLight(new DirectionnalLight(glm::vec3(-8, 0, 0), glm::vec3(-1, 0, 0), glm::vec3(1, 0, 1)));
+		this->lightScene->addLight(new DirectionnalLight(glm::vec3(-8, 0, 0), glm::vec3(-1, 0, 0), glm::vec3(1, 0.5f, 1)));
 		this->lightScene->addLight(new DirectionnalLight(glm::vec3(0, 0, -8), glm::vec3(0, 0, -1), glm::vec3(1, 1, 1)));
 
 		// Texte
@@ -201,7 +201,7 @@ public:
 				this->cooldownFPS = 1.0f;
 			}
 
-			this->text2D->DrawText(std::to_string(fps), -1, 1, 0.9f);
+			//this->text2D->DrawText(std::to_string(fps), -1, 1, 0.9f);
 		}
 	}
 
@@ -212,26 +212,26 @@ public:
 
 		if (id == 0)
 		{
-
+			float speed = 0.5f;
 			switch (direction)
 			{
 			case Direction::DEVANT:
-				this->cameras[this->activeCamera]->move(CameraAxe::Z, true, deltaTime);
+				this->cameras[this->activeCamera]->move(CameraAxe::Z, true, deltaTime * speed);
 				break;
 			case Direction::DERRIERE:
-				this->cameras[this->activeCamera]->move(CameraAxe::Z, false, deltaTime);
+				this->cameras[this->activeCamera]->move(CameraAxe::Z, false, deltaTime * speed);
 				break;
 			case Direction::GAUCHE:
-				this->cameras[this->activeCamera]->move(CameraAxe::X, false, deltaTime);
+				this->cameras[this->activeCamera]->move(CameraAxe::X, false, deltaTime * speed);
 				break;
 			case Direction::DROITE:
-				this->cameras[this->activeCamera]->move(CameraAxe::X, true, deltaTime);
+				this->cameras[this->activeCamera]->move(CameraAxe::X, true, deltaTime * speed);
 				break;
 			case Direction::HAUT:
-				this->cameras[this->activeCamera]->move(CameraAxe::Y, true, deltaTime);
+				this->cameras[this->activeCamera]->move(CameraAxe::Y, true, deltaTime * speed);
 				break;
 			case Direction::BAS:
-				this->cameras[this->activeCamera]->move(CameraAxe::Y, false, deltaTime);
+				this->cameras[this->activeCamera]->move(CameraAxe::Y, false, deltaTime * speed);
 				break;
 			}
 		}

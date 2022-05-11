@@ -38,11 +38,11 @@ public:
 			this->shadow.drawData();
 			scene->compute(this->shadow.getData(), NULL, true);
 			glCullFace(GL_BACK);
-			if (first)
+			/*if (first)
 			{
 				this->shadow.save_PPM_file("test.ppm");
 				first = false;
-			}
+			}*/
 		}
 	}
 
