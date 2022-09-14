@@ -11,7 +11,7 @@ Khélian LARVET
 ./Launch.sh  
 
 ### Technique_2  
-mkdir build   
+mkdir build
 cmake . -B"build"
 cmake --build "build" --config Release
 ./build/launch-moteur.sh  
