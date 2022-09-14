@@ -7,13 +7,13 @@ Khélian LARVET
 
 ### Technique_1  
 ./InitCMake.sh  
-./Build.sh
+./Build.sh  
 ./Launch.sh  
 
 ### Technique_2  
-mkdir build
-cmake . -B"build"
-cmake --build "build" --config Release
+mkdir build  
+cmake . -B"build"  
+cmake --build "build" --config Release  
 ./build/launch-moteur.sh  
 
 ## FONCTIONNALITES
